@@ -1,3 +1,5 @@
+
+/*
 let dataLen = 51
 let i = -1
 let labels = Array.from({length: dataLen}, () => i += 1);
@@ -33,3 +35,4 @@ function removeData(chart) {
     });
     chart.update();
 }
+*/

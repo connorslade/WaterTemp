@@ -1,0 +1,46 @@
+body {
+  margin: 0;
+  min-width: 250px;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #17171a;
+  color: white;
+  height: 100%;
+  width: 100%;
+  scroll-behavior: smooth;
+
+  display: grid;
+  grid-gap: 15px;
+  justify-content: center;
+}
+
+.temp-div {
+  margin-top: 10vh;
+
+  p {
+    font-size: 80px;
+    font-weight: 600;
+    font-style: normal;
+    padding-left: 28.8px;
+    margin-bottom: 0;
+
+    &::after {
+      content: "°";
+    }
+  }
+}
+
+.footer {
+  background-color: #1a1a1d;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  text-align: center;
+  display: inline-block;
+}
+
+p.footer-content {
+  margin-left: 0;
+  margin: 15px;
+}
