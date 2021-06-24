@@ -26,8 +26,8 @@ body {
   p {
     float: right;
     margin: 0;
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
   }
 }
 
@@ -65,6 +65,14 @@ body {
       }
     }
   }
+}
+
+.graph {
+  position: fixed;
+  bottom: 48px + 20px;
+  left: 0;
+  width: 100%;
+  height: auto;
 }
 
 .footer {

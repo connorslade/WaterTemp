@@ -5,13 +5,22 @@ let socket = null;
 let tmp = 30;
 let avg = 10;
 
-let currentIdex = 0;
+// Persistent Settings
+
+if (localStorage.getItem('setup') === null) {
+  localStorage.setItem('setup', true);
+  localStorage.setItem('showingGraph', false);
+  localStorage.setItem('unit', 0);
+}
 
 // Unit Changing
 
+let currentIdex = parseInt(localStorage.getItem('unit'))
+document.getElementById('unit').innerHTML = `<p>${units[currentIdex]}</p>`
 document.getElementById('unit').addEventListener("click", function () {
   currentIdex += 1;
   if (currentIdex >= units.length) currentIdex = 0;
+  localStorage.setItem('unit', currentIdex)
   document.getElementById('unit').innerHTML = `<p>${units[currentIdex]}</p>`
   
   document.getElementById('temp').innerHTML = Math.round(convert[currentIdex](tmp) * 10) / 10;
@@ -80,12 +89,29 @@ function setError(value) {
   document.getElementById('error').innerHTML = '✅';
 }
 
+// Event Listeners
+
 document.getElementById('error').addEventListener("click", function () {
   socket.close()
   createWebSocket()
 });
 
-/*Its 
+let graphToggle = localStorage.getItem("showingGraph") == "true";
+document.getElementById("graphToggle").addEventListener("click", toggleGraph);
+toggleGraph()
+
+function toggleGraph() {
+  graphToggle = !graphToggle;
+  localStorage.setItem("showingGraph", !graphToggle);
+  if (graphToggle) {
+    document.getElementById("graph").style.display = "none";
+    return;
+  }
+  document.getElementById("graph").style.display = "block";
+}
+
+// Graph
+
 let dataLen = 51
 let i = -1
 let labels = Array.from({length: dataLen}, () => i += 1);
@@ -103,7 +129,7 @@ let config = {
   type: 'line',
   data: data,
 };
-var ctx = document.getElementById('myChart').getContext('2d');
+var ctx = document.getElementById('graph').getContext('2d');
 var stackedLine = new Chart(ctx, config);
 
 function addData(chart, label, data) {
@@ -121,4 +147,3 @@ function removeData(chart) {
     });
     chart.update();
 }
-*/

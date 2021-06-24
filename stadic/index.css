@@ -60,6 +60,14 @@ body {
   content: "DEV: ";
 }
 
+.graph {
+  position: fixed;
+  bottom: 68px;
+  left: 0;
+  width: 100%;
+  height: auto;
+}
+
 .footer {
   background-color: #1a1a1d;
   position: fixed;
