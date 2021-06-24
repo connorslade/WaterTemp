@@ -23,6 +23,23 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
+
+let sockets = [];
+wsServer.on('connection', socket => {
+    socket.on('message', message => common.log("🔌 WebSocket", message, socket._socket.remoteAddress));
+    socket.on('close', function () {
+        console.log(`❌ WebSocket Disconnected ${socket._socket.remoteAddress}`);
+        sockets = sockets.filter(s => s !== socket);
+    });
+    sockets.push(socket);
+    setInterval(function() {
+        let toSend = `{"tmp": ${Math.floor(Math.random() * 10)}, "avg": ${Math.floor(Math.random() * 10)}}`;
+        socket.send(toSend);
+        //sockets.forEach(s => s.send(toSend));
+      }, 5000);
+})
+
+
 app.listen(config.server.port, config.server.ip, function () {
     console.log(`🐍 Serving http://${config.server.ip}:${config.server.port}/`);
 })
