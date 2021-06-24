@@ -13,6 +13,24 @@ body {
   justify-content: center;
 }
 
+.unit {
+  background-color: #212123;
+  border-radius: 5px;
+  position: absolute;
+  right: 0px;
+  padding: 10px;
+  float: right;
+  margin: 5px;
+  cursor: pointer;
+
+  p {
+    float: right;
+    margin: 0;
+    width: 18px;
+    height: 18px;
+  }
+}
+
 .temp-div {
   margin-top: 10vh;
 
@@ -25,6 +43,26 @@ body {
 
     &::after {
       content: "°";
+    }
+  }
+}
+
+.stats {
+  p {
+    &::after {
+      content: "°";
+    }
+    &:nth-child(1) {
+      float: left;
+      &::before {
+        content: "AVG: ";
+      }
+    }
+    &:nth-child(2) {
+      float: right;
+      &::before {
+        content: "DEV: ";
+      }
     }
   }
 }

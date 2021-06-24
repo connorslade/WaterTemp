@@ -1,3 +1,22 @@
+const units = ['°F', '°C', '°K'];
+const convert = [function (c) { return c }, function (c) { return (c-32)*(5/9) }, function (c) { return (c+459.67)*(5/9)}]
+
+let tmp = 30;
+let avg = 10;
+
+let currentIdex = 0;
+
+// Unit Changing
+
+document.getElementById('unit').addEventListener("click", function () {
+  currentIdex += 1;
+  if (currentIdex >= units.length) currentIdex = 0;
+  document.getElementById('unit').innerHTML = `<p>${units[currentIdex]}</p>`
+  
+  document.getElementById('temp').innerHTML = Math.round(convert[currentIdex](tmp) * 10) / 10;
+  document.getElementById('avg').innerHTML = Math.round(convert[currentIdex](avg) * 10) / 10;
+  document.getElementById('dev').innerHTML = Math.abs(Math.round(convert[currentIdex](avg) * 10 / 10 - convert[currentIdex](tmp) * 10 / 10));
+});
 
 /*
 let dataLen = 51

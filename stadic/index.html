@@ -6,19 +6,24 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="index.css">
+    <script defer src="index.js"></script>
     <!--<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
-    <title>Water Temp</title>
+    <title>Water Temperature</title>
 </head>
 
 <body>
     <!--<canvas id="myChart"></canvas>-->
-    <script src="index.js"></script>
+    <div class="unit" id="unit">
+        <p>°F</p>
+    </div>
+
     <div class="temp-div">
-        <p>30</p>
+        <p id="temp">30</p>
     </div>
 
     <div class="stats">
-        <p>AVG: 10° DEV: 20°</p>
+        <p id="avg">10</p>
+        <p id="dev">20</p>
     </div>
 
     <div class="footer">

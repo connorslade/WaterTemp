@@ -13,6 +13,23 @@ body {
   justify-content: center;
 }
 
+.unit {
+  background-color: #212123;
+  border-radius: 5px;
+  position: absolute;
+  right: 0px;
+  padding: 10px;
+  float: right;
+  margin: 5px;
+  cursor: pointer;
+}
+.unit p {
+  float: right;
+  margin: 0;
+  width: 18px;
+  height: 18px;
+}
+
 .temp-div {
   margin-top: 10vh;
 }
@@ -25,6 +42,22 @@ body {
 }
 .temp-div p::after {
   content: "°";
+}
+
+.stats p::after {
+  content: "°";
+}
+.stats p:nth-child(1) {
+  float: left;
+}
+.stats p:nth-child(1)::before {
+  content: "AVG: ";
+}
+.stats p:nth-child(2) {
+  float: right;
+}
+.stats p:nth-child(2)::before {
+  content: "DEV: ";
 }
 
 .footer {
