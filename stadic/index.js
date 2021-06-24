@@ -1,6 +1,7 @@
 const units = ['°F', '°C', '°K'];
 const convert = [function (c) { return c }, function (c) { return (c-32)*(5/9) }, function (c) { return (c+459.67)*(5/9)}]
 
+let stackedLine = null;
 let socket = null;
 let tmp = 30;
 let avg = 10;
@@ -43,39 +44,50 @@ function updateData(tmp, avg) {
   document.getElementById('temp').innerHTML = Math.round(convert[currentIdex](tmp) * 10) / 10;
   document.getElementById('avg').innerHTML = Math.round(convert[currentIdex](avg) * 10) / 10;
   document.getElementById('dev').innerHTML = Math.abs(Math.round(convert[currentIdex](avg) * 10 / 10 - convert[currentIdex](tmp) * 10 / 10));
+  addData(stackedLine, '?', tmp)
+  removeData(stackedLine)
 }
 
 // Websocket Init
 
 window.onload = function () {
   createWebSocket();
-}
+};
 
 function createWebSocket() {
-  let wsProto = 'ws';
-  if (location.protocol === 'https:') wsProto = 'wss';
-  socket = new WebSocket(`${wsProto}://${window.location.href.split('/')[2]}`);
+  let wsProto = "ws";
+  if (location.protocol === "https:") wsProto = "wss";
+  socket = new WebSocket(`${wsProto}://${window.location.href.split("/")[2]}`);
 
   socket.onopen = function () {
     setError(false);
   };
 
   socket.onmessage = function (event) {
-      let data = JSON.parse(event.data);
-      console.log(data)
-      updateData(data.tmp, data.avg)
+    let data = JSON.parse(event.data);
+    console.log(data)
+    switch (data.event) {
+      case 'update':
+        updateData(data.tmp, data.avg);
+        break;
+        
+      case 'init':
+        initGraph(data.data)
+        updateData(data.tmp, data.avg);
+        break;
+    }
   };
 
   socket.onclose = function (event) {
-      if (event.wasClean) return;
-      if (event.code === 1000) return;
-      setError(true)
-      setTimeout(createWebSocket, 5000);
-  }
+    if (event.wasClean) return;
+    if (event.code === 1000) return;
+    setError(true);
+    setTimeout(createWebSocket, 5000);
+  };
 
   socket.onerror = function () {
     setError(true);
-      setTimeout(createWebSocket, 5000);
+    setTimeout(createWebSocket, 5000);
   };
 }
 
@@ -110,27 +122,33 @@ function toggleGraph() {
   document.getElementById("graph").style.display = "block";
 }
 
-// Graph
+// Graph Stuff
 
-let dataLen = 51
-let i = -1
-let labels = Array.from({length: dataLen}, () => i += 1);
-let data = {
-  labels: labels,
-  datasets: [{
-    label: 'Tempature',
-    data: Array.from({length: dataLen}, () => Math.floor(Math.random() * dataLen)),
-    fill: false,
-    borderColor: 'rgb(75, 192, 192)',
-    tension: 0.1
-  }]
-};
-let config = {
-  type: 'line',
-  data: data,
-};
-var ctx = document.getElementById('graph').getContext('2d');
-var stackedLine = new Chart(ctx, config);
+let dataLen = 10
+let i = -50
+let labels = Array.from({length: dataLen}, () => i += 5);
+
+function initGraph(initData) {
+  let data = {
+    labels: labels,
+    datasets: [{
+      label: 'Temperature',
+      data: initData,
+      fill: false,
+      borderColor: '#3861fb',
+      tension: 0.1
+    }]
+  };
+  
+  let config = {
+    type: 'line',
+    data: data,
+  };
+  
+  var ctx = document.getElementById('graph').getContext('2d');
+  stackedLine = new Chart(ctx, config);
+}
+
 
 function addData(chart, label, data) {
     chart.data.labels.push(label);

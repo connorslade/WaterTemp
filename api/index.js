@@ -32,10 +32,11 @@ wsServer.on('connection', socket => {
         sockets = sockets.filter(s => s !== socket);
     });
     sockets.push(socket);
+    socket.send(JSON.stringify({event: "init", data: Array.from({length: 10}, () => Math.floor(Math.random() * 10)), tmp: Math.floor(Math.random() * 10), avg: Math.floor(Math.random() * 10)}))
 })
 
 setInterval(function() {
-    let toSend = `{"tmp": ${Math.floor(Math.random() * 10)}, "avg": ${Math.floor(Math.random() * 10)}}`;
+    let toSend = `{"event": "update", "tmp": ${Math.floor(Math.random() * 10)}, "avg": ${Math.floor(Math.random() * 10)}}`;
     sockets.forEach(s => s.send(toSend));
   }, 5000);
 
