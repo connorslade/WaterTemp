@@ -1,0 +1,25 @@
+{
+    "version": "0.0",
+    "server": {
+        "ip": "0.0.0.0",
+        "port": 8080,
+        "static": {
+            "serveStatic": true,
+            "staticFolder": "./../static"
+        },
+        "rateLimit": {
+            "enabled": true,
+            "window": 10000,
+            "max": 10
+        },
+        "tls": {
+            "enabled": false
+        }
+    },
+    "plugins": {
+        "loadPlugins": true,
+        "disabledPlugins": [
+          "example.js"
+        ]
+      }
+}
