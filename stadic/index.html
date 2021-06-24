@@ -5,8 +5,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#17171a">
+    <link rel="apple-touch-icon" href="icons/apple-icon-180.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-startup-image" href="icons/apple.png">
     <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel='manifest' href='/manifest.json'>
     <script defer src="index.js"></script>
+    <script src="serviceworker-loader.js"></script>
     <script src="lib/chart.js"></script>
     <title>Water Temperature</title>
 </head>
@@ -37,7 +43,7 @@
     <canvas class="graph" id="graph" style="display: none;"></canvas>
 
     <div class="footer">
-        <p class="footer-content">© Connor Slade · 2021 · V0.0</p>
+        <p class="footer-content">© Connor Slade · 2021 · V0.1</p>
     </div>
 </body>
 

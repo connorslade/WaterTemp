@@ -39,6 +39,7 @@ body {
   font-style: normal;
   padding-left: 28.8px;
   margin-bottom: 0;
+  z-index: 2;
 }
 .temp-div p::after {
   content: "°";
