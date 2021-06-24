@@ -32,12 +32,12 @@ wsServer.on('connection', socket => {
         sockets = sockets.filter(s => s !== socket);
     });
     sockets.push(socket);
-    setInterval(function() {
-        let toSend = `{"tmp": ${Math.floor(Math.random() * 10)}, "avg": ${Math.floor(Math.random() * 10)}}`;
-        socket.send(toSend);
-        //sockets.forEach(s => s.send(toSend));
-      }, 5000);
 })
+
+setInterval(function() {
+    let toSend = `{"tmp": ${Math.floor(Math.random() * 10)}, "avg": ${Math.floor(Math.random() * 10)}}`;
+    sockets.forEach(s => s.send(toSend));
+  }, 5000);
 
 
 app.listen(config.server.port, config.server.ip, function () {
