@@ -1,7 +1,7 @@
 let cachedItems = ['/', '/index.html', '/index.css', '/index.js'];
-let staticCacheName = "Checklist";
+let staticCacheName = 'Checklist';
 
-self.addEventListener("install", function (e) {
+self.addEventListener('install', function (e) {
     e.waitUntil(
         caches.open(staticCacheName).then(function (cache) {
             return cache.addAll(cachedItems);
@@ -9,8 +9,9 @@ self.addEventListener("install", function (e) {
     );
 });
 
-self.addEventListener("fetch", function (event) {
-    event.waitUntil(//TODO: THIS IS DEBUG CODE
+self.addEventListener('fetch', function (event) {
+    event.waitUntil(
+        //TODO: THIS IS DEBUG CODE
         caches.open(staticCacheName).then(function (cache) {
             return cache.addAll(cachedItems);
         })

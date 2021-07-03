@@ -1,11 +1,12 @@
-const fs = require("fs");
+const fs = require('fs');
 
 function load(folder, config) {
     if (!config['plugins']['loadPlugins']) return;
     let plugins = {};
     let loadedPlugins = 0;
     console.log('🔌 Loading Plugins');
-    const commandFiles = fs.readdirSync(folder)
+    const commandFiles = fs
+        .readdirSync(folder)
         .filter(file => file.endsWith('.js'));
 
     for (const file of commandFiles) {
@@ -31,13 +32,10 @@ function runInits(plugins) {
     for (const key in plugins) {
         try {
             plugins[key].init();
-        }
-        catch (e) {
-
-        }
+        } catch (e) {}
     }
 }
 
 module.exports = {
     load
-}
+};
