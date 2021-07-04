@@ -1,4 +1,3 @@
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Basicprogrammer10/WaterTemp/Format%20and%20Tests?label=Tests&style=for-the-badge) [![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/Basicprogrammer10/WaterTemp?style=for-the-badge)](https://www.codefactor.io/repository/github/basicprogrammer10/watertemp) ![Lines of code](https://img.shields.io/tokei/lines/github/Basicprogrammer10/WaterTemp?style=for-the-badge)
 <p align="center">
   <a href="https://github.com/Basicprogrammer10/NoseBot">
     <img src="https://raw.githubusercontent.com/Basicprogrammer10/WaterTemp/master/Logo.png" alt="Logo" width="240" height="240">
@@ -15,6 +14,10 @@
     <a href="https://github.com/Basicprogrammer10/WaterTemp/blob/master/todo.md">Planned Features</a>
     ·
     <a href="https://github.com/Basicprogrammer10/NoseBot/issues">Request Feature</a>
+  <br><br>
+  <a href="https://github.com/Basicprogrammer10/WaterTemp/actions"><img src="https://img.shields.io/github/workflow/status/Basicprogrammer10/WaterTemp/Format%20and%20Tests?label=Tests"></a>
+  <a href="https://www.codefactor.io/repository/github/basicprogrammer10/watertemp"><img src="https://img.shields.io/codefactor/grade/github/Basicprogrammer10/WaterTemp?label=Code%20Quality"></a>
+  <a href="#"><img src="https://img.shields.io/tokei/lines/github/Basicprogrammer10/WaterTemp?label=Total%20Lines"></a>
 </p>
 <br><br>
 
