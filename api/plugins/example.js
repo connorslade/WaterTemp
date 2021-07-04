@@ -1,4 +1,4 @@
-// Example WebChecklist Plugin
+// Example WaterTemp Plugin
 // V1.0 By Connor Slade 4/28/2021
 // This plugin is currently disabled in the Config File
 // Enable it to see it in action
@@ -11,8 +11,7 @@ module.exports = {
 
     onInit: function () {
         // Function run once on plugin load
-        // common.log is like console.log but it has extra formatting
-        // and adds the output to the log file
+        // Lets console log some *very* important information
         console.log('Hello World :P');
     },
 
