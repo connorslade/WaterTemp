@@ -1,0 +1,1 @@
+Put your Server.cert and Server.key in this folder then enable TLS in the config file

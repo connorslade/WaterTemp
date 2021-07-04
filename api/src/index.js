@@ -6,6 +6,13 @@ const server = require('./server');
 console.log(`💧 Starting Water Temp Server! v${config.version}`);
 if (debug) console.log(`💦 Debug mode enabled!`);
 
+// Init the plugin loader
 server.init(pluginLoader.load('plugins', config), debug);
-if (config.server.tls.enabled) server.startTls();
-if (!config.server.tls.enabled) server.start();
+
+// TLS
+if (config.server.tls.enabled)
+    server.startTls(config.server.ip, config.server.port);
+
+// No TLS :(
+if (!config.server.tls.enabled)
+    server.start(config.server.ip, config.server.port);
