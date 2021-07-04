@@ -43,9 +43,11 @@ document.getElementById('unit').addEventListener('click', () => {
     localStorage.setItem('unit', currentIdex);
 
     document.getElementById('unit').innerHTML = `<p>${units[currentIdex]}</p>`;
-    document.getElementById('temp').innerHTML = convertUnit(currentIdex, tmp)
-    document.getElementById('avg').innerHTML = convertUnit(currentIdex, avg)
-    document.getElementById('dev').innerHTML = Math.abs(convertUnit(currentIdex, avg) - convertUnit(currentIdex, tmp));
+    document.getElementById('temp').innerHTML = convertUnit(currentIdex, tmp);
+    document.getElementById('avg').innerHTML = convertUnit(currentIdex, avg);
+    document.getElementById('dev').innerHTML = Math.abs(
+        convertUnit(currentIdex, avg) - convertUnit(currentIdex, tmp)
+    );
 });
 
 // Align Top Boxes
@@ -65,9 +67,11 @@ Object.keys(boxes).forEach(e => {
  * @param {Number} avg Average Temperature in F
  */
 function updateData(tmp, avg) {
-    document.getElementById('temp').innerHTML = convertUnit(currentIdex, tmp)
-    document.getElementById('avg').innerHTML = convertUnit(currentIdex, avg)
-    document.getElementById('dev').innerHTML = Math.abs(convertUnit(currentIdex, avg) - convertUnit(currentIdex, tmp));
+    document.getElementById('temp').innerHTML = convertUnit(currentIdex, tmp);
+    document.getElementById('avg').innerHTML = convertUnit(currentIdex, avg);
+    document.getElementById('dev').innerHTML = Math.abs(
+        convertUnit(currentIdex, avg) - convertUnit(currentIdex, tmp)
+    );
 
     if (stackedLine === null) return;
     addData(stackedLine, '?', tmp);
