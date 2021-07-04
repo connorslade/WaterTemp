@@ -138,11 +138,23 @@ function setError(value) {
 
 // Event Listeners
 
+// On Click Error Button
 document.getElementById('error').addEventListener('click', function () {
     socket.close();
     createWebSocket();
 });
 
+// On Window Resize
+function processSizeChange() {
+    let w = window.innerWidth;
+    let h = window.innerHeight;
+    if (h >= w) document.getElementById('graphDiv').style.height = `35%`;
+    else document.getElementById('graphDiv').style.height = `90%`;
+}
+window.addEventListener('resize', _ => processSizeChange(), true);
+processSizeChange();
+
+// On Click Graph Button
 let graphToggle = localStorage.getItem('showingGraph') == 'true';
 document.getElementById('graphToggle').addEventListener('click', toggleGraph);
 toggleGraph();
@@ -184,8 +196,12 @@ function initGraph(initData) {
     };
 
     let config = {
+        data: data,
         type: 'line',
-        data: data
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
     };
 
     var ctx = document.getElementById('graph').getContext('2d');
