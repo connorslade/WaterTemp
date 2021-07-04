@@ -45,23 +45,29 @@ describe('Unit Changing', () => {
 describe('Test saving options to LocalStorage', () => {
     it('Check LocalStorage Init', () => {
         cy.visit('http://localhost:8080');
-        cy.get('#unit').click().should(() => {
-            expect(localStorage.getItem('setup')).to.eq('true')
-        });
+        cy.get('#unit')
+            .click()
+            .should(() => {
+                expect(localStorage.getItem('setup')).to.eq('true');
+            });
     });
 
     it('Save Unit', () => {
         cy.visit('http://localhost:8080');
-        cy.get('#unit').click().should(() => {
-            expect(localStorage.getItem('unit')).to.eq('1')
-        })
+        cy.get('#unit')
+            .click()
+            .should(() => {
+                expect(localStorage.getItem('unit')).to.eq('1');
+            });
     });
 
     it('Save Showing Graph', () => {
         cy.visit('http://localhost:8080');
-        cy.get('#graphToggle').click().should(() => {
-            expect(localStorage.getItem('showingGraph')).to.eq('true')
-        })
+        cy.get('#graphToggle')
+            .click()
+            .should(() => {
+                expect(localStorage.getItem('showingGraph')).to.eq('true');
+            });
     });
 });
 
