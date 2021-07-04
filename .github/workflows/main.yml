@@ -30,8 +30,15 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: "12"
-      - run: cd api
-      - run: npm install
-      - run: node src --debug &
-      - run: npx cypress run
-    
+
+      - name: Install Packages
+        working-directory: ./api
+        run: npm install
+
+      - name: Start Web Server
+        working-directory: ./api
+        run: node src --debug &
+
+      - name: Run Cypress
+        working-directory: ./api
+        run: npx cypress run
