@@ -151,7 +151,7 @@ function processSizeChange() {
     if (h >= w) document.getElementById('graphDiv').style.height = `35%`;
     else document.getElementById('graphDiv').style.height = `90%`;
 }
-window.addEventListener('resize', _ => processSizeChange(), true);
+window.addEventListener('resize', () => processSizeChange(), true);
 processSizeChange();
 
 // On Click Graph Button
