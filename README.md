@@ -1,3 +1,4 @@
+[![Format and Tests](https://github.com/Basicprogrammer10/WaterTemp/actions/workflows/main.yml/badge.svg)](https://github.com/Basicprogrammer10/WaterTemp/actions/workflows/main.yml) [![CodeFactor](https://www.codefactor.io/repository/github/basicprogrammer10/watertemp/badge)](https://www.codefactor.io/repository/github/basicprogrammer10/watertemp) ![Lines of code](https://img.shields.io/tokei/lines/github/Basicprogrammer10/WaterTemp)
 <p align="center">
   <a href="https://github.com/Basicprogrammer10/NoseBot">
     <img src="https://raw.githubusercontent.com/Basicprogrammer10/WaterTemp/master/Logo.png" alt="Logo" width="240" height="240">

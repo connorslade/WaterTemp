@@ -1,5 +1,5 @@
 module.exports = {
-    webSocket: function (wsServer, config) {
+    webSocket: wsServer => {
         let sockets = [];
         wsServer.on('connection', socket => {
             socket.on('message', message =>

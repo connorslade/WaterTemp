@@ -32,7 +32,10 @@ function runInits(plugins) {
     for (const key in plugins) {
         try {
             plugins[key].init();
-        } catch (e) {}
+        } catch (e) {
+            // Ignore Errors
+            // Like a REAL MAN
+        }
     }
 }
 
