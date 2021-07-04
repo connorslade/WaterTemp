@@ -5,7 +5,7 @@ describe('Basic', () => {
     });
 });
 
-// Check data is comming from API
+// Check data is coming from API
 describe('API Check', () => {
     it('Temperature Data', () => {
         cy.visit('http://localhost:8080');
