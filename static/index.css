@@ -24,6 +24,7 @@ body {
   cursor: pointer;
 }
 .unit p {
+  text-align: center;
   float: right;
   margin: 0;
   width: 22px;

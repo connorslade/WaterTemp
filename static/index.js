@@ -59,8 +59,8 @@ Object.keys(boxes).forEach(e => {
 
 /**
  * Update Ui Data
- * @param {Number} tmp Tempature in F
- * @param {Number} avg Average Tempature in F
+ * @param {Number} tmp Temperature in F
+ * @param {Number} avg Average Temperature in F
  */
 function updateData(tmp, avg) {
     document.getElementById('temp').innerHTML =
@@ -130,10 +130,10 @@ function createWebSocket() {
  */
 function setError(value) {
     if (value) {
-        document.getElementById('error').innerHTML = '❌';
+        document.getElementById('error').innerHTML = '<p>❌</p>';
         return;
     }
-    document.getElementById('error').innerHTML = '✅';
+    document.getElementById('error').innerHTML = '<p>✅</p>';
 }
 
 // Event Listeners
