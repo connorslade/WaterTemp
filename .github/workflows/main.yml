@@ -1,4 +1,4 @@
-name: Format Code
+name: Format and Tests
 on: [push, pull_request]
 jobs:
   Format:
@@ -20,3 +20,18 @@ jobs:
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git commit -am "💎 Automated Code Formatting"
           git push origin HEAD:master
+
+  Tests:
+    name: Run UI tests with Cypress
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: "12"
+      - run: cd api
+      - run: npm install
+      - run: node src --debug &
+      - run: npx cypress run
+    
