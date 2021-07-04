@@ -1,15 +1,5 @@
 const units = ['°F', '°C', '°K'];
-const convert = [
-    function (c) {
-        return c;
-    },
-    function (c) {
-        return (c - 32) * (5 / 9);
-    },
-    function (c) {
-        return (c + 459.67) * (5 / 9);
-    }
-];
+const convert = [c => { return c }, c => { return (c - 32) * (5 / 9) }, c => { return (c + 459.67) * (5 / 9) }];
 
 let stackedLine = null;
 let socket = null;
@@ -28,7 +18,7 @@ if (localStorage.getItem('setup') === null) {
 
 let currentIdex = parseInt(localStorage.getItem('unit'));
 document.getElementById('unit').innerHTML = `<p>${units[currentIdex]}</p>`;
-document.getElementById('unit').addEventListener('click', function () {
+document.getElementById('unit').addEventListener('click', () => {
     currentIdex += 1;
     if (currentIdex >= units.length) currentIdex = 0;
     localStorage.setItem('unit', currentIdex);
@@ -57,6 +47,11 @@ Object.keys(boxes).forEach(e => {
 
 // Update Data
 
+/**
+ * Update Ui Data
+ * @param {Number} tmp Tempature in F
+ * @param {Number} avg Average Tempature in F
+ */
 function updateData(tmp, avg) {
     document.getElementById('temp').innerHTML =
         Math.round(convert[currentIdex](tmp) * 10) / 10;
@@ -68,16 +63,18 @@ function updateData(tmp, avg) {
                 (convert[currentIdex](tmp) * 10) / 10
         )
     );
+    if (stackedLine === null) return;
     addData(stackedLine, '?', tmp);
     removeData(stackedLine);
 }
 
 // Websocket Init
 
-window.onload = function () {
-    createWebSocket();
-};
+window.onload = () => createWebSocket();
 
+/**
+ * Init the Web Socket
+ */
 function createWebSocket() {
     let wsProto = 'ws';
     if (location.protocol === 'https:') wsProto = 'wss';
@@ -85,11 +82,9 @@ function createWebSocket() {
         `${wsProto}://${window.location.href.split('/')[2]}`
     );
 
-    socket.onopen = function () {
-        setError(false);
-    };
+    socket.onopen = () => setError(false);
 
-    socket.onmessage = function (event) {
+    socket.onmessage = event => {
         let data = JSON.parse(event.data);
         console.log(data);
         switch (data.event) {
@@ -104,14 +99,14 @@ function createWebSocket() {
         }
     };
 
-    socket.onclose = function (event) {
+    socket.onclose = event => {
         if (event.wasClean) return;
         if (event.code === 1000) return;
         setError(true);
         setTimeout(createWebSocket, 5000);
     };
 
-    socket.onerror = function () {
+    socket.onerror = () => {
         setError(true);
         setTimeout(createWebSocket, 5000);
     };
@@ -119,6 +114,10 @@ function createWebSocket() {
 
 // Lost Connection Message
 
+/**
+ * Show / Hide Error Message
+ * @param {Boolean} value True if error. False if no error.
+ */
 function setError(value) {
     if (value) {
         document.getElementById('error').innerHTML = '❌';
@@ -138,6 +137,9 @@ let graphToggle = localStorage.getItem('showingGraph') == 'true';
 document.getElementById('graphToggle').addEventListener('click', toggleGraph);
 toggleGraph();
 
+/**
+ * Toggle if Graph is showing
+ */
 function toggleGraph() {
     graphToggle = !graphToggle;
     localStorage.setItem('showingGraph', !graphToggle);
@@ -154,6 +156,9 @@ let dataLen = 10;
 let i = -50;
 let labels = Array.from({ length: dataLen }, () => (i += 5));
 
+/**
+ * @param {Array} initData Data to start graph with
+ */
 function initGraph(initData) {
     let data = {
         labels: labels,
@@ -177,6 +182,11 @@ function initGraph(initData) {
     stackedLine = new Chart(ctx, config);
 }
 
+/**
+ * @param {Object} chart Chart to add data to
+ * @param {String]} label Label for data
+ * @param {Number} data Data to add 
+ */
 function addData(chart, label, data) {
     chart.data.labels.push(label);
     chart.data.datasets.forEach(dataset => {
@@ -185,6 +195,11 @@ function addData(chart, label, data) {
     chart.update();
 }
 
+/**
+ * Remove data from chart.
+ * Removes the first bit of data from the chart. (data.shift())
+ * @param {Object} chart Chart to remove data from
+ */
 function removeData(chart) {
     chart.data.labels.pop();
     chart.data.datasets.forEach(dataset => {
