@@ -34,11 +34,34 @@ describe('Unit Changing', () => {
         cy.get('#unit').should('have.text', '°C');
     });
 
-    it('Swich Unit to K', () => {
+    it('Switch Unit to K', () => {
         cy.visit('http://localhost:8080');
         cy.get('#unit').click();
         cy.get('#unit').click();
         cy.get('#unit').should('have.text', '°K');
+    });
+});
+
+describe('Test saving options to LocalStorage', () => {
+    it('Check LocalStorage Init', () => {
+        cy.visit('http://localhost:8080');
+        cy.get('#unit').click().should(() => {
+            expect(localStorage.getItem('setup')).to.eq('true')
+        });
+    });
+
+    it('Save Unit', () => {
+        cy.visit('http://localhost:8080');
+        cy.get('#unit').click().should(() => {
+            expect(localStorage.getItem('unit')).to.eq('1')
+        })
+    });
+
+    it('Save Showing Graph', () => {
+        cy.visit('http://localhost:8080');
+        cy.get('#graphToggle').click().should(() => {
+            expect(localStorage.getItem('showingGraph')).to.eq('true')
+        })
     });
 });
 
