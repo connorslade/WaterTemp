@@ -200,7 +200,19 @@ function initGraph(initData) {
         type: 'line',
         options: {
             responsive: true,
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
         }
     };
 
