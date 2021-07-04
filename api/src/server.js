@@ -23,6 +23,7 @@ module.exports = {
         if (debug)
             app.get('/EXIT', (req, res) => {
                 res.send('ok');
+                console.log('[*] Server is exiting...');
                 process.exit(0);
             });
 
