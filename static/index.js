@@ -46,7 +46,9 @@ document.getElementById('unit').addEventListener('click', () => {
     document.getElementById('temp').innerHTML = convertUnit(currentIdex, tmp);
     document.getElementById('avg').innerHTML = convertUnit(currentIdex, avg);
     document.getElementById('dev').innerHTML = Math.abs(
-        convertUnit(currentIdex, avg) - convertUnit(currentIdex, tmp)
+        Math.round(
+            (convertUnit(currentIdex, avg) - convertUnit(currentIdex, tmp)) * 10
+        ) / 10
     );
 });
 
@@ -70,7 +72,9 @@ function updateData(tmp, avg) {
     document.getElementById('temp').innerHTML = convertUnit(currentIdex, tmp);
     document.getElementById('avg').innerHTML = convertUnit(currentIdex, avg);
     document.getElementById('dev').innerHTML = Math.abs(
-        convertUnit(currentIdex, avg) - convertUnit(currentIdex, tmp)
+        Math.round(
+            (convertUnit(currentIdex, avg) - convertUnit(currentIdex, tmp)) * 10
+        ) / 10
     );
 
     if (stackedLine === null) return;
