@@ -30,18 +30,24 @@ describe('Unit Changing', () => {
 
     it('Switch Unit to C', () => {
         cy.visit('http://localhost:8080');
-        cy.get('#unit').click().then(() => {
-            cy.get('#unit').should('have.text', '°C');
-        });
+        cy.get('#unit')
+            .click()
+            .then(() => {
+                cy.get('#unit').should('have.text', '°C');
+            });
     });
 
     it('Switch Unit to K', () => {
         cy.visit('http://localhost:8080');
-        cy.get('#unit').click().then(() => {
-            cy.get('#unit').click().then(() => {
-                cy.get('#unit').should('have.text', '°K');
+        cy.get('#unit')
+            .click()
+            .then(() => {
+                cy.get('#unit')
+                    .click()
+                    .then(() => {
+                        cy.get('#unit').should('have.text', '°K');
+                    });
             });
-        })
     });
 });
 
@@ -82,9 +88,11 @@ describe('Chart', () => {
 
     it('Toggle Chart Visibility', () => {
         cy.visit('http://localhost:8080');
-        cy.get('#graphToggle').click().then(() => {
-            cy.get('#graph').should('have.css', 'display', 'block');
-        });
+        cy.get('#graphToggle')
+            .click()
+            .then(() => {
+                cy.get('#graph').should('have.css', 'display', 'block');
+            });
     });
 });
 
