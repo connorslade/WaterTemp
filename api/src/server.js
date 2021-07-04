@@ -53,16 +53,12 @@ function init(plugins, debug) {
  *  Start Server Http
  */
 function start(ip, port) {
-    app.listen(config.server.port, config.server.ip, () => {
-        console.log(`🐍 Serving http://${ip}:${port}/`);
-    }).on('upgrade', (request, socket, head) => {
+    app.listen(config.server.port, config.server.ip, () =>
+        console.log(`🐍 Serving http://${ip}:${port}/`)
+    ).on('upgrade', (request, socket, head) => {
         wsServer.handleUpgrade(request, socket, head, socket => {
             wsServer.emit('connection', socket, request);
-            console.log(
-                `✔ WebSocket Connected`,
-                '',
-                socket._socket.remoteAddress
-            );
+            console.log(`✔ WebSocket Connected`, socket._socket.remoteAddress);
         });
     });
 }
@@ -70,19 +66,14 @@ function start(ip, port) {
 /**
  *  Start Server Https
  */
+// prettier-ignore
 function startTls(ip, port) {
-    https
-        .createServer(
-            {
-                key: fs.readFileSync(config.server.tls.key),
-                cert: fs.readFileSync(config.server.tls.cert)
-            },
-            app
-        )
+    let key = fs.readFileSync(config.server.tls.key);
+    let cert = fs.readFileSync(config.server.tls.cert);
+    https.createServer({ key: key, cert: cert }, app)
         .listen(port, ip, () =>
             console.log(`🐍 Serving https://${ip}:${port}/`)
-        )
-        .on('upgrade', (request, socket, head) => {
+        ).on('upgrade', (request, socket, head) => {
             wsServer.handleUpgrade(request, socket, head, socket => {
                 wsServer.emit('connection', socket, request);
                 console.log(
