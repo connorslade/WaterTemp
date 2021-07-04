@@ -98,15 +98,23 @@ describe('Chart', () => {
     it('Chart Size [WIDE]', () => {
         cy.visit('http://localhost:8080');
         cy.viewport(1920, 1080);
-        cy.get('#graph').should('have.css', 'width', '1920px');
-        cy.get('#graph').should('have.css', 'height', '972px');
+        cy.get('#graphToggle')
+            .click()
+            .then(() => {
+                cy.get('#graph').should('have.css', 'width', '1920px');
+                cy.get('#graph').should('have.css', 'height', '972px');
+            });
     });
 
     it('Chart Size [NARROW]', () => {
         cy.visit('http://localhost:8080');
-        cy.viewport(1920, 2000);
-        cy.get('#graph').should('have.css', 'width', '1920px');
-        cy.get('#graph').should('have.css', 'height', '700px');
+        cy.viewport(375, 812);
+        cy.get('#graphToggle')
+            .click()
+            .then(() => {
+                cy.get('#graph').should('have.css', 'width', '375px');
+                cy.get('#graph').should('have.css', 'height', '284px');
+            });
     });
 });
 

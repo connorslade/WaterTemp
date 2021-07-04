@@ -174,6 +174,7 @@ function toggleGraph() {
         return;
     }
     document.getElementById('graph').style.display = 'block';
+    processSizeChange();
 }
 
 // Graph Stuff
