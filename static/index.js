@@ -26,24 +26,26 @@ if (localStorage.getItem('setup') === null) {
 
 // Unit Changing
 
+/**
+ * Convert Temp °F to other units
+ * @param {Number} index Unit index
+ * @param {Number} tmp Temperature in °F
+ */
+function convertUnit(index, tmp) {
+    return Math.round(convert[index](tmp) * 10) / 10;
+}
+
 let currentIdex = parseInt(localStorage.getItem('unit'));
 document.getElementById('unit').innerHTML = `<p>${units[currentIdex]}</p>`;
 document.getElementById('unit').addEventListener('click', () => {
     currentIdex += 1;
     if (currentIdex >= units.length) currentIdex = 0;
     localStorage.setItem('unit', currentIdex);
-    document.getElementById('unit').innerHTML = `<p>${units[currentIdex]}</p>`;
 
-    document.getElementById('temp').innerHTML =
-        Math.round(convert[currentIdex](tmp) * 10) / 10;
-    document.getElementById('avg').innerHTML =
-        Math.round(convert[currentIdex](avg) * 10) / 10;
-    document.getElementById('dev').innerHTML = Math.abs(
-        Math.round(
-            (convert[currentIdex](avg) * 10) / 10 -
-                (convert[currentIdex](tmp) * 10) / 10
-        )
-    );
+    document.getElementById('unit').innerHTML = `<p>${units[currentIdex]}</p>`;
+    document.getElementById('temp').innerHTML = convertUnit(currentIdex, tmp)
+    document.getElementById('avg').innerHTML = convertUnit(currentIdex, avg)
+    document.getElementById('dev').innerHTML = Math.abs(convertUnit(currentIdex, avg) - convertUnit(currentIdex, tmp));
 });
 
 // Align Top Boxes
@@ -63,16 +65,10 @@ Object.keys(boxes).forEach(e => {
  * @param {Number} avg Average Temperature in F
  */
 function updateData(tmp, avg) {
-    document.getElementById('temp').innerHTML =
-        Math.round(convert[currentIdex](tmp) * 10) / 10;
-    document.getElementById('avg').innerHTML =
-        Math.round(convert[currentIdex](avg) * 10) / 10;
-    document.getElementById('dev').innerHTML = Math.abs(
-        Math.round(
-            (convert[currentIdex](avg) * 10) / 10 -
-                (convert[currentIdex](tmp) * 10) / 10
-        )
-    );
+    document.getElementById('temp').innerHTML = convertUnit(currentIdex, tmp)
+    document.getElementById('avg').innerHTML = convertUnit(currentIdex, avg)
+    document.getElementById('dev').innerHTML = Math.abs(convertUnit(currentIdex, avg) - convertUnit(currentIdex, tmp));
+
     if (stackedLine === null) return;
     addData(stackedLine, '?', tmp);
     removeData(stackedLine);
