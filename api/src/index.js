@@ -1,4 +1,4 @@
-const debug = process.argv.slice(2).includes('--debug')
+const debug = process.argv.slice(2).includes('--debug');
 const config = require('./../config/config.json');
 const pluginLoader = require('./pluginLoader');
 const server = require('./server');

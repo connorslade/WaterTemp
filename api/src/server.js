@@ -20,8 +20,12 @@ app.use(bodyParser.json());
 
 module.exports = {
     init: function (plugins, debug) {
-        if (debug) app.get('/EXIT', (req, res) => { res.send('ok'); process.exit(0); });
-        
+        if (debug)
+            app.get('/EXIT', (req, res) => {
+                res.send('ok');
+                process.exit(0);
+            });
+
         let loadDefault = true;
         for (const key in plugins) {
             if ('disableDefaultApi' in plugins[key])
