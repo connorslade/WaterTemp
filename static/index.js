@@ -1,5 +1,15 @@
 const units = ['°F', '°C', '°K'];
-const convert = [c => { return c }, c => { return (c - 32) * (5 / 9) }, c => { return (c + 459.67) * (5 / 9) }];
+const convert = [
+    c => {
+        return c;
+    },
+    c => {
+        return (c - 32) * (5 / 9);
+    },
+    c => {
+        return (c + 459.67) * (5 / 9);
+    }
+];
 
 let stackedLine = null;
 let socket = null;
@@ -185,7 +195,7 @@ function initGraph(initData) {
 /**
  * @param {Object} chart Chart to add data to
  * @param {String]} label Label for data
- * @param {Number} data Data to add 
+ * @param {Number} data Data to add
  */
 function addData(chart, label, data) {
     chart.data.labels.push(label);
