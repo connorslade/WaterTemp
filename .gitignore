@@ -4,3 +4,4 @@ api/cypress/support
 api/cypress/fixtures
 api/cypress/plugins
 api/cypress/videos
+api/cypress/screenshots
