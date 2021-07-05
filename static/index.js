@@ -1,18 +1,5 @@
 const units = ['°F', '°C', '°K'];
-const convert = [
-    c => {
-        return c;
-    },
-    c => {
-        return (c - 32) * (5 / 9);
-    },
-    c => {
-        return (c + 459.67) * (5 / 9);
-    }
-];
-
-// Add as Localstorgage Item
-let extraGraph = false;
+const convert = [c => c, c => (c - 32) * (5 / 9), c => (c + 459.67) * (5 / 9)];
 
 let stackedLine = null;
 let socket = null;
@@ -27,6 +14,10 @@ if (localStorage.getItem('setup') === null) {
     localStorage.setItem('unit', 0);
 }
 
+let graphToggle = localStorage.getItem('showingGraph') == 'true';
+let extraGraph = localStorage.getItem('extraGraph') == 'true';
+let currentIdex = parseInt(localStorage.getItem('unit'));
+
 // Unit Changing
 
 /**
@@ -38,9 +29,7 @@ function convertUnit(index, tmp) {
     return Math.round(convert[index](tmp) * 10) / 10;
 }
 
-let currentIdex = parseInt(localStorage.getItem('unit'));
-document.getElementById('unit').innerHTML = `<p>${units[currentIdex]}</p>`;
-document.getElementById('unit').addEventListener('click', () => {
+function processUnitChange() {
     currentIdex += 1;
     if (currentIdex >= units.length) currentIdex = 0;
     localStorage.setItem('unit', currentIdex);
@@ -53,6 +42,14 @@ document.getElementById('unit').addEventListener('click', () => {
             (convertUnit(currentIdex, avg) - convertUnit(currentIdex, tmp)) * 10
         ) / 10
     );
+}
+
+document.getElementById('unit').innerHTML = `<p>${units[currentIdex]}</p>`;
+['click', 'keydown'].forEach(event => {
+    document.getElementById('unit').addEventListener(event, e => {
+        if ('key' in e && e.key !== 'Enter') return;
+        processUnitChange();
+    });
 });
 
 // Align Top Boxes
@@ -136,33 +133,27 @@ function createWebSocket() {
  * @param {Boolean} value True if error. False if no error.
  */
 function setError(value) {
-    if (value) {
-        document.getElementById('error').innerHTML = '<p>❌</p>';
-        return;
-    }
-    document.getElementById('error').innerHTML = '<p>✅</p>';
+    if (value) document.getElementById('error').innerHTML = '<p>❌</p>';
+    else document.getElementById('error').innerHTML = '<p>✅</p>';
 }
 
 // Event Listeners
 
 // On Click Error Button
-document.getElementById('error').addEventListener('click', function () {
+document.getElementById('error').addEventListener('click', () => {
     socket.close();
     createWebSocket();
 });
 
-// On Triple Click
-window.addEventListener('click', evt => {
-    if (evt.detail !== 3) return;
-    extraGraph = !extraGraph;
-    stackedLine.destroy();
-    initGraph(
-        Array.from({ length: 10 }, () => 0),
-        extraGraph
-    );
+document.getElementById('error').addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    socket.close();
+    createWebSocket();
 });
 
-// On Window Resize
+/**
+ * Run on Window Resize and set Chart Height.
+ */
 function processSizeChange() {
     let w = window.innerWidth;
     let h = window.innerHeight;
@@ -173,8 +164,10 @@ window.addEventListener('resize', () => processSizeChange(), true);
 processSizeChange();
 
 // On Click Graph Button
-let graphToggle = localStorage.getItem('showingGraph') == 'true';
 document.getElementById('graphToggle').addEventListener('click', toggleGraph);
+document.getElementById('graphToggle').addEventListener('keydown', e => {
+    if (e.key === 'Enter') toggleGraph();
+});
 toggleGraph();
 
 /**
@@ -199,6 +192,7 @@ let labels = Array.from({ length: dataLen }, () => (i += 5));
 
 /**
  * @param {Array} initData Data to start graph with
+ * @param {Boolean} extraGraph True if extra graph info is showing. False if not.
  */
 function initGraph(initData, extraGraph) {
     extraGraph = extraGraph || false;
@@ -242,6 +236,7 @@ function initGraph(initData, extraGraph) {
     };
 
     var ctx = document.getElementById('graph').getContext('2d');
+    if (stackedLine !== null) stackedLine.destroy();
     stackedLine = new Chart(ctx, config);
 }
 
