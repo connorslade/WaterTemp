@@ -16,7 +16,7 @@ jobs:
         run: npm install
         
       - name: Compile Typescript
-        working-directory: ./api
+        working-directory: ./static
         run: npx tsc
 
       - name: Start Web Server
