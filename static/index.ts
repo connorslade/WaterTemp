@@ -1,14 +1,14 @@
 const units = ['°F', '°C', '°K'];
 const convert = [
-    (c: number) => c,
-    (c: number) => (c - 32) * (5 / 9),
-    (c: number) => (c + 459.67) * (5 / 9)
+    (c: number): number => c,
+    (c: number): number => (c - 32) * (5 / 9),
+    (c: number): number => (c + 459.67) * (5 / 9)
 ];
 
 let stackedLine: any = null;
 let socket: any = null;
-let tmp = 30;
-let avg = 10;
+let tmp: number = 30;
+let avg: number = 10;
 
 // Persistent Settings
 
@@ -20,7 +20,7 @@ if (localStorage.getItem('setup') === null) {
 
 let graphToggle = localStorage.getItem('showingGraph') == 'true';
 let extraGraph = localStorage.getItem('extraGraph') == 'true';
-let currentIdex = parseInt(localStorage.getItem('unit'));
+let currentIndex = parseInt(localStorage.getItem('unit'));
 
 // Unit Changing
 
@@ -35,24 +35,39 @@ function convertUnit(index: number, tmp: number, string: boolean = true): any {
     else return math;
 }
 
-function processUnitChange() {
-    currentIdex += 1;
-    if (currentIdex >= units.length) currentIdex = 0;
-    localStorage.setItem('unit', currentIdex.toString());
-
-    document.getElementById('unit').innerHTML = `<p>${units[currentIdex]}</p>`;
-    document.getElementById('temp').innerHTML = convertUnit(currentIdex, tmp);
-    document.getElementById('avg').innerHTML = convertUnit(currentIdex, avg);
-    document.getElementById('dev').innerHTML = Math.abs(
+/**
+ * Get the difference between current temperature and average temperature.
+ * @param {Number} currentIndex Unit Index
+ * @param {Number} tmp Temperature in °F
+ * @param {Number} avg Average Temperature in °F
+ * @returns {Number} Dev
+ */
+function getTempDev(currentIndex: number, tmp: number, avg: number): number {
+    return Math.abs(
         Math.round(
-            (convertUnit(currentIdex, avg, false) -
-                convertUnit(currentIdex, tmp, false)) *
+            (convertUnit(currentIndex, avg, false) -
+                convertUnit(currentIndex, tmp, false)) *
                 10
         ) / 10
+    );
+}
+
+function processUnitChange() {
+    currentIndex += 1;
+    if (currentIndex >= units.length) currentIndex = 0;
+    localStorage.setItem('unit', currentIndex.toString());
+
+    document.getElementById('unit').innerHTML = `<p>${units[currentIndex]}</p>`;
+    document.getElementById('temp').innerHTML = convertUnit(currentIndex, tmp);
+    document.getElementById('avg').innerHTML = convertUnit(currentIndex, avg);
+    document.getElementById('dev').innerHTML = getTempDev(
+        currentIndex,
+        tmp,
+        avg
     ).toString();
 }
 
-document.getElementById('unit').innerHTML = `<p>${units[currentIdex]}</p>`;
+document.getElementById('unit').innerHTML = `<p>${units[currentIndex]}</p>`;
 ['click', 'keydown'].forEach(event => {
     document.getElementById('unit').addEventListener(event, (e: any) => {
         if ('key' in e && e.key !== 'Enter') return;
@@ -79,14 +94,12 @@ Object.keys(boxes).forEach((e: any) => {
  * @param {Number} avg Average Temperature in F
  */
 function updateData(tmp: number, avg: number) {
-    document.getElementById('temp').innerHTML = convertUnit(currentIdex, tmp);
-    document.getElementById('avg').innerHTML = convertUnit(currentIdex, avg);
-    document.getElementById('dev').innerHTML = Math.abs(
-        Math.round(
-            (convertUnit(currentIdex, avg, false) -
-                convertUnit(currentIdex, tmp, false)) *
-                10
-        ) / 10
+    document.getElementById('temp').innerHTML = convertUnit(currentIndex, tmp);
+    document.getElementById('avg').innerHTML = convertUnit(currentIndex, avg);
+    document.getElementById('dev').innerHTML = getTempDev(
+        currentIndex,
+        tmp,
+        avg
     ).toString();
 
     if (stackedLine === null) return;
