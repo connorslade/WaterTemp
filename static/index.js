@@ -11,6 +11,9 @@ const convert = [
     }
 ];
 
+// Add as Localstorgage Item
+let extraGraph = false;
+
 let stackedLine = null;
 let socket = null;
 let tmp = 30;
@@ -148,6 +151,17 @@ document.getElementById('error').addEventListener('click', function () {
     createWebSocket();
 });
 
+// On Triple Click
+window.addEventListener('click', evt => {
+    if (evt.detail !== 3) return;
+    extraGraph = !extraGraph;
+    stackedLine.destroy();
+    initGraph(
+        Array.from({ length: 10 }, () => 0),
+        extraGraph
+    );
+});
+
 // On Window Resize
 function processSizeChange() {
     let w = window.innerWidth;
@@ -186,12 +200,13 @@ let labels = Array.from({ length: dataLen }, () => (i += 5));
 /**
  * @param {Array} initData Data to start graph with
  */
-function initGraph(initData) {
+function initGraph(initData, extraGraph) {
+    extraGraph = extraGraph || false;
     let data = {
         labels: labels,
         datasets: [
             {
-                label: 'Temperature',
+                label: 'Temperature °F',
                 data: initData,
                 fill: false,
                 borderColor: '#3861fb',
@@ -209,13 +224,18 @@ function initGraph(initData) {
             scales: {
                 x: {
                     grid: {
-                        display: false
+                        display: false || extraGraph
                     }
                 },
                 y: {
                     grid: {
-                        display: false
+                        display: false || extraGraph
                     }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false || extraGraph
                 }
             }
         }
