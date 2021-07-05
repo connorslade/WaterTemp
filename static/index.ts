@@ -20,7 +20,7 @@ if (localStorage.getItem('setup') === null) {
 
 let graphToggle = localStorage.getItem('showingGraph') == 'true';
 let extraGraph = localStorage.getItem('extraGraph') == 'true';
-let currentIndex = parseInt(localStorage.getItem('unit'));
+let currentIndex = parseInt(localStorage.getItem('unit'), 10);
 
 // Unit Changing
 

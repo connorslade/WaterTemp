@@ -9,3 +9,5 @@ api/certs/server.*
 
 static/index.js
 static/index.js.map
+
+/sensor_Interface/target
