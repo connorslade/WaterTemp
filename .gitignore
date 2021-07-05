@@ -6,3 +6,6 @@ api/cypress/plugins
 api/cypress/videos
 api/cypress/screenshots
 api/certs/server.*
+
+static/index.js
+static/index.js.map

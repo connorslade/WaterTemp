@@ -1,17 +1,21 @@
 const units = ['°F', '°C', '°K'];
-const convert = [c => c, c => (c - 32) * (5 / 9), c => (c + 459.67) * (5 / 9)];
+const convert = [
+    (c: number) => c,
+    (c: number) => (c - 32) * (5 / 9),
+    (c: number) => (c + 459.67) * (5 / 9)
+];
 
-let stackedLine = null;
-let socket = null;
+let stackedLine: any = null;
+let socket: any = null;
 let tmp = 30;
 let avg = 10;
 
 // Persistent Settings
 
 if (localStorage.getItem('setup') === null) {
-    localStorage.setItem('setup', true);
-    localStorage.setItem('showingGraph', false);
-    localStorage.setItem('unit', 0);
+    localStorage.setItem('setup', 'true');
+    localStorage.setItem('showingGraph', 'false');
+    localStorage.setItem('unit', '0');
 }
 
 let graphToggle = localStorage.getItem('showingGraph') == 'true';
@@ -25,28 +29,32 @@ let currentIdex = parseInt(localStorage.getItem('unit'));
  * @param {Number} index Unit index
  * @param {Number} tmp Temperature in °F
  */
-function convertUnit(index, tmp) {
-    return Math.round(convert[index](tmp) * 10) / 10;
+function convertUnit(index: number, tmp: number, string: boolean = true): any {
+    let math = Math.round(convert[index](tmp) * 10) / 10;
+    if (string) return math.toString();
+    else return math;
 }
 
 function processUnitChange() {
     currentIdex += 1;
     if (currentIdex >= units.length) currentIdex = 0;
-    localStorage.setItem('unit', currentIdex);
+    localStorage.setItem('unit', currentIdex.toString());
 
     document.getElementById('unit').innerHTML = `<p>${units[currentIdex]}</p>`;
     document.getElementById('temp').innerHTML = convertUnit(currentIdex, tmp);
     document.getElementById('avg').innerHTML = convertUnit(currentIdex, avg);
     document.getElementById('dev').innerHTML = Math.abs(
         Math.round(
-            (convertUnit(currentIdex, avg) - convertUnit(currentIdex, tmp)) * 10
+            (convertUnit(currentIdex, avg, false) -
+                convertUnit(currentIdex, tmp, false)) *
+                10
         ) / 10
-    );
+    ).toString();
 }
 
 document.getElementById('unit').innerHTML = `<p>${units[currentIdex]}</p>`;
 ['click', 'keydown'].forEach(event => {
-    document.getElementById('unit').addEventListener(event, e => {
+    document.getElementById('unit').addEventListener(event, (e: any) => {
         if ('key' in e && e.key !== 'Enter') return;
         processUnitChange();
         document.getElementById('unit').blur();
@@ -57,7 +65,8 @@ document.getElementById('unit').innerHTML = `<p>${units[currentIdex]}</p>`;
 
 let boxes = document.getElementsByClassName('unit');
 let acu = 5;
-Object.keys(boxes).forEach(e => {
+Object.keys(boxes).forEach((e: any) => {
+    // @ts-ignore
     boxes[e].style.marginRight = `${acu}px`;
     acu += 47;
 });
@@ -69,14 +78,16 @@ Object.keys(boxes).forEach(e => {
  * @param {Number} tmp Temperature in F
  * @param {Number} avg Average Temperature in F
  */
-function updateData(tmp, avg) {
+function updateData(tmp: number, avg: number) {
     document.getElementById('temp').innerHTML = convertUnit(currentIdex, tmp);
     document.getElementById('avg').innerHTML = convertUnit(currentIdex, avg);
     document.getElementById('dev').innerHTML = Math.abs(
         Math.round(
-            (convertUnit(currentIdex, avg) - convertUnit(currentIdex, tmp)) * 10
+            (convertUnit(currentIdex, avg, false) -
+                convertUnit(currentIdex, tmp, false)) *
+                10
         ) / 10
-    );
+    ).toString();
 
     if (stackedLine === null) return;
     addData(stackedLine, '?', tmp);
@@ -99,7 +110,7 @@ function createWebSocket() {
 
     socket.onopen = () => setError(false);
 
-    socket.onmessage = event => {
+    socket.onmessage = (event: any) => {
         let data = JSON.parse(event.data);
         console.log(data);
         switch (data.event) {
@@ -114,7 +125,7 @@ function createWebSocket() {
         }
     };
 
-    socket.onclose = event => {
+    socket.onclose = (event: any) => {
         if (event.wasClean) return;
         if (event.code === 1000) return;
         setError(true);
@@ -133,7 +144,7 @@ function createWebSocket() {
  * Show / Hide Error Message
  * @param {Boolean} value True if error. False if no error.
  */
-function setError(value) {
+function setError(value: boolean) {
     if (value) document.getElementById('error').innerHTML = '<p>❌</p>';
     else document.getElementById('error').innerHTML = '<p>✅</p>';
 }
@@ -179,7 +190,7 @@ toggleGraph();
 function toggleGraph() {
     graphToggle = !graphToggle;
     document.getElementById('graphToggle').blur();
-    localStorage.setItem('showingGraph', !graphToggle);
+    localStorage.setItem('showingGraph', (!graphToggle).toString());
     if (graphToggle) {
         document.getElementById('graph').style.display = 'none';
         return;
@@ -198,7 +209,7 @@ let labels = Array.from({ length: dataLen }, () => (i += 5));
  * @param {Array} initData Data to start graph with
  * @param {Boolean} extraGraph True if extra graph info is showing. False if not.
  */
-function initGraph(initData, extraGraph) {
+function initGraph(initData: Object, extraGraph: boolean = false) {
     extraGraph = extraGraph || false;
     let data = {
         labels: labels,
@@ -239,8 +250,10 @@ function initGraph(initData, extraGraph) {
         }
     };
 
+    // @ts-ignore
     var ctx = document.getElementById('graph').getContext('2d');
     if (stackedLine !== null) stackedLine.destroy();
+    // @ts-ignore
     stackedLine = new Chart(ctx, config);
 }
 
@@ -249,9 +262,9 @@ function initGraph(initData, extraGraph) {
  * @param {String]} label Label for data
  * @param {Number} data Data to add
  */
-function addData(chart, label, data) {
+function addData(chart: any, label: string, data: number) {
     chart.data.labels.push(label);
-    chart.data.datasets.forEach(dataset => {
+    chart.data.datasets.forEach((dataset: any) => {
         dataset.data.push(data);
     });
     chart.update();
@@ -262,9 +275,9 @@ function addData(chart, label, data) {
  * Removes the first bit of data from the chart. (data.shift())
  * @param {Object} chart Chart to remove data from
  */
-function removeData(chart) {
+function removeData(chart: any) {
     chart.data.labels.pop();
-    chart.data.datasets.forEach(dataset => {
+    chart.data.datasets.forEach((dataset: any) => {
         dataset.data.shift();
     });
     chart.update();
