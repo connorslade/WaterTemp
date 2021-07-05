@@ -16,6 +16,7 @@ body {
 .unit {
   background-color: rgba(32, 32, 34, 0.75);
   filter: drop-shadow(0 3px 5px black);
+  transition: background-color 0.1s;
   border-radius: 5px;
   position: fixed;
   right: 0;

@@ -49,6 +49,7 @@ document.getElementById('unit').innerHTML = `<p>${units[currentIdex]}</p>`;
     document.getElementById('unit').addEventListener(event, e => {
         if ('key' in e && e.key !== 'Enter') return;
         processUnitChange();
+        document.getElementById('unit').blur();
     });
 });
 
@@ -143,12 +144,14 @@ function setError(value) {
 document.getElementById('error').addEventListener('click', () => {
     socket.close();
     createWebSocket();
+    document.getElementById('error').blur();
 });
 
 document.getElementById('error').addEventListener('keydown', e => {
     if (e.key !== 'Enter') return;
     socket.close();
     createWebSocket();
+    document.getElementById('error').blur();
 });
 
 /**
@@ -175,6 +178,7 @@ toggleGraph();
  */
 function toggleGraph() {
     graphToggle = !graphToggle;
+    document.getElementById('graphToggle').blur();
     localStorage.setItem('showingGraph', !graphToggle);
     if (graphToggle) {
         document.getElementById('graph').style.display = 'none';

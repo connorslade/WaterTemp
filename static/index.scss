@@ -16,6 +16,7 @@ body {
 .unit {
   background-color: rgba(32, 32, 34, 0.75);
   filter: drop-shadow(0 3px 5px black);
+  transition: background-color 0.1s;
   border-radius: 5px;
   position: fixed;
   right: 0;
@@ -28,7 +29,7 @@ body {
 
   &:focus {
     background-color: rgba(57, 57, 62, 0.75);
-    transition: background-color 0.2s;
+  transition: background-color 0.2s;
   }
 
   p {
