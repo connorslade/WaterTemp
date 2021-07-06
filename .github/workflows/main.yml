@@ -19,6 +19,12 @@ jobs:
         working-directory: ./static
         run: npx tsc
 
+      - name: Start Sensor Interface
+        working-directory: ./sensor_Interface
+        run: |
+          curl https://sh.rustup.rs -sSf | sh -s -- -y
+          cargo run --debug &
+
       - name: Start Web Server
         working-directory: ./api
         run: node src --debug &
@@ -26,6 +32,9 @@ jobs:
       - name: Run Cypress
         working-directory: ./api
         run: npx cypress run
+
+      - name: Shutdown Sensor Interface
+        run: curl http://localhost:3030/EXIT
 
   runRustTests:
     name: Run Rust Unit Tests
