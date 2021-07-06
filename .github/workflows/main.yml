@@ -23,7 +23,7 @@ jobs:
         working-directory: ./sensor_Interface
         run: |
           curl https://sh.rustup.rs -sSf | sh -s -- -y
-          cargo run --debug &
+          cargo run -- --debug &
 
       - name: Start Web Server
         working-directory: ./api
