@@ -1,10 +1,10 @@
 use rand::Rng;
 
+/// Get current temperature from sensor
 pub fn get_temperature() -> i32 {
     // This RNG stuff is all temporary
     let mut rng = rand::thread_rng();
-    let number: i32 = rng.gen_range(0, 10);
-    return number;
+    rng.gen_range(0, 10)
 }
 
 
