@@ -3,6 +3,7 @@ use super::sensor;
 
 // I wish there was a nice way to do this, but I can't figure it out.
 
+/// GET: "/*"
 /// Run For All Requests
 pub fn all(req: &tiny_http::Request) {
     println!(
@@ -11,6 +12,8 @@ pub fn all(req: &tiny_http::Request) {
     );
 }
 
+/// GET: "/EXIT"
+/// When in Debug Mode this will exit the server
 pub fn get_exit(_req: &tiny_http::Request) -> [String; 2] {
     [
         "Ok - Goodby World".to_string(),
@@ -18,7 +21,8 @@ pub fn get_exit(_req: &tiny_http::Request) -> [String; 2] {
     ]
 }
 
-/// Run on GET "/temp"
+/// GET: "/temp"
+/// Gives the current temperature and temperature history
 pub fn get_temp(_req: &tiny_http::Request) -> [String; 2] {
     let temp: i32 = sensor::get_temperature();
 
@@ -49,6 +53,7 @@ pub fn get_test(_req: &tiny_http::Request) -> [String; 2] {
     ]
 }
 
+/// GET: "/*" when no other route is found
 /// Run when no specific route is defined
 pub fn not_found(_req: &tiny_http::Request) -> [String; 2] {
     [

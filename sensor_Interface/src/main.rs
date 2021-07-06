@@ -1,3 +1,6 @@
+extern crate tiny_http;
+extern crate rand;
+
 use std::env;
 
 mod common;
@@ -10,9 +13,11 @@ pub static VERSION: &str = "0.3";
 fn main() {
     let args: Vec<String> = env::args().collect();
     let mut debug = false;
+
     if args.iter().any(|i| i == "--debug") {
         debug = true;
     }
+
     println!(
         "{} {} {}",
         common::color_bold("[*] Starting Sensor Interface", 32),
