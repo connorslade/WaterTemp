@@ -2,7 +2,7 @@ mod common;
 mod server;
 
 /// Server Version
-pub static VERSION: &str = "0.2";
+pub static VERSION: &str = "0.3";
 
 /// Main entry point
 fn main() {

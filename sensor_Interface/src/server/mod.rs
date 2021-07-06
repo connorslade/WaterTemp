@@ -21,8 +21,8 @@ pub fn start(server: tiny_http::Server) {
             _ => res = routes::not_found(&request),
         }
 
-        let response =
-            Response::from_string(&res[0]).with_header((&res[1]).parse::<tiny_http::Header>().unwrap());
+        let response = Response::from_string(&res[0])
+            .with_header((&res[1]).parse::<tiny_http::Header>().unwrap());
         let _ = request.respond(response);
     }
 }
@@ -32,7 +32,10 @@ mod tests {
     use super::super::common;
     use super::*;
     #[test]
-    fn test_server_start() {
-        assert_eq!(common::get_type(&init("127.0.0.1", 8080)), "tiny_http::Server");
+    fn test_server_init() {
+        assert_eq!(
+            common::get_type(&init("127.0.0.1", 8080)),
+            "tiny_http::Server"
+        );
     }
 }

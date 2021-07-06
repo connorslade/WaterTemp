@@ -7,7 +7,6 @@ pub fn get_temperature() -> i32 {
     rng.gen_range(0, 10)
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

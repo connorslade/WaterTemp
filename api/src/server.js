@@ -37,8 +37,8 @@ function init(plugins, debug) {
     // Load plugins
     let loadDefault = true;
     for (const key in plugins) {
-        if ('disableDefaultApi' in plugins[key])
-            if (plugins[key].disableDefaultApi) loadDefault = false;
+        if ('disable' in plugins[key])
+            if (plugins[key].disable) loadDefault = false;
         if ('api' in plugins[key]) {
             for (const fun in plugins[key].api) {
                 plugins[key].api[fun](app, wsServer, config);
@@ -46,6 +46,7 @@ function init(plugins, debug) {
         }
     }
     if (!loadDefault) return;
+    console.log('[*] Loading default API');
     require('./routes').webSocket(wsServer, config);
 }
 
