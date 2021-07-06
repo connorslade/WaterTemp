@@ -21,5 +21,5 @@
 </p>
 <br><br>
 
-<img src="https://i.imgur.com/2tkURsV.png" width="49%"></img> <img src="https://i.imgur.com/xoaA6cx.png" width="49%"></img>
+<img src="https://i.imgur.com/GFe5Rgn.png" width="49%"></img> <img src="https://i.imgur.com/POConlM.png" width="49%"></img>
 
