@@ -9,5 +9,6 @@ api/certs/server.*
 
 static/index.js
 static/index.js.map
+static/lib/chat.js
 
 /sensor_Interface/target
