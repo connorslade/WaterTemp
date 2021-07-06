@@ -32,7 +32,7 @@ def runCommand(command, cb=None):
             break
         if text == '':
             continue
-        if cb != None:
+        if cb is not None:
             cb(text)
     exit_code = process.wait()
     return exit_code
@@ -40,7 +40,7 @@ def runCommand(command, cb=None):
 
 def checkNode(cb=None):
     """Make sure NODE.JS is installed"""
-    if cb != None:
+    if cb is not None:
         version = int(cb[1:].replace('.', ''))
         if version < 12000:
             debugPrint('Startup', 'NODE.JS version is too old', 31)
@@ -51,7 +51,7 @@ def checkNode(cb=None):
 
 def checkNpm(cb=None):
     """Make sure NPM is installed"""
-    if cb != None:
+    if cb is not None:
         version = int(cb.replace('.', ''))
         if version < 6000:
             debugPrint('Startup', 'NPM version is too old', 31)
@@ -62,7 +62,7 @@ def checkNpm(cb=None):
 
 def checkNpx(cb=None):
     """Make sure NPX is installed"""
-    if cb != None:
+    if cb is not None:
         version = int(cb.replace('.', ''))
         if version < 1500:
             debugPrint('Startup', 'CARGO version is too old', 31)
@@ -73,7 +73,7 @@ def checkNpx(cb=None):
 
 def checkCargo(cb=None):
     """Make sure CARGO is installed"""
-    if cb != None:
+    if cb is not None:
         version = int(cb.split(' ')[1].replace('.', ''))
         if version < 1500:
             debugPrint('Startup', 'CARGO version is too old', 31)
@@ -101,11 +101,11 @@ def startSensorInterface():
                    'Please Install CARGO and rerun this script', 33)
         exit()
     debugPrint('SensorInterface', 'Building Sensor Server', 33)
-    if runCommand([CARGO_COMMAND, 'build', '--release']) != 0:
+    if runCommand([CARGO_COMMAND, 'build', '--release']) is not 0:
         debugPrint('SensorInterface', 'CARGO failed to build', 31)
         exit()
     debugPrint('SensorInterface', 'Starting Sensor Server', 33)
-    subprocess.Popen(['cargo', 'run', '--', '--debug'])
+    subprocess.Popen([CARGO_COMMAND, 'run', '--', '--debug'])
     os.chdir('../')
 
 
@@ -134,5 +134,6 @@ if __name__ == '__main__':
     debugPrint('Main', 'Starting', 32)
     try:
         main()
-    except:
+    except Exception as e:
         debugPrint('Main', 'Uhhh... Houston, we have a problem.', 31)
+        print(colored(e, 31))
