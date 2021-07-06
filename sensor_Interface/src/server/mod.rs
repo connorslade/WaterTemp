@@ -1,3 +1,4 @@
+use std::process;
 use tiny_http::{Response, Server};
 
 mod routes;
@@ -10,9 +11,15 @@ pub fn init(ip: &str, port: u32) -> tiny_http::Server {
 }
 
 /// Start a webServer
-pub fn start(server: tiny_http::Server) {
+pub fn start(server: tiny_http::Server, debug: bool) {
     for request in server.incoming_requests() {
         let res: [String; 2];
+
+        if debug && request.url() == "/EXIT" {
+            res = routes::get_exit(&request);
+            let _ = request.respond(Response::from_string(&res[0]));
+            process::exit(0);
+        }
 
         routes::all(&request);
         match request.url() {

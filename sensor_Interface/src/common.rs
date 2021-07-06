@@ -8,6 +8,18 @@ pub fn color_bold(text: &str, color: i32) -> String {
     ["\x1B[1;", &color.to_string()[..], "m", text, "\x1B[0;0m"].join("")
 }
 
+// COLORS
+// ------------
+// BLACK   - 30
+// RED     - 31
+// GREEN   - 32
+// YELLOW  - 33
+// BLUE    - 34
+// MAGENTA - 35
+// CYAN    - 36
+// WHITE   - 37
+// RESET   - 0
+
 #[allow(dead_code)]
 /// Get the type of a value
 pub fn get_type<T>(_: &T) -> String {

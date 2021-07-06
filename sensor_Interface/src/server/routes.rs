@@ -5,7 +5,17 @@ use super::sensor;
 
 /// Run For All Requests
 pub fn all(req: &tiny_http::Request) {
-    println!("{}", common::color(&format!("{:?}: \"{}\"", req.method(), req.url())[..], 32));
+    println!(
+        "{}",
+        common::color(&format!("{:?}: \"{}\"", req.method(), req.url())[..], 32)
+    );
+}
+
+pub fn get_exit(_req: &tiny_http::Request) -> [String; 2] {
+    [
+        "Ok - Goodby World".to_string(),
+        "Content-type: text/plain".to_string(),
+    ]
 }
 
 /// Run on GET "/temp"
