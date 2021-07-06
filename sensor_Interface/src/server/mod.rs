@@ -17,6 +17,7 @@ pub fn start(server: tiny_http::Server) {
         routes::all(&request);
         match request.url() {
             "/temp" => res = routes::get_temp(&request),
+            "/test" => res = routes::get_test(&request),
             _ => res = routes::not_found(&request),
         }
 
