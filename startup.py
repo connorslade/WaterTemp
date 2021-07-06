@@ -23,8 +23,7 @@ def debugPrint(Category, Text, Color):
 
 
 def runCommand(command, cb=None):
-    # print(command)
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True) # nosec
     while True:
         line = process.stdout.readline()
         text = line.decode("utf-8").replace('\n', '')
@@ -101,7 +100,7 @@ def startSensorInterface():
                    'Please Install CARGO and rerun this script', 33)
         exit()
     debugPrint('SensorInterface', 'Building Sensor Server', 33)
-    if runCommand([CARGO_COMMAND, 'build', '--release']) is not 0:
+    if runCommand([CARGO_COMMAND, 'build', '--release']) == 0:
         debugPrint('SensorInterface', 'CARGO failed to build', 31)
         exit()
     debugPrint('SensorInterface', 'Starting Sensor Server', 33)
