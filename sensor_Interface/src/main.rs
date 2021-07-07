@@ -15,10 +15,10 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let debug = args.iter().any(|i| i == "--debug");
 
-    // let mut cfg = config::Config::new("config.ini");
-    // cfg.read().ok().unwrap();
-
-    // println!("MESSAGE: {}", cfg.get("message"))
+    let mut cfg = config::Config::new(Some("config.ini"));
+    cfg.read().ok().unwrap();
+    let ip = &cfg.get("ip")[..];
+    let port = cfg.get("port").parse::<u32>().unwrap();
 
     println!(
         "{} {} {}",
@@ -30,5 +30,12 @@ fn main() {
             "".to_string()
         }
     );
-    server::start(server::init("127.0.0.1", 3030), debug);
+
+    println!(
+        "{}{}",
+        common::color("[*] Serving on: ", 32),
+        common::color(&format!("{}:{}", ip, port)[..], 36)
+    );
+
+    server::start(server::init(ip, port), debug);
 }

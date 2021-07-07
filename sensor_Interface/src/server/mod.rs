@@ -41,7 +41,7 @@ mod tests {
     #[test]
     fn test_server_init() {
         assert_eq!(
-            common::get_type(&init("127.0.0.1", 8080)),
+            common::get_type(&init("localhost", 8080)),
             "tiny_http::Server"
         );
     }
