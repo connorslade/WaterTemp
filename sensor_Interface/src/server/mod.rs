@@ -11,7 +11,7 @@ pub fn init(ip: &str, port: u32) -> tiny_http::Server {
 }
 
 /// Start a webServer
-pub fn start(server: tiny_http::Server, debug: bool) {
+pub fn start(server: tiny_http::Server, debug: bool, dev_id: String) {
     for request in server.incoming_requests() {
         let res: [String; 2];
 
@@ -23,7 +23,7 @@ pub fn start(server: tiny_http::Server, debug: bool) {
 
         routes::all(&request);
         match request.url() {
-            "/temp" => res = routes::get_temp(&request),
+            "/temp" => res = routes::get_temp(&request, &dev_id, debug),
             "/test" => res = routes::get_test(&request),
             _ => res = routes::not_found(&request),
         }

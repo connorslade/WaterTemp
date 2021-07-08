@@ -23,16 +23,18 @@ pub fn get_exit(_req: &tiny_http::Request) -> [String; 2] {
 
 /// GET: "/temp"
 /// Gives the current temperature and temperature history
-pub fn get_temp(_req: &tiny_http::Request) -> [String; 2] {
-    let temp: i32 = sensor::get_temperature();
+pub fn get_temp(_req: &tiny_http::Request, dev_id: &String, debug: bool) -> [String; 2] {
+    let temp: i32 = sensor::get_temperature(&dev_id, debug);
 
     let mut history: String = "".to_owned();
     for i in 0..10 {
         if i == 9 {
-            history.push_str(&sensor::get_temperature().to_string()[..]);
+            //history.push_str(&sensor::get_temperature(&dev_id, debug).to_string()[..]);
+            history.push_str("0");
             continue;
         }
-        history.push_str(&format!("{}, ", sensor::get_temperature())[..]);
+        //history.push_str(&format!("{}, ", sensor::get_temperature(&dev_id, debug))[..]);
+        history.push_str("0, ");
     }
 
     [

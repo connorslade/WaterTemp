@@ -20,6 +20,7 @@ fn main() {
 
     let ip = &cfg.get("ip").unwrap()[..];
     let port = cfg.get("port").unwrap().parse::<u32>().unwrap();
+    let dev_id = cfg.get("dev_id").unwrap();
     debug = debug || cfg.get_bool("debug").unwrap();
 
     println!(
@@ -33,11 +34,16 @@ fn main() {
         }
     );
 
+    println!("{} {}",
+        common::color("[*] Device ID:", 32),
+        common::color(&dev_id.to_string()[..], 34)
+    );
+    
     println!(
         "{}{}",
         common::color("[*] Serving on: ", 32),
         common::color(&format!("{}:{}", ip, port)[..], 36)
     );
 
-    server::start(server::init(ip, port), debug);
+    server::start(server::init(ip, port), debug, dev_id);
 }
