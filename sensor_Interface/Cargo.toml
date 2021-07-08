@@ -7,5 +7,6 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+simple_config_parser = "0.1.5" # One of my own packages :P
 tiny_http = "0.6"
 rand = "0.5"

@@ -2,9 +2,9 @@ extern crate rand;
 extern crate tiny_http;
 
 use std::env;
+use simple_config_parser::config::Config;
 
 mod common;
-mod config;
 mod server;
 
 /// Server Version
@@ -13,12 +13,14 @@ pub static VERSION: &str = "0.3";
 /// Main entry point
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let debug = args.iter().any(|i| i == "--debug");
+    let mut debug = args.iter().any(|i| i == "--debug");
 
-    let mut cfg = config::Config::new(Some("config.ini"));
-    cfg.read().ok().unwrap();
-    let ip = &cfg.get("ip")[..];
-    let port = cfg.get("port").parse::<u32>().unwrap();
+    let mut cfg = Config::new(Some("config.ini"));
+    cfg.read().ok().expect("Error reading config file :/");
+
+    let ip = &cfg.get("ip").unwrap()[..];
+    let port = cfg.get("port").unwrap().parse::<u32>().unwrap();
+    debug = debug || cfg.get_bool("debug").unwrap();
 
     println!(
         "{} {} {}",
