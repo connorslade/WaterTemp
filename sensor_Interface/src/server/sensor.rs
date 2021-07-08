@@ -22,8 +22,10 @@ pub fn get_temperature(dev_id: &String, debug: bool) -> i32 {
     }
     let mut dev_path = format!("/sys/bus/w1/devices/{}/{}", dev_id, "w1_slave");
     let mut sensor_data = fs::read_to_string(&mut dev_path).expect("Failed to read sensor data");
-    while &remove_whitespace(sensor_data[sensor_data.len() - 3..].to_string()) != "YES" {
+    while &remove_whitespace(sensor_data[sensor_data.len() - 3..sensor_data.len()].to_string()) != "YES" {
         sensor_data = fs::read_to_string(&mut dev_path).expect("Failed to read sensor data");
+        println!("Checking: '{}'", remove_whitespace(sensor_data[sensor_data.len() - 3..sensor_data.len()].to_string()));
+        println!("tmpData: {}", &sensor_data);
     }
     print!("{}", sensor_data);
     1
