@@ -8,7 +8,7 @@ use super::sensor;
 pub fn all(req: &tiny_http::Request) {
     println!(
         "{}",
-        common::color(&format!("{:?}: \"{}\"", req.method(), req.url())[..], 32)
+        common::color(&format!("[+] {:?}: \"{}\"", req.method(), req.url())[..], 32)
     );
 }
 
@@ -24,7 +24,7 @@ pub fn get_exit(_req: &tiny_http::Request) -> [String; 2] {
 /// GET: "/temp"
 /// Gives the current temperature and temperature history
 pub fn get_temp(_req: &tiny_http::Request, dev_id: &String, debug: bool) -> [String; 2] {
-    let temp: i32 = sensor::get_temperature(&dev_id, debug);
+    let temp: f64 = sensor::get_temperature(&dev_id, debug);
 
     let mut history: String = "".to_owned();
     for i in 0..10 {
