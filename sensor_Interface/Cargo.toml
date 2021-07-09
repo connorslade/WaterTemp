@@ -9,4 +9,6 @@ edition = "2018"
 [dependencies]
 simple_config_parser = "0.1.5" # One of my own packages :P
 tiny_http = "0.6"
+chrono = { version = "0.4", features = ["unstable-locales"] }
 rand = "0.5"
+regex = "1"

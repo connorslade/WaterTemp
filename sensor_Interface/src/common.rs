@@ -1,3 +1,5 @@
+use regex::Regex;
+
 /// Return string with ANSI color codes
 pub fn color(text: &str, color: i32) -> String {
     ["\x1B[0;", &color.to_string()[..], "m", text, "\x1B[0;0m"].join("")
@@ -8,11 +10,17 @@ pub fn color_bold(text: &str, color: i32) -> String {
     ["\x1B[1;", &color.to_string()[..], "m", text, "\x1B[0;0m"].join("")
 }
 
+/// Removes ANSI color codes from text
+pub fn remove_ansi(text: &str) -> String {
+    let re = Regex::new(r"\[[0-1];[0-9]+m").unwrap();
+    re.replace_all(text, "").to_string()
+}
+
 pub fn ret_if(cond: bool, ret: String) -> String {
     if cond {
         return ret;
     }
-    return "".to_string();
+    "".to_string()
 }
 
 // COLORS

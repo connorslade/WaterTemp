@@ -1,13 +1,13 @@
 extern crate rand;
 extern crate tiny_http;
 
+use simple_config_parser::config::Config;
 use std::env;
 use std::thread;
-use simple_config_parser::config::Config;
 
 mod common;
-mod server;
 mod logging;
+mod server;
 
 /// Server Version
 pub static VERSION: &str = "0.5";
@@ -32,32 +32,60 @@ fn main() {
     let calibration = cfg.get_float("calibration").unwrap();
     debug = debug || cfg.get_bool("debug").unwrap();
 
-    println!(
-        "{} {} {} {}",
-        common::color_bold("[*] Starting Sensor Interface", 32),
-        common::color(&format!("[v{}]", VERSION)[..], 34),
-        common::ret_if(logging, common::color_bold("LOGGING", 36)),
-        common::ret_if(debug, common::color_bold("DEBUG", 31))
+    let event_log_cfg = logging::LogCfg {
+        do_log: cfg.get_bool("event_logging").unwrap(),
+        file: cfg.get("event_log_file").unwrap(),
+    };
+
+    // Print some info
+    logging::log_event(
+        &event_log_cfg,
+        format!(
+            "{} {} {} {}",
+            common::color_bold("[*] Starting Sensor Interface", 32),
+            common::color(&format!("[v{}]", VERSION)[..], 34),
+            common::ret_if(logging, common::color_bold("LOGGING", 36)),
+            common::ret_if(debug, common::color_bold("DEBUG", 31))
+        ),
     );
 
-    println!("{} {}",
-        common::color("[*] Device ID:", 32),
-        common::color(&dev_id.to_string()[..], 34)
+    logging::log_event(
+        &event_log_cfg,
+        format!(
+            "{} {}",
+            common::color("[*] Device ID:", 32),
+            common::color(&dev_id[..], 34)
+        ),
     );
-    
-    println!(
-        "{}{}",
-        common::color("[*] Serving on: ", 32),
-        common::color(&format!("{}:{}", ip, port)[..], 36)
+
+    logging::log_event(
+        &event_log_cfg,
+        format!(
+            "{}{}",
+            common::color("[*] Serving on: ", 32),
+            common::color(&format!("{}:{}", ip, port)[..], 36)
+        ),
     );
 
     // Start Logging thread
     if logging {
         thread::spawn(move || {
-            logging::start_data_logging(&log_file[..], log_delay, debug, cfg.get("dev_id").unwrap(), calibration)
+            logging::start_data_logging(
+                &log_file[..],
+                log_delay,
+                debug,
+                cfg.get("dev_id").unwrap(),
+                calibration,
+            )
         });
     }
 
     // Start web server
-    server::start(server::init(ip, port), debug, dev_id, calibration);
+    server::start(
+        server::init(ip, port),
+        debug,
+        &dev_id[..],
+        calibration,
+        &event_log_cfg,
+    );
 }
