@@ -52,6 +52,7 @@ function getData(event) {
             data = JSON.parse(data);
             history.push(data.temp);
             history.shift();
+            global.sensor_data = [(new Date).toLocaleTimeString(), data.temp]
             let toSend = {
                 event: event,
                 tmp: data.temp,
@@ -71,8 +72,12 @@ function onInit() {
             data = JSON.parse(data);
             common.log('✅ Connection with Sensor Server Initialized');
             common.log(`   ➥  ${data.message} - v${data.version}`);
+            global.sensor_state = [true, data.version, data.message]
         })
-        .catch(e => common.log('❌ Connection with Sensor Server Failed', e));
+        .catch(e => {
+            common.log('❌ Connection with Sensor Server Failed', e);
+            global.sensor_state = [false, 'N/A', e]
+        });
 }
 
 function api(app, wsServer) {
@@ -93,7 +98,7 @@ function api(app, wsServer) {
     });
 
     setInterval(function () {
-        getData('update').then(data => sockets.forEach(socket => socket.send(data)));
+        getData('update').then(data => sockets.forEach(socket => socket.send(data))).catch(e => common.log('❌ Error', e));
     }, 5000);
 }
 
