@@ -8,6 +8,13 @@ pub fn color_bold(text: &str, color: i32) -> String {
     ["\x1B[1;", &color.to_string()[..], "m", text, "\x1B[0;0m"].join("")
 }
 
+pub fn ret_if(cond: bool, ret: String) -> String {
+    if cond {
+        return ret;
+    }
+    return "".to_string();
+}
+
 // COLORS
 // ------------
 // BLACK   - 30
