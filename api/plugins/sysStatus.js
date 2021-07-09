@@ -8,9 +8,15 @@ const config = require('../config/config.json');
 function secondsToHms(d) {
     d = Number(d);
     var h = Math.floor(d / 3600);
-    var m = Math.floor(d % 3600 / 60);
-    var s = Math.floor(d % 3600 % 60);
-    return ('0' + h).slice(-2) + ":" + ('0' + m).slice(-2) + ":" + ('0' + s).slice(-2);
+    var m = Math.floor((d % 3600) / 60);
+    var s = Math.floor((d % 3600) % 60);
+    return (
+        ('0' + h).slice(-2) +
+        ':' +
+        ('0' + m).slice(-2) +
+        ':' +
+        ('0' + s).slice(-2)
+    );
 }
 
 // Define some global variables
@@ -21,8 +27,7 @@ global.sensor_state = [false, 'N/A', ''];
 // [Last Update, Temperature]
 global.sensor_data = ['N/A', 'N/A'];
 
-const basePage =
-`
+const basePage = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -39,6 +44,7 @@ const basePage =
     <p>Port: {PORT}</p>
     <p>System: {SYSTEM}</p>
     <p>Uptime: {UPTIME}</p>
+    <p>Plugins: {PLUGINS}</p>
 
     <h2>Sensor Status</h2>
     <p>Connected: {S_CONNECTED}</p>
@@ -48,24 +54,31 @@ const basePage =
     <p>Temperature: {S_TEMP}</p>
 </body>
 </html>
-`
+`;
 
 function api(app, wsServer, config) {
     app.get('/status', (req, res) => {
-        common.log('✨ GET: /status', '', req.ip)
-        formatPage = basePage
-        .replace('{VERSION}', config.version)
-        .replace('{TLS}', config.server.tls.enabled ? 'Enabled' : 'Disabled')
-        .replace('{IP}', config.server.ip)
-        .replace('{PORT}', config.server.port)
-        .replace('{SYSTEM}', os.type())
-        .replace('{UPTIME}', secondsToHms(os.uptime()))
-        
-        .replace('{S_CONNECTED}', global.sensor_state[0] ? 'Yes' : 'No')
-        .replace('{S_VERSION}', global.sensor_state[1])
-        .replace('{S_MESSAGE}', global.sensor_state[2])
-        .replace('{S_LAST_UPDATE}', global.sensor_data[0])
-        .replace('{S_TEMP}', global.sensor_data[1] + '°F');
+        common.log('✨ GET: /status', '', req.ip);
+        let plugins = [];
+        Object.keys(global.plugins).forEach(e =>
+            plugins.push(
+                `${global.plugins[e].name} [${global.plugins[e].version}]`
+            )
+        );
+        let formatPage = basePage
+            .replace('{VERSION}', config.version)
+            .replace('{TLS}', config.server.tls.enabled ? 'Enabled' : 'Disabled')
+            .replace('{IP}', config.server.ip)
+            .replace('{PORT}', config.server.port)
+            .replace('{SYSTEM}', os.type())
+            .replace('{UPTIME}', secondsToHms(os.uptime()))
+            .replace('{PLUGINS}', plugins.join(', '))
+
+            .replace('{S_CONNECTED}', global.sensor_state[0] ? 'Yes' : 'No')
+            .replace('{S_VERSION}', global.sensor_state[1])
+            .replace('{S_MESSAGE}', global.sensor_state[2])
+            .replace('{S_LAST_UPDATE}', global.sensor_data[0])
+            .replace('{S_TEMP}', global.sensor_data[1] + '°F');
         res.send(formatPage);
     });
 }

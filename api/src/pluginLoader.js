@@ -20,11 +20,13 @@ function load(folder, config) {
             name: command.name,
             disable: command.disableDefaultApi,
             init: command.onInit,
-            api: command.api
+            api: command.api,
+            version: command.version
         };
     }
     common.log(`🔌 ${loadedPlugins} plugins loaded`);
     if (loadedPlugins > 0) runInits(plugins);
+    global.plugins = plugins;
     return plugins;
 }
 
