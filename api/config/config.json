@@ -1,5 +1,5 @@
 {
-    "version": "0.2",
+    "version": "0.3",
     "server": {
         "ip": "0.0.0.0",
         "port": 8080,
@@ -18,10 +18,14 @@
             "cert": "./certs/server.cert"
         }
     },
+    "log": {
+        "enabled": true,
+        "log": "./log/#.log"
+    },
     "plugins": {
         "loadPlugins": true,
         "disabledPlugins": [
-          "example.js"
+            "example.js"
         ]
-      }
+    }
 }

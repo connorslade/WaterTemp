@@ -1,10 +1,11 @@
+const common = require('./common');
 const fs = require('fs');
 
 function load(folder, config) {
     if (!config['plugins']['loadPlugins']) return;
     let plugins = {};
     let loadedPlugins = 0;
-    console.log('🔌 Loading Plugins');
+    common.log('🔌 Loading Plugins');
     const commandFiles = fs
         .readdirSync(folder)
         .filter(file => file.endsWith('.js'));
@@ -13,7 +14,7 @@ function load(folder, config) {
         if (config['plugins']['disabledPlugins'].includes(file)) continue;
         const command = require(`../${folder}/${file}`);
         if (!command.loadThis) continue;
-        console.log(`🍞 Loading ${file} v${command.version}`);
+        common.log(`🍞 Loading ${file} v${command.version}`);
         loadedPlugins++;
         plugins[file] = {
             name: command.name,
@@ -22,13 +23,13 @@ function load(folder, config) {
             api: command.api
         };
     }
-    console.log(`🔌 ${loadedPlugins} plugins loaded`);
+    common.log(`🔌 ${loadedPlugins} plugins loaded`);
     if (loadedPlugins > 0) runInits(plugins);
     return plugins;
 }
 
 function runInits(plugins) {
-    console.log('👆 Initializing Plugins');
+    common.log('👆 Initializing Plugins');
     for (const key in plugins) {
         try {
             plugins[key].init();

@@ -3,6 +3,7 @@ const config = require('./../config/config.json');
 const rateLimit = require('express-rate-limit');
 const bodyParser = require('body-parser');
 const express = require('express');
+const common = require('./common');
 const https = require('https');
 const ws = require('ws');
 const fs = require('fs');
@@ -30,7 +31,7 @@ function init(plugins, debug) {
     if (debug)
         app.get('/EXIT', (req, res) => {
             res.send('ok');
-            console.log('[*] Server is exiting...');
+            common.log('[*] Server is exiting...');
             process.exit(0);
         });
 
@@ -46,7 +47,7 @@ function init(plugins, debug) {
         }
     }
     if (!loadDefault) return;
-    console.log('[*] Loading default API');
+    common.log('[*] Loading default API');
     require('./routes').webSocket(wsServer, config);
 }
 
@@ -55,11 +56,11 @@ function init(plugins, debug) {
  */
 function start(ip, port) {
     app.listen(config.server.port, config.server.ip, () =>
-        console.log(`🐍 Serving http://${ip}:${port}/`)
+        common.log(`🐍 Serving http://${ip}:${port}/`)
     ).on('upgrade', (request, socket, head) => {
         wsServer.handleUpgrade(request, socket, head, socket => {
             wsServer.emit('connection', socket, request);
-            console.log(`✔ WebSocket Connected`, socket._socket.remoteAddress);
+            common.log(`✔ WebSocket Connected`, '', socket._socket.remoteAddress);
         });
     });
 }
@@ -73,12 +74,13 @@ function startTls(ip, port) {
     let cert = fs.readFileSync(config.server.tls.cert);
     https.createServer({ key: key, cert: cert }, app)
         .listen(port, ip, () =>
-            console.log(`🐍 Serving https://${ip}:${port}/`)
+            common.log(`🐍 Serving https://${ip}:${port}/`)
         ).on('upgrade', (request, socket, head) => {
             wsServer.handleUpgrade(request, socket, head, socket => {
                 wsServer.emit('connection', socket, request);
-                console.log(
+                common.log(
                     `✔ WebSocket Connected`,
+                    '',
                     socket._socket.remoteAddress
                 );
             });

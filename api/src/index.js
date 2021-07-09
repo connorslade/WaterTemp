@@ -1,10 +1,15 @@
 const debug = process.argv.slice(2).includes('--debug');
 const config = require('./../config/config.json');
 const pluginLoader = require('./pluginLoader');
+const common = require('./common');
 const server = require('./server');
+const setup = require('./setup');
 
-console.log(`💧 Starting Water Temp Server! v${config.version}`);
-if (debug) console.log(`💦 Debug mode enabled!`);
+common.log(`💧 Starting Water Temp Server! v${config.version}`);
+if (debug) common.log(`💦 Debug mode enabled!`);
+
+// Run setup
+setup.setup();
 
 // Init the plugin loader
 server.init(pluginLoader.load('plugins', config), debug);

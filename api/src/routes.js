@@ -1,3 +1,5 @@
+const common = require('./common');
+
 module.exports = {
     webSocket: wsServer => {
         let sockets = [];
@@ -10,7 +12,7 @@ module.exports = {
                 )
             );
             socket.on('close', function () {
-                console.log(
+                common.log(
                     `❌ WebSocket Disconnected ${socket._socket.remoteAddress}`
                 );
                 sockets = sockets.filter(s => s !== socket);

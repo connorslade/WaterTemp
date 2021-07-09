@@ -12,7 +12,7 @@ module.exports = {
     onInit: function () {
         // Function run once on plugin load
         // Lets console log some *very* important information
-        console.log('Hello World :P');
+        common.log('Hello World :P');
     },
 
     api: [

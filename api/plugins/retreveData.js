@@ -1,3 +1,4 @@
+const common = require('../src/common');
 const http = require('http');
 
 // Connect to the local temperature sensor
@@ -68,10 +69,10 @@ function onInit() {
     get(`http://${config.sensor.ip}:${config.sensor.port}/test`)
         .then(data => {
             data = JSON.parse(data);
-            console.log('✅ Connection with Sensor Server Initialized');
-            console.log(`   ➥  ${data.message} - v${data.version}`);
+            common.log('✅ Connection with Sensor Server Initialized');
+            common.log(`   ➥  ${data.message} - v${data.version}`);
         })
-        .catch(e => console.log('❌ Connection with Sensor Server Failed', e));
+        .catch(e => common.log('❌ Connection with Sensor Server Failed', e));
 }
 
 function api(app, wsServer) {
@@ -79,11 +80,11 @@ function api(app, wsServer) {
     let sockets = [];
     wsServer.on('connection', socket => {
         socket.on('message', message =>
-            common.log('🔌 WebSocket', message, socket._socket.remoteAddress)
+            common.log('🔌 WebSocket', '', message, socket._socket.remoteAddress)
         );
         socket.on('close', function () {
-            console.log(
-                `❌ WebSocket Disconnected ${socket._socket.remoteAddress}`
+            common.log(
+                '❌ WebSocket Disconnected', '', socket._socket.remoteAddress
             );
             sockets = sockets.filter(s => s !== socket);
         });
