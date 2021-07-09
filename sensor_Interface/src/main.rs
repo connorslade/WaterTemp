@@ -10,7 +10,7 @@ mod logging;
 mod server;
 
 /// Server Version
-pub static VERSION: &str = "0.5";
+pub static VERSION: &str = "0.6";
 
 /// Main entry point
 fn main() {

@@ -1,4 +1,3 @@
-const config = require('./../config/config.json');
 const common = require('./common');
 const fs = require('fs');
 
