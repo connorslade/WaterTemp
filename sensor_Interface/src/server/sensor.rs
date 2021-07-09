@@ -26,11 +26,17 @@ fn get_sensor_data(dev_id: &String) -> String {
 }
 
 /// Get current temperature from sensor
-pub fn get_temperature(dev_id: &String, debug: bool) -> f64 {
+pub fn get_temperature(dev_id: &String, debug: bool, calibration: Option<f64>) -> f64 {
+    let cal = match calibration {
+        Some(c) => c,
+        None => 0.0,
+    };
+
     if debug {
         let mut rng = rand::thread_rng();
-        return rng.gen_range::<f64>(0.0, 10.0);
+        return rng.gen_range::<f64>(0.0, 10.0) + cal;
     }
+
     let sensor_data = get_sensor_data(dev_id);
     let temp: Vec<&str> = sensor_data.split("t=").collect();
     if temp.len() != 2 {
@@ -39,7 +45,8 @@ pub fn get_temperature(dev_id: &String, debug: bool) -> f64 {
     }
     let temp_str = temp[1].to_string();
     let temp_c = temp_str.parse::<f64>().expect("Failed to parse temperature") / 1000.0;
-    temp_c * 9.0 / 5.0 + 32.0
+    let temp_f = temp_c * 9.0 / 5.0 + 32.0;
+    return temp_f + cal;
 }
 
 #[cfg(test)]
@@ -48,7 +55,13 @@ mod tests {
 
     #[test]
     fn test_get_temperature_1() {
-        let number: f64 = get_temperature(&"".to_string(), true);
+        let number: f64 = get_temperature(&"".to_string(), true, None);
         assert!(number >= 0.0 && number < 10.0);
+    }
+
+    #[test]
+    fn test_get_temperature_cal() {
+        let number: f64 = get_temperature(&"".to_string(), true, Some(10.0));
+        assert!(number >= 10.0 && number < 20.0);
     }
 }

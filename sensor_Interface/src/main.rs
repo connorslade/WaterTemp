@@ -8,7 +8,7 @@ mod common;
 mod server;
 
 /// Server Version
-pub static VERSION: &str = "0.3";
+pub static VERSION: &str = "0.4";
 
 /// Main entry point
 fn main() {
@@ -21,6 +21,7 @@ fn main() {
     let ip = &cfg.get("ip").unwrap()[..];
     let port = cfg.get("port").unwrap().parse::<u32>().unwrap();
     let dev_id = cfg.get("dev_id").unwrap();
+    let calibration = cfg.get_float("calibration").unwrap();
     debug = debug || cfg.get_bool("debug").unwrap();
 
     println!(
@@ -45,5 +46,5 @@ fn main() {
         common::color(&format!("{}:{}", ip, port)[..], 36)
     );
 
-    server::start(server::init(ip, port), debug, dev_id);
+    server::start(server::init(ip, port), debug, dev_id, calibration);
 }

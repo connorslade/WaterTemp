@@ -23,8 +23,8 @@ pub fn get_exit(_req: &tiny_http::Request) -> [String; 2] {
 
 /// GET: "/temp"
 /// Gives the current temperature and temperature history
-pub fn get_temp(_req: &tiny_http::Request, dev_id: &String, debug: bool) -> [String; 2] {
-    let temp: f64 = sensor::get_temperature(&dev_id, debug);
+pub fn get_temp(_req: &tiny_http::Request, dev_id: &String, debug: bool, calibration: f64) -> [String; 2] {
+    let temp: f64 = sensor::get_temperature(&dev_id, debug, Some(calibration));
 
     let mut history: String = "".to_owned();
     for i in 0..10 {
