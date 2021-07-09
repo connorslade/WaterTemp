@@ -27,6 +27,7 @@ fn main() {
     let port = cfg.get("port").unwrap().parse::<u32>().unwrap();
     let dev_id = cfg.get("dev_id").unwrap();
     let logging = cfg.get_bool("logging").unwrap();
+    let log_delay = cfg.get_int("log_delay").unwrap();
     let log_file = cfg.get("log_file").unwrap();
     let calibration = cfg.get_float("calibration").unwrap();
     debug = debug || cfg.get_bool("debug").unwrap();
@@ -53,7 +54,7 @@ fn main() {
     // Start Logging thread
     if logging {
         thread::spawn(move || {
-            logging::start_data_logging(&log_file[..], 5000, debug, cfg.get("dev_id").unwrap(), calibration)
+            logging::start_data_logging(&log_file[..], log_delay, debug, cfg.get("dev_id").unwrap(), calibration)
         });
     }
 

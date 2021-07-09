@@ -1,11 +1,12 @@
 use std::time::{Duration, Instant};
 use std::fs::OpenOptions;
 use std::io::prelude::*;
+use std::time::SystemTime;
 use std::thread;
 
 use super::server::sensor;
 
-pub fn start_data_logging(log_file: &str, log_interval: u64, debug: bool, dev_id: String, calibration: f64) {
+pub fn start_data_logging(log_file: &str, log_interval: i64, debug: bool, dev_id: String, calibration: f64) {
     // Open file
     // Will also create file if it does not exist
     let mut file = OpenOptions::new()
@@ -15,20 +16,23 @@ pub fn start_data_logging(log_file: &str, log_interval: u64, debug: bool, dev_id
     .open(log_file)
     .expect("Error opening file");
 
+    let delay: u64 = log_interval as u64;
+
     loop {
         let start = Instant::now();
 
         let temp: f64 = sensor::get_temperature(&dev_id, debug, Some(calibration));
+        let epoch = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap();
 
         println!("[+] TMP: {:?}", temp);
-        if let Err(e) = writeln!(file, "{}", temp) {
+        if let Err(e) = writeln!(file, "{:?},{}", epoch.as_secs(), temp) {
             eprintln!("Error writhing to file: {}", e);
         }
 
         // Fancy stuff to make sure this runs every 5 seconds
-        // not just 5 seconds after everything finished processing
+        // Not just 5 seconds after everything finished processing
         let runtime = start.elapsed();
-        if let Some(remaining) = Duration::from_millis(log_interval).checked_sub(runtime) {
+        if let Some(remaining) = Duration::from_millis(delay).checked_sub(runtime) {
             thread::sleep(remaining);
         }
     }
