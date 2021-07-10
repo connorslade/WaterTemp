@@ -1,9 +1,8 @@
 const os = require('os');
 const common = require('../src/common');
-const config = require('../config/config.json');
 
 // System Status Plugin for Water temp system thing
-// V1.0 By Connor Slade 7/9/2021
+// V1.1 By Connor Slade 7/9/2021
 
 function secondsToHms(d) {
     d = Number(d);
@@ -31,7 +30,7 @@ const basePage = `
 <!DOCTYPE html>
 <html>
 <head>
-    <title>System Status</title>
+    <title>System Status - V1.1</title>
     <meta charset="UTF-8">
 </head>
 <body style="font-family: Arial,sans-serif;">
