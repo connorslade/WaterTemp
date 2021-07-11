@@ -10,13 +10,6 @@ self.addEventListener('install', function (e) {
 });
 
 self.addEventListener('fetch', function (event) {
-    event.waitUntil(
-        //TODO: THIS IS DEBUG CODE
-        caches.open(staticCacheName).then(function (cache) {
-            return cache.addAll(cachedItems);
-        })
-    );
-
     event.respondWith(
         caches.match(event.request).then(function (response) {
             return response || fetch(event.request);

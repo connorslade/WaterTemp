@@ -125,7 +125,6 @@ function createWebSocket() {
 
     socket.onmessage = (event: any) => {
         let data = JSON.parse(event.data);
-        console.log(data);
         switch (data.event) {
             case 'update':
                 updateData(data.tmp, data.avg);
