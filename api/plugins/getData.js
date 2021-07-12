@@ -26,6 +26,7 @@ const basePage = `
 <head>
     <title>Get Data - V0.1</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="index.css">
     <style>
@@ -56,7 +57,7 @@ const basePage = `
     <button class="btn"><i class="fa fa-download"></i> Download JSON</button>
     </a>
     <div class="footer">
-        <p class="footer-content">© Connor Slade · 2021 · V0.1 · <a href="https://github.com/Basicprogrammer10/WaterTemp">Github</a></p>
+        <p class="footer-content">© Connor Slade · 2021 · V0.2 · <a href="https://github.com/Basicprogrammer10/WaterTemp">Github</a> · <a href="/">Home</a></p>
     </div>
 </body>
 </html>
