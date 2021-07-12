@@ -32,25 +32,45 @@ const basePage = `
 <head>
     <title>System Status - V1.1</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <style>
+        body * {
+            text-align: left;
+            font-family: Arial,sans-serif;
+            margin: 0;
+            margin-top: 0;
+        }
+        .title {
+            text-align: center;
+        }
+        .fa {
+            margin-left: 30px;
+        }
+        .cat {
+            margin-left: 0;
+        }
+    </style>
 </head>
 <body style="font-family: Arial,sans-serif;">
-    <h1>System Status</h1>
-    <p>By Connor Slade :P</p>
-    <h2>Web Server</h2>
-    <p>Version: {VERSION}</p>
-    <p>TLS: {TLS}</p>
-    <p>IP: {IP}</p>
-    <p>Port: {PORT}</p>
-    <p>System: {SYSTEM}</p>
-    <p>Uptime: {UPTIME}</p>
-    <p>Plugins: {PLUGINS}</p>
+    <h1 class="title">System Status</h1>
+    <p class="title">By Connor Slade :P</p>
+    <h2><i class="cat fa fa-snowflake-o"></i> Web Server</h2>
+    <p><i class="fa fa-code-fork"></i> <strong>Version:</strong> {VERSION}</p>
+    <p><i class="fa fa-lock"></i> <strong>TLS:</strong> {TLS}</p>
+    <p><i class="fa fa-globe"></i> <strong>IP:</strong> {IP}</p>
+    <p><i class="fa fa-window-maximize"></i> <strong>Port:</strong> {PORT}</p>
+    <p><i class="fa fa-linux"></i> <strong>System:</strong> {SYSTEM}</p>
+    <p><i class="fa fa-clock-o"></i> <strong>Uptime:</strong> {UPTIME}</p>
+    <p><i class="fa fa-plug"></i> <strong>Plugins:</strong> {PLUGINS}</p>
 
-    <h2>Sensor Status</h2>
-    <p>Connected: {S_CONNECTED}</p>
-    <p>Version: {S_VERSION}</p>
-    <p>Message: {S_MESSAGE}</p>
-    <p>Last Update: {S_LAST_UPDATE}</p>
-    <p>Temperature: {S_TEMP}</p>
+    <h2><i class="cat fa fa-microchip"></i> Sensor Status</h2>
+    <p><i class="fa fa-check"></i> <strong>Connected:</strong> {S_CONNECTED}</p>
+    <p><i class="fa fa-code-fork"></i> <strong>Version:</strong> {S_VERSION}</p>
+    <p><i class="fa fa-comment"></i> <strong>Message:</strong> {S_MESSAGE}</p>
+    <p><i class="fa fa-wrench"></i> <strong>Last Update:</strong> {S_LAST_UPDATE}</p>
+    <p><i class="fa fa-thermometer-half"></i> <strong>Temperature:</strong> {S_TEMP}</p>
 </body>
 </html>
 `;
