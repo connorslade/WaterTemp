@@ -63,6 +63,44 @@ const basePage = `
 </html>
 `;
 
+const errorPage = `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Error</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <style>
+        body * {
+            text-align: left;
+            font-family: Arial,sans-serif;
+            margin: 0;
+        }
+        code {
+            padding: 2px 4px;
+            font-size: 90%;
+            color: #c7254e;
+            background-color: #f9f2f4;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Error 😓</h1>
+    <br>
+    <p>There was an error processing your request.</p>
+    <p>This problem was likely caused by the sensor server bring down...</p>
+    <p>If the problem persists, please contact me at <a href="mailto:water@connorcode.com?subject=Error with Get Data Site&body={ERROR}">water@connorcode.com</a>.</p>
+    <br>
+    <p><strong>ERROR INFO:</strong> <code>{ERROR}</code></p>
+    <div class="footer">
+        <p class="footer-content">©Connor Slade · 2021 · V0.2 · <a href="https://github.com/Basicprogrammer10/WaterTemp">Github</a> · <a href="/">Home</a></p>
+    </div>
+</body>
+</html>
+`;
+
 function api(app, wsServer, config) {
     app.get('/data', (req, res) => {
         common.log('✨ GET: /data', '', req.ip);
@@ -85,7 +123,7 @@ function api(app, wsServer, config) {
                     .replace('{DATA_SIZE}', dataSize);
                 res.send(page);
             })
-            .catch(err => res.send(err));
+            .catch(err => res.send(errorPage.replace(/{ERROR}/g, err)));
     });
 }
 
@@ -93,22 +131,24 @@ function download(app, wsServer, config) {
     app.get('/data/download.csv', (req, res) => {
         common.log('✨ GET: /data/download.csv', '', req.ip);
         res.header('Content-Type', 'text/csv');
-        get(`http://${sensor.ip}:${sensor.port}/data/download`).then(data =>
-            res.send(data)
-        );
+        get(`http://${sensor.ip}:${sensor.port}/data/download`)
+            .then(data => res.send(data))
+            .catch(err => res.send(errorPage.replace(/{ERROR}/g, err)));
     });
 
     app.get('/data/download.json', (req, res) => {
         common.log('✨ GET: /data/download.json', '', req.ip);
         res.header('Content-Type', 'application/json');
-        get(`http://${sensor.ip}:${sensor.port}/data/download`).then(data => {
-            let json = {};
-            data.split('\n').forEach(e => {
-                let items = e.split(',');
-                json[items[0]] = items[1];
-            });
-            res.send(JSON.stringify(json));
-        });
+        get(`http://${sensor.ip}:${sensor.port}/data/download`)
+            .then(data => {
+                let json = {};
+                data.split('\n').forEach(e => {
+                    let items = e.split(',');
+                    json[items[0]] = items[1];
+                });
+                res.send(JSON.stringify(json));
+            })
+            .catch(err => res.send(errorPage.replace(/{ERROR}/g, err)));
     });
 }
 

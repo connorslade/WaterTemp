@@ -54,7 +54,7 @@ const basePage = `
     </style>
 </head>
 <body style="font-family: Arial,sans-serif;">
-    <h1 class="title">System Status</h1>
+    <h1 class="title">System Status 1.1</h1>
     <p class="title">By Connor Slade :P</p>
     <h2><i class="cat fa fa-snowflake-o"></i> Web Server</h2>
     <p><i class="fa fa-code-fork"></i> <strong>Version:</strong> {VERSION}</p>
@@ -105,7 +105,7 @@ function api(app, wsServer, config) {
 module.exports = {
     loadThis: true,
     name: 'System Status',
-    version: '1.0',
+    version: '1.1',
     disableDefaultApi: false,
 
     onInit: () => {},
