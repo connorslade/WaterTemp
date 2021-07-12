@@ -2,7 +2,7 @@ const http = require('http');
 const common = require('../src/common');
 
 // System Status Plugin for Water temp system thing
-// V0.0 By Connor Slade 7/11/2021
+// V0.2 By Connor Slade 7/11/2021
 
 const sensor = {
     ip: 'localhost',
@@ -24,7 +24,7 @@ const basePage = `
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Get Data - V0.1</title>
+    <title>Get Data - V0.2</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
@@ -49,7 +49,7 @@ const basePage = `
     <p><i class="fa fa-hourglass-end"></i> Data End: {DATA_E}</p>
 
     <br>
-    <h2><i class="fa fa-database"></i> Download Data</h2>
+    <h2><i class="fa fa-database"></i> Download Data ({DATA_SIZE} kb)</h2>
     <a href="/data/download.csv" download="TemperatureData.csv">
     <button class="btn"><i class="fa fa-download"></i> Download CSV</button>
     </a>
@@ -69,6 +69,7 @@ function api(app, wsServer, config) {
         get(`http://${sensor.ip}:${sensor.port}/data/stats`)
             .then(data => {
                 data = JSON.parse(data);
+                let dataSize = Math.round(10 + (9 + data.length * 28) / 1024);
                 let page = basePage
                     .replace('{DATA_POINTS}', data.length)
                     .replace('{DATA_RATE}', data.rate)
@@ -80,7 +81,8 @@ function api(app, wsServer, config) {
                     .replace(
                         '{DATA_E}',
                         new Date(data.last * 1000).toDateString()
-                    );
+                    )
+                    .replace('{DATA_SIZE}', dataSize);
                 res.send(page);
             })
             .catch(err => res.send(err));
@@ -89,7 +91,7 @@ function api(app, wsServer, config) {
 
 function download(app, wsServer, config) {
     app.get('/data/download.csv', (req, res) => {
-        common.log('✨ GET: /data/download', '', req.ip);
+        common.log('✨ GET: /data/download.csv', '', req.ip);
         res.header('Content-Type', 'text/csv');
         get(`http://${sensor.ip}:${sensor.port}/data/download`).then(data =>
             res.send(data)
@@ -97,7 +99,7 @@ function download(app, wsServer, config) {
     });
 
     app.get('/data/download.json', (req, res) => {
-        common.log('✨ GET: /data/download', '', req.ip);
+        common.log('✨ GET: /data/download.json', '', req.ip);
         res.header('Content-Type', 'application/json');
         get(`http://${sensor.ip}:${sensor.port}/data/download`).then(data => {
             let json = {};
@@ -113,7 +115,7 @@ function download(app, wsServer, config) {
 module.exports = {
     loadThis: true,
     name: 'Get Data',
-    version: '0.0',
+    version: '0.2',
     disableDefaultApi: false,
 
     onInit: () => {},
