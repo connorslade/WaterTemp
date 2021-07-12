@@ -55,6 +55,57 @@ pub fn get_temp(
     ]
 }
 
+/// Run on GET: "/data/download"
+/// Download the current temperature history
+pub fn get_download(_req: &tiny_http::Request, log_file: &String) -> [String; 2] {
+    let history: Option<String> = sensor::get_history(log_file);
+    if history.is_none() {
+        return [
+            "Data logging is not enabled :/".to_string(),
+            "Content-type: text/plain".to_string(),
+        ];
+    }
+    [
+        format!("time,temp\n{}", history.unwrap()),
+        "Content-type: text/plain".to_string(),
+    ]
+}
+
+/// Run on GET: "/data/stats"
+/// Get statistics for the temperature history
+pub fn get_stats(_req: &tiny_http::Request, log_file: &String, rate: i64) -> [String; 2] {
+    let history: Option<String> = sensor::get_history(log_file);
+    if history.is_none() {
+        return [
+            "Data logging is not enabled :/".to_string(),
+            "Content-type: text/plain".to_string(),
+        ];
+    };
+    let history = history.unwrap();
+    let data: Vec<&str> = history.split('\n').collect();
+    let first: Vec<&str> = data[0].split(',').collect();
+    let last: Vec<&str> = data[data.len() - 2].split(',').collect();
+    let mut mean: f64 = 0.0;
+    for i in &data {
+        let items: Vec<&str> = i.split(',').collect();
+        if items.len() != 2 {
+            continue;
+        }
+        mean += items[1].parse::<f64>().unwrap();
+    }
+    [
+        format!(
+            "{{\"length\":{}, \"mean\": {}, \"first\":{}, \"last\":{}, \"rate\":{}}}",
+            data.len(),
+            mean / data.len() as f64,
+            first[0],
+            last[0],
+            60.0 / (rate as f64 / 1000.0 / 60.0)
+        ),
+        "Content-type: application/json".to_string(),
+    ]
+}
+
 /// Run on GET "/test"
 /// Make sure everything is working :P
 pub fn get_test(_req: &tiny_http::Request) -> [String; 2] {

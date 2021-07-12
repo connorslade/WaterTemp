@@ -10,7 +10,7 @@ mod logging;
 mod server;
 
 /// Server Version
-pub static VERSION: &str = "0.6";
+pub static VERSION: &str = "0.7";
 
 /// Main entry point
 fn main() {
@@ -71,7 +71,7 @@ fn main() {
     if logging {
         thread::spawn(move || {
             logging::start_data_logging(
-                &log_file[..],
+                &cfg.get("log_file").unwrap()[..],
                 log_delay,
                 debug,
                 cfg.get("dev_id").unwrap(),
@@ -85,6 +85,8 @@ fn main() {
         server::init(ip, port),
         debug,
         &dev_id[..],
+        log_delay,
+        &log_file,
         calibration,
         &event_log_cfg,
     );

@@ -29,6 +29,15 @@ fn get_sensor_data(dev_id: &str) -> String {
     sensor_data_lines[1].to_string()
 }
 
+/// Get data history
+pub fn get_history(log_file: &String) -> Option<String> {
+    let data = match fs::read_to_string(log_file) {
+        Ok(data) => Some(data),
+        Err(_) => None,
+    };
+    data
+}
+
 /// Get current temperature from sensor
 pub fn get_temperature(dev_id: &str, debug: bool, calibration: Option<f64>) -> f64 {
     let cal = calibration.unwrap_or(0.0);

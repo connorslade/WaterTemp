@@ -16,6 +16,8 @@ pub fn start(
     server: tiny_http::Server,
     debug: bool,
     dev_id: &str,
+    data_rate: i64,
+    log_file: &String,
     calibration: f64,
     event_log_cfg: &logging::LogCfg,
 ) {
@@ -32,6 +34,8 @@ pub fn start(
         match &request.url().to_lowercase()[..] {
             "/temp" => res = routes::get_temp(&request, dev_id, debug, calibration),
             "/test" => res = routes::get_test(&request),
+            "/data/download" => res = routes::get_download(&request, log_file),
+            "/data/stats" => res = routes::get_stats(&request, log_file, data_rate),
             _ => res = routes::not_found(&request),
         }
 
