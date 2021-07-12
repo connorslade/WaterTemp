@@ -20,18 +20,13 @@ function get(uri) {
     });
 }
 
-function get_date(epoch) {
-    dt = new Date(epoch);
-    return dt.toDateString();
-}
-
 const basePage = `
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Get Data - V0.0</title>
+    <title>Get Data - V0.1</title>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="index.css">
     <style>
         body * {
@@ -44,7 +39,6 @@ const basePage = `
 </head>
 <body style="font-family: Arial,sans-serif;">
     <h1 style="margin: 16px;">Get Data</h1>
-    <p>This Page is currently in beta.</p>
     <br>
     <h2><i class="fa fa-code"></i> Data Stats</h2>
     <p><i class="fa fa-area-chart"></i> Data Points: {DATA_POINTS}</p>
@@ -61,6 +55,9 @@ const basePage = `
     <a href="/data/download.json" download="TemperatureData.json">
     <button class="btn"><i class="fa fa-download"></i> Download JSON</button>
     </a>
+    <div class="footer">
+        <p class="footer-content">© Connor Slade · 2021 · V0.1 · <a href="https://github.com/Basicprogrammer10/WaterTemp">Github</a></p>
+    </div>
 </body>
 </html>
 `;

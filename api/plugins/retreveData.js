@@ -81,7 +81,6 @@ function onInit() {
 }
 
 function api(app, wsServer) {
-    app;
     let sockets = [];
     wsServer.on('connection', socket => {
         socket.on('message', message =>
