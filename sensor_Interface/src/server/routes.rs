@@ -65,8 +65,9 @@ pub fn get_download(_req: &tiny_http::Request, log_file: &String) -> [String; 2]
             "Content-type: text/plain".to_string(),
         ];
     }
+    let format_history: String = history.unwrap().replace("\n\n", "\n");
     [
-        format!("time,temp\n{}", history.unwrap()),
+        format!("time,temp\n{}", format_history),
         "Content-type: text/plain".to_string(),
     ]
 }

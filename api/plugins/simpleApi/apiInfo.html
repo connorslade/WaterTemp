@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Water Temp API</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-dark.css">
+        <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.1.0/build/highlight.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="index.css">
+        <script defer>hljs.highlightAll();</script>
+        <style>
+        @font-face {
+            font-family: "proxima-nova";
+            src: url("https://cdn.jsdelivr.net/npm/font-proxima-nova@1.0.1/fonts/ProximaNova-Regular.woff") format('woff');
+        }
+        @import url("https://cdn.jsdelivr.net/gh/tonsky/FiraCode@1.207/distr/fira_code.min.css");
+        body * {
+            text-align: left;
+            font-family: proxima-nova,Arial,sans-serif;
+            margin: 0;
+            margin-top: 0;
+        }
+        body {
+            width: 50%;
+            margin-left: 25%;
+            margin-top: 3%;
+        }
+        hr {
+            width: 268px;
+            margin: auto;
+        }
+        code {
+            padding: 2px 4px;
+            font-size: 95%;
+            color: #58a6ff;
+            background-color: #29292d;
+            border-radius: 4px;
+            font-family: Fira Code,proxima-nova,Arial,sans-serif;
+        }
+        .title {
+            text-align: center;
+            margin-left: 0;
+        }
+        .fa {
+            margin-left: 30px;
+        }
+        .item {
+            margin-left: 30px;
+        }
+        .cat {
+            margin-left: 0;
+        }
+    </style>
+    </head>
+    <body>
+        <h1 class="title">Water Temp API</h1>
+        <hr>
+        <br>
+        <h2> <i class="cat fa fa-info-circle"></i> Basic Info</h2>
+        <p class="item">This water temperature api is Restful and returns the temperature of the water, temperature history and lots other fun data!
+        The base url is <code>http://water.connorcode.com/api/</code> and the current api endpoints are: <code>/temp, /history</code>.
+        The data is returned in JSON format and is cached for 2 minutes to keep pressure on the sensor low.</p>
+        <br>
+        <h2> <i class="cat fa fa-globe"></i> API Endpoints</h2>
+        <h3> <i class="fa fa-list-ul"></i> GET /temp</h3>
+        <p class="item">This endpoint returns the current temperature in fahrenheit and if the data is cached.
+        A response may look like the following <code>{ "temp": 79.475, "cached": false }</code>.</p>
+        <h3> <i class="fa fa-list-ul"></i> GET /history</h3>
+        <p class="item">This endpoint returns all of the saved temperature data. The data is logged every minute. The time is in Unix Epoch time and the data is in fahrenheit.
+        The data is returned in a JSON object like the following: <code>{ "temp": {1625959169: 80.123, ...}, "cached": false }</code>.</p>
+        </p>
+        <br>
+        <h2> <i class="cat fa fa-code"></i> Examples</h2>
+        <p class="item">These are some examples of the api in action. There are in Python because it is easy to understand but this same logic will apply to any language.</p>
+        <h3> <i class="fa fa-thermometer-half"></i> Get the current lake temperature</h3>
+        <pre><code class="item language-python">import requests
+
+# Get data from the API
+data = requests.get('http://localhost:8080/api/temp')
+
+# Basic error handling
+if data.status_code != 200:
+    print(f'Error: {data.json()["error"]}')
+    exit(1)
+
+# Get the temperature from the data
+temp = data.json()['temp']
+
+# Print the data
+print(f'Current Temp: {temp}°F')</code></pre><br>
+        <h3> <i class="fa fa-history"></i> Get the temperature history</h3>
+        <pre><code class="item language-python">import requests
+
+# Get data from the API
+data = requests.get('http://localhost:8080/api/history')
+
+# Basic error handling
+if data.status_code != 200:
+    print(f'Error: {data.json()["error"]}')
+    exit(1)
+
+# Get the temperature section of the data
+data = data.json()['temp']
+
+# Loop over the data and sum the temperatures
+temp = 0
+for i in data:
+    temp += data[i]
+
+# Get the average temperature
+avg = temp / len(data)
+
+# Print the data
+print(f'Average Temp: {avg}°F')</code></pre>
+        <br>
+    </body>
+</html>

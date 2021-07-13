@@ -3,6 +3,11 @@ describe('Basic', () => {
         cy.wait(500);
         cy.visit('http://localhost:8080');
     });
+
+    it('Visits data get plugin is running', () => {
+        cy.wait(500);
+        cy.visit('http://localhost:8080/data');
+    });
 });
 
 // Check data is coming from API
