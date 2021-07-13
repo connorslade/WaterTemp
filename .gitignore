@@ -12,3 +12,5 @@ static/index.js.map
 static/lib/chat.js
 
 /sensor_Interface/target
+*.log
+*/sensor.wtl
