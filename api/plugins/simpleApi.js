@@ -13,7 +13,7 @@ const pluginConfig = {
 };
 
 // Load Api Info Page
-let basePage = []
+let basePage = [];
 basePage['index.html'] = fs.readFileSync('./plugins/simpleApi/index.html');
 basePage['index.css'] = fs.readFileSync('./plugins/simpleApi/index.css');
 
@@ -53,14 +53,14 @@ function api(app, wsServer, config) {
     // Api Docs
     app.get('/api', (req, res) => {
         common.log('🌐 GET: /api', '', req.ip);
-        res.type('html')
+        res.type('html');
         if (pluginConfig.docs) res.send(basePage['index.html']);
         else res.status(404).send('404 Not Found');
     });
 
     ['index.html', 'index.css'].forEach(file => {
         app.get(`/api/${file}`, (req, res) => {
-            res.type(file.split('.')[1])
+            res.type(file.split('.')[1]);
             common.log('🌐 GET: /api/' + file, '', req.ip);
             res.send(basePage[file]);
         });
@@ -100,6 +100,27 @@ function api(app, wsServer, config) {
                     if (date <= time) temp = data[e];
                 });
                 res.send({ temp: temp, cached: d[1] });
+            })
+            .catch(err => {
+                res.status(500);
+                res.send({ error: err });
+            });
+    });
+
+    // Get temperature stats
+    app.get('/api/stats', (req, res) => {
+        common.log('🌐 GET: /api/stats', '', req.ip);
+        getData(`http://${pluginConfig.ip}:${pluginConfig.port}/data/stats`)
+            .then(d => {
+                data = JSON.parse(d[0]);
+                res.send({
+                    length: data.length,
+                    mean: data.mean,
+                    first: data.first,
+                    last: data.last,
+                    rate: data.rate,
+                    cached: d[1]
+                });
             })
             .catch(err => {
                 res.status(500);

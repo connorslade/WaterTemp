@@ -17,7 +17,7 @@
         <br>
         <h2> <i class="cat fa fa-info-circle"></i> Basic Info</h2>
         <p class="item">This water temperature api is Restful and returns the temperature of the water, temperature history and lots other fun data!
-        The base url is <code>http://water.connorcode.com/api/</code> and the current api endpoints are: <code>/temp, /temp/:time, /history</code>.
+        The base url is <code>http://water.connorcode.com/api/</code> and the current api endpoints are: <code>/temp, /temp/:time, /stats, /history</code>.
         The data is returned in JSON format and is cached for 2 minutes to keep pressure on the sensor low.</p>
         <br>
         <h2> <i class="cat fa fa-globe"></i> API Endpoints</h2>
@@ -28,6 +28,10 @@
         <p class="item">This endpoint returns the temperature at a point in time in fahrenheit and if the response was cached.
         The :time parameter is a unix timestamp in seconds EX: <code>1625959170</code>. A response may look like the following 
         <code>{ "temp": 79.475, "cached": false }</code>. If there is no data for the time requested, the temp will be Null.
+        </p>
+        <h3> <i class="fa fa-list-ul"></i> GET /stats</h3>
+        <p class="item">This endpoint returns some stats about the data. Again the data is in fahrenheit and is cached. The date in from this endpoint
+        can all be calculated using the <code>/history</code> endpoint but this is more efficient. The response may look like the following: <code>{"length":23532,"mean":73.9687449291441785,"first":1625959169,"last":1626273206,"rate":60,"cached":false}</code>
         </p>
         <h3> <i class="fa fa-list-ul"></i> GET /history</h3>
         <p class="item">This endpoint returns all of the saved temperature data. The data is logged every minute. The time is in Unix Epoch time and the data is in fahrenheit.
