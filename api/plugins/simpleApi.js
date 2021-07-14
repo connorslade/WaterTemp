@@ -71,6 +71,35 @@ function api(app, wsServer, config) {
             });
     });
 
+    // Get the temperature at a specific time
+    app.get('/api/temp/:time', (req, res) => {
+        common.log('🌐 GET: /api/temp/:time', '', req.ip);
+        let time = new Date(parseInt(req.params.time) * 1000);
+        let temp = null;
+        getData(`http://${pluginConfig.ip}:${pluginConfig.port}/data/download`)
+            .then(d => {
+                data = {};
+                d[0].split('\n').forEach(e => {
+                    if (e != 'time,temp')
+                        data[parseInt(e.split(',')[0])] = parseFloat(
+                            e.split(',')[1]
+                        );
+                });
+                if (NaN in data) delete data[NaN];
+                Object.keys(data).forEach(e => {
+                    if (typeof e !== 'NaN'){
+                        date = new Date(e * 1000);
+                        if (date <= time) temp = data[e];
+                    }
+                });
+                res.send({ temp: temp, cached: d[1] });
+            })
+            .catch(err => {
+                res.status(500);
+                res.send({ error: err });
+            });
+    }); 
+
     // Get temperature history
     app.get('/api/history', (req, res) => {
         common.log('🌐 GET: /api/history', '', req.ip);

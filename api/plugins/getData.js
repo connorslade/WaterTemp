@@ -55,7 +55,9 @@ const basePage = `
     </a>
     <a href="/data/download.json" download="TemperatureData.json">
     <button class="btn"><i class="fa fa-download"></i> Download JSON</button>
-    </a>
+    </a><br>
+    <h2><i class="fa fa-code"></i> Access API</h2>
+    <p>This water temperature system thing <br>has a public api. Learn more <a href="/api">here</a>.</p>
     <div class="footer">
         <p class="footer-content">© Connor Slade · 2021 · V0.2 · <a href="https://github.com/Basicprogrammer10/WaterTemp">Github</a> · <a href="/">Home</a></p>
     </div>
@@ -90,7 +92,7 @@ const errorPage = `
     <h1 style="text-align: center;">Error 😓</h1>
     <br>
     <p>There was an error processing your request.</p>
-    <p>This problem was likely caused by the sensor server bring down...</p>
+    <p>This problem was likely caused by the sensor server being down...</p>
     <p>If the problem persists, please contact me at <a href="mailto:water@connorcode.com?subject=Error with Get Data Site&body={ERROR}">water@connorcode.com</a>.</p>
     <br>
     <p><strong>ERROR INFO:</strong> <code>{ERROR}</code></p>
