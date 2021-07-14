@@ -13,10 +13,9 @@ const pluginConfig = {
 };
 
 // Load Api Info Page
-const basePage = fs.readFileSync('./plugins/simpleApi/apiInfo.html', {
-    encoding: 'utf8',
-    flag: 'r'
-});
+let basePage = []
+basePage['index.html'] = fs.readFileSync('./plugins/simpleApi/index.html');
+basePage['index.css'] = fs.readFileSync('./plugins/simpleApi/index.css');
 
 // Get Request
 function get(uri) {
@@ -51,10 +50,20 @@ function getData(url) {
 }
 
 function api(app, wsServer, config) {
+    // Api Docs
     app.get('/api', (req, res) => {
         common.log('🌐 GET: /api', '', req.ip);
-        if (pluginConfig.docs) res.send(basePage);
+        res.type('html')
+        if (pluginConfig.docs) res.send(basePage['index.html']);
         else res.status(404).send('404 Not Found');
+    });
+
+    ['index.html', 'index.css'].forEach(file => {
+        app.get(`/api/${file}`, (req, res) => {
+            res.type(file.split('.')[1])
+            common.log('🌐 GET: /api/' + file, '', req.ip);
+            res.send(basePage[file]);
+        });
     });
 
     // Get current temperature
@@ -87,10 +96,8 @@ function api(app, wsServer, config) {
                 });
                 if (NaN in data) delete data[NaN];
                 Object.keys(data).forEach(e => {
-                    if (typeof e !== 'NaN'){
-                        date = new Date(e * 1000);
-                        if (date <= time) temp = data[e];
-                    }
+                    date = new Date(e * 1000);
+                    if (date <= time) temp = data[e];
                 });
                 res.send({ temp: temp, cached: d[1] });
             })
@@ -98,7 +105,7 @@ function api(app, wsServer, config) {
                 res.status(500);
                 res.send({ error: err });
             });
-    }); 
+    });
 
     // Get temperature history
     app.get('/api/history', (req, res) => {
