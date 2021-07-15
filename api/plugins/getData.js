@@ -36,6 +36,9 @@ const basePage = `
             margin: 0;
             margin-top: 0;
         }
+        a {
+            color: #58a6ff;
+        }
     </style>
 </head>
 <body style="font-family: Arial,sans-serif;">
@@ -85,6 +88,9 @@ const errorPage = `
             color: #c7254e;
             background-color: #f9f2f4;
             border-radius: 4px;
+        }
+        a {
+            color: #58a6ff;
         }
     </style>
 </head>

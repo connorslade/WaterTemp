@@ -29,7 +29,7 @@ body {
 }
 .unit:focus {
   background-color: rgba(57, 57, 62, 0.75);
-  filter: drop-shadow(0 0px 2px black);
+  filter: drop-shadow(0 0 2px black);
   transition: all 0.2s;
 }
 .unit p {
@@ -101,6 +101,9 @@ body {
   height: auto;
   text-align: center;
   display: inline-block;
+}
+.footer a {
+  color: #58a6ff;
 }
 
 p.footer-content {
