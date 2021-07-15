@@ -82,7 +82,29 @@ if temp is None:
     exit(1)
 
 # Print the data
-print(f'Temperature at {datetime.fromtimestamp(time)} is {temp}°F')</code></pre>
+print(f'Temperature at {datetime.fromtimestamp(time)} is {temp}°F')</code></pre><br>
+
+        <h3> <i class="fa fa-plus-circle"></i> Get data stats</h3>
+        <pre><code class="item language-python">import requests
+
+# Get data from the API
+data = requests.get('https://water.connorcode.com/api/stats')
+
+# Basic error handling
+if data.status_code != 200:
+    print(f'Error: {data.json()["error"]}')
+    exit(1)
+
+# Get the temperature from the data
+data = data.json()
+
+# Print some information from the data
+print(f'Data Points: {data["length"]}')
+print(f'Average Temp: {data["mean"]}°F')
+print(f'First Datapoint: {data["first"]}')
+print(f'Last Datapoint: {data["last"]}')
+print(f'Date Rate: {data["rate"]}/h')</code></pre><br>
+
         <h3> <i class="fa fa-history"></i> Get the temperature history</h3>
         <pre><code class="item language-python">import requests
 

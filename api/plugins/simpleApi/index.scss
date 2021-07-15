@@ -3,22 +3,27 @@
     src: url('https://cdn.jsdelivr.net/npm/font-proxima-nova@1.0.1/fonts/ProximaNova-Regular.woff')
         format('woff');
 }
+
 @import url('https://cdn.jsdelivr.net/gh/tonsky/FiraCode@1.207/distr/fira_code.min.css');
+
 body * {
     text-align: left;
     font-family: proxima-nova, Arial, sans-serif;
     margin: 0;
     margin-top: 0;
 }
+
 body {
     width: 50%;
     margin-left: 25%;
     margin-top: 3%;
 }
+
 hr {
     width: 268px;
     margin: auto;
 }
+
 code {
     padding: 2px 4px;
     font-size: 95%;
@@ -27,16 +32,24 @@ code {
     border-radius: 4px;
     font-family: Fira Code, proxima-nova, Arial, sans-serif;
 }
+
 .title {
     text-align: center;
     margin-left: 0;
 }
+
 .fa {
     margin-left: 30px;
 }
+
 .item {
     margin-left: 30px;
 }
+
 .cat {
     margin-left: 0;
+}
+
+a {
+    color: #58a6ff;
 }
