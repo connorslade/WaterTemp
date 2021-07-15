@@ -1,4 +1,4 @@
-const common = require('../src/common');
+const common = require('../../src/common');
 const http = require('http');
 const fs = require('fs');
 
@@ -42,10 +42,10 @@ function api(app, wsServer, config) {
                 data = JSON.parse(d[0]);
                 res.send({ temp: data.temp, cached: d[1] });
             })
-            // .catch(err => {
-            //     res.status(500);
-            //     res.send({ error: err });
-            // });
+            .catch(err => {
+                res.status(500);
+                res.send({ error: err });
+            });
     });
 
     // Get the temperature at a specific time
@@ -122,7 +122,7 @@ function api(app, wsServer, config) {
 module.exports = {
     loadThis: true,
     name: 'Simple Api',
-    version: '1.1',
+    version: '1.2',
     disableDefaultApi: false,
 
     onInit: () => {},

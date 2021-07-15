@@ -127,12 +127,12 @@ function getData(url, cacheTime) {
 }
 
 module.exports = {
-    getLogFileName: getLogFileName,
-    addToLog: addToLog,
-    getData: getData,
-    ipPad: ipPad,
-    pad: pad,
-    log: log,
-    get: get,
-    avg: avg
+    getLogFileName,
+    addToLog,
+    getData,
+    ipPad,
+    pad,
+    log,
+    get,
+    avg
 };

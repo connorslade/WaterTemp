@@ -88,7 +88,7 @@ function startTls(ip, port) {
 }
 
 module.exports = {
-    init: init,
-    start: start,
-    startTls: startTls
+    startTls,
+    start,
+    init
 };

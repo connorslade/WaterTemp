@@ -125,5 +125,5 @@ function webSocket(wsServer, debug) {
 }
 
 module.exports = {
-    webSocket: webSocket
+    webSocket
 };
