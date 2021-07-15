@@ -37,7 +37,8 @@ function api(app, wsServer, config) {
     // Get current temperature
     app.get('/api/temp', (req, res) => {
         common.log('🌐 GET: /api/temp', '', req.ip);
-        common.getData(`http://${pluginConfig.ip}:${pluginConfig.port}/temp`)
+        common
+            .getData(`http://${config.sensor.ip}:${config.sensor.port}/temp`)
             .then(d => {
                 data = JSON.parse(d[0]);
                 res.send({ temp: data.temp, cached: d[1] });
@@ -53,7 +54,10 @@ function api(app, wsServer, config) {
         common.log('🌐 GET: /api/temp/:time', '', req.ip);
         let time = new Date(parseInt(req.params.time) * 1000);
         let temp = null;
-        common.getData(`http://${pluginConfig.ip}:${pluginConfig.port}/data/download`)
+        common
+            .getData(
+                `http://${config.sensor.ip}:${config.sensor.port}/data/download`
+            )
             .then(d => {
                 data = {};
                 d[0].split('\n').forEach(e => {
@@ -78,7 +82,10 @@ function api(app, wsServer, config) {
     // Get temperature stats
     app.get('/api/stats', (req, res) => {
         common.log('🌐 GET: /api/stats', '', req.ip);
-        common.getData(`http://${pluginConfig.ip}:${pluginConfig.port}/data/stats`)
+        common
+            .getData(
+                `http://${config.sensor.ip}:${config.sensor.port}/data/stats`
+            )
             .then(d => {
                 data = JSON.parse(d[0]);
                 res.send({
@@ -87,6 +94,8 @@ function api(app, wsServer, config) {
                     first: data.first,
                     last: data.last,
                     rate: data.rate,
+                    max: data.max,
+                    min: data.min,
                     cached: d[1]
                 });
             })
@@ -99,7 +108,10 @@ function api(app, wsServer, config) {
     // Get temperature history
     app.get('/api/history', (req, res) => {
         common.log('🌐 GET: /api/history', '', req.ip);
-        common.getData(`http://${pluginConfig.ip}:${pluginConfig.port}/data/download`)
+        common
+            .getData(
+                `http://${config.sensor.ip}:${config.sensor.port}/data/download`
+            )
             .then(d => {
                 data = {};
                 let lines = d[0].split('\n');

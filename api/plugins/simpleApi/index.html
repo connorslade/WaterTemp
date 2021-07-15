@@ -31,7 +31,7 @@
         </p>
         <h3> <i class="fa fa-list-ul"></i> GET /stats</h3>
         <p class="item">This endpoint returns some stats about the data. Again the data is in fahrenheit and is cached. The date in from this endpoint
-        can all be calculated using the <code>/history</code> endpoint but this is more efficient. The response may look like the following: <code>{"length":23532,"mean":73.9687449291441785,"first":1625959169,"last":1626273206,"rate":60,"cached":false}</code>
+        can all be calculated using the <code>/history</code> endpoint but this is more efficient. The response may look like the following: <code>{"length":23532,"mean":73.9687449291441785,"first":1625959169,"last":1626273206,"rate":60,"min":75.3,"max": 80.1,"cached":false}</code>
         </p>
         <h3> <i class="fa fa-list-ul"></i> GET /history</h3>
         <p class="item">This endpoint returns all of the saved temperature data. The data is logged every minute. The time is in Unix Epoch time and the data is in fahrenheit.
@@ -103,6 +103,8 @@ print(f'Data Points: {data["length"]}')
 print(f'Average Temp: {data["mean"]}°F')
 print(f'First Datapoint: {data["first"]}')
 print(f'Last Datapoint: {data["last"]}')
+print(f'Last Datapoint: {data["min"]}')
+print(f'Last Datapoint: {data["max"]}')
 print(f'Date Rate: {data["rate"]}/h')</code></pre><br>
 
         <h3> <i class="fa fa-history"></i> Get the temperature history</h3>

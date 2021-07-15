@@ -31,6 +31,8 @@ function api(app, wsServer, config) {
                     .replace('{DATA_POINTS}', data.length)
                     .replace('{DATA_RATE}', data.rate)
                     .replace('{DATA_MEAN}', Math.round(data.mean * 1000) / 1000)
+                    .replace('{DATA_MIN}', Math.round(data.min * 1000) / 1000)
+                    .replace('{DATA_MAX}', Math.round(data.max * 1000) / 1000)
                     .replace(
                         '{DATE_S}',
                         new Date(data.first * 1000).toDateString()
@@ -86,7 +88,7 @@ function download(app, wsServer, config) {
 module.exports = {
     loadThis: true,
     name: 'Get Data',
-    version: '0.2',
+    version: '0.3',
     disableDefaultApi: false,
 
     onInit: () => {},
