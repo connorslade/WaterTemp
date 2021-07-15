@@ -39,6 +39,7 @@ function load(folder, config) {
 
     for (const pluginFolder of commandFolders) {
         if (config['plugins']['disabledPlugins'].includes(pluginFolder)) continue;
+        if (!fs.existsSync(`${folder}/${pluginFolder}/index.js`)) continue;
         const command = require(`../${folder}/${pluginFolder}/index`);
         const plugin = loadPlugin(pluginFolder, command);
         if (!plugin) continue;
