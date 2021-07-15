@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Get Data - V0.2</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" type="text/css" href="data/index.css">
+</head>
+<body style="font-family: Arial,sans-serif;">
+    <h1 style="margin: 16px;">Get Data</h1>
+    <br>
+    <h2><i class="fa fa-code"></i> Data Stats</h2>
+    <p><i class="fa fa-area-chart"></i> Data Points: {DATA_POINTS}</p>
+    <p><i class="fa fa-clock-o"></i> Data Rate: {DATA_RATE}/h</p>
+    <p><i class="fa fa-cogs"></i> Total Mean: {DATA_MEAN}°F</p>
+    <p><i class="fa fa-hourglass-start"></i> Data Start: {DATE_S}</p>
+    <p><i class="fa fa-hourglass-end"></i> Data End: {DATA_E}</p>
+
+    <br>
+    <h2><i class="fa fa-database"></i> Download Data ({DATA_SIZE} kb)</h2>
+    <a href="/data/download.csv" download="TemperatureData.csv">
+    <button class="btn"><i class="fa fa-download"></i> Download CSV</button>
+    </a>
+    <a href="/data/download.json" download="TemperatureData.json">
+    <button class="btn"><i class="fa fa-download"></i> Download JSON</button>
+    </a><br>
+    <h2><i class="fa fa-code"></i> Access API</h2>
+    <p>This water temperature system thing <br>has a public api. Learn more <a href="/api">here</a>.</p>
+    <div class="footer">
+        <p class="footer-content">© Connor Slade · 2021 · V0.2 · <a href="https://github.com/Basicprogrammer10/WaterTemp">Github</a> · <a href="/">Home</a></p>
+    </div>
+</body>
+</html>
