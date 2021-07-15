@@ -31,7 +31,7 @@ function init(plugins, debug) {
     if (debug)
         app.get('/EXIT', (req, res) => {
             res.send('ok');
-            common.log('[*] Server is exiting...');
+            common.log('🛑 Server is exiting...');
             process.exit(0);
         });
 
@@ -47,8 +47,8 @@ function init(plugins, debug) {
         }
     }
     if (!loadDefault) return;
-    common.log('[*] Loading default API');
-    require('./routes').webSocket(wsServer, config);
+    common.log('🚓 Loading default API');
+    require('./routes').webSocket(wsServer, debug);
 }
 
 /**

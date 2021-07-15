@@ -1,5 +1,9 @@
 {
-    "version": "0.3",
+    "version": "0.4",
+    "sensor": {
+        "ip": "localhost",
+        "port": 3030
+    },
     "server": {
         "ip": "0.0.0.0",
         "port": 8080,
