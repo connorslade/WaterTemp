@@ -5,16 +5,6 @@ const common = require('./common');
 let history = Array.from({ length: 10 }, () => 0);
 
 /**
- * Averages the numbers in an array
- * @param {Array} arr Array to average
- * @returns {Number}
- */
-function avg(arr) {
-    let sum = arr.reduce((a, b) => a + b, 0);
-    return sum / arr.length;
-}
-
-/**
  * Gets Init Data for Websocket Clients
  * @param {String} event Event Type
  * @returns {String}
@@ -34,7 +24,7 @@ function getData(event) {
                 let toSend = {
                     event: event,
                     tmp: data.temp,
-                    avg: avg(history)
+                    avg: common.avg(history)
                 };
                 if (event === 'init') toSend.data = history;
                 resolve(JSON.stringify(toSend));

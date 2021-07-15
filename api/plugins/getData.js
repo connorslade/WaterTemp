@@ -1,24 +1,7 @@
-const http = require('http');
 const common = require('../src/common');
 
 // System Status Plugin for Water temp system thing
-// V0.2 By Connor Slade 7/11/2021
-
-const sensor = {
-    ip: 'localhost',
-    port: 3030
-};
-
-function get(uri) {
-    return new Promise((resolve, reject) => {
-        let req = http.get(uri, response => {
-            let data = '';
-            response.on('data', chunk => (data += chunk));
-            response.on('end', () => resolve(data));
-        });
-        req.on('error', reject);
-    });
-}
+// V0.3 By Connor Slade 7/11/2021
 
 const basePage = `
 <!DOCTYPE html>
@@ -112,7 +95,8 @@ const errorPage = `
 function api(app, wsServer, config) {
     app.get('/data', (req, res) => {
         common.log('✨ GET: /data', '', req.ip);
-        get(`http://${sensor.ip}:${sensor.port}/data/stats`)
+        common
+            .get(`http://${config.sensor.ip}:${config.sensor.port}/data/stats`)
             .then(data => {
                 data = JSON.parse(data);
                 let dataSize = Math.round(10 + (9 + data.length * 28) / 1024);
@@ -139,7 +123,10 @@ function download(app, wsServer, config) {
     app.get('/data/download.csv', (req, res) => {
         common.log('✨ GET: /data/download.csv', '', req.ip);
         res.header('Content-Type', 'text/csv');
-        get(`http://${sensor.ip}:${sensor.port}/data/download`)
+        common
+            .get(
+                `http://${config.sensor.ip}:${config.sensor.port}/data/download`
+            )
             .then(data => res.send(data))
             .catch(err => res.send(errorPage.replace(/{ERROR}/g, err)));
     });
@@ -147,7 +134,10 @@ function download(app, wsServer, config) {
     app.get('/data/download.json', (req, res) => {
         common.log('✨ GET: /data/download.json', '', req.ip);
         res.header('Content-Type', 'application/json');
-        get(`http://${sensor.ip}:${sensor.port}/data/download`)
+        common
+            .get(
+                `http://${config.sensor.ip}:${config.sensor.port}/data/download`
+            )
             .then(data => {
                 let json = {};
                 data.split('\n').forEach(e => {
