@@ -1,4 +1,4 @@
-const common = require('../src/common');
+const common = require('../../src/common');
 const http = require('http');
 const fs = require('fs');
 
@@ -16,38 +16,6 @@ const pluginConfig = {
 let basePage = [];
 basePage['index.html'] = fs.readFileSync('./plugins/simpleApi/index.html');
 basePage['index.css'] = fs.readFileSync('./plugins/simpleApi/index.css');
-
-// Get Request
-function get(uri) {
-    return new Promise((resolve, reject) => {
-        let req = http.get(uri, response => {
-            let data = '';
-            response.on('data', chunk => (data += chunk));
-            response.on('end', () => resolve(data));
-        });
-        req.on('error', reject);
-    });
-}
-
-let cache = {};
-
-function getData(url) {
-    return new Promise((resolve, reject) => {
-        if (
-            url in cache &&
-            Date.now() - cache[url].time <= pluginConfig.cacheTime
-        )
-            resolve([cache[url].data, true]);
-        else {
-            get(url)
-                .then(data => {
-                    cache[url] = { data: data, time: Date.now() };
-                    resolve([data, false]);
-                })
-                .catch(reject);
-        }
-    });
-}
 
 function api(app, wsServer, config) {
     // Api Docs
@@ -69,7 +37,8 @@ function api(app, wsServer, config) {
     // Get current temperature
     app.get('/api/temp', (req, res) => {
         common.log('🌐 GET: /api/temp', '', req.ip);
-        getData(`http://${pluginConfig.ip}:${pluginConfig.port}/temp`)
+        common
+            .getData(`http://${config.sensor.ip}:${config.sensor.port}/temp`)
             .then(d => {
                 data = JSON.parse(d[0]);
                 res.send({ temp: data.temp, cached: d[1] });
@@ -85,7 +54,10 @@ function api(app, wsServer, config) {
         common.log('🌐 GET: /api/temp/:time', '', req.ip);
         let time = new Date(parseInt(req.params.time) * 1000);
         let temp = null;
-        getData(`http://${pluginConfig.ip}:${pluginConfig.port}/data/download`)
+        common
+            .getData(
+                `http://${config.sensor.ip}:${config.sensor.port}/data/download`
+            )
             .then(d => {
                 data = {};
                 d[0].split('\n').forEach(e => {
@@ -110,7 +82,10 @@ function api(app, wsServer, config) {
     // Get temperature stats
     app.get('/api/stats', (req, res) => {
         common.log('🌐 GET: /api/stats', '', req.ip);
-        getData(`http://${pluginConfig.ip}:${pluginConfig.port}/data/stats`)
+        common
+            .getData(
+                `http://${config.sensor.ip}:${config.sensor.port}/data/stats`
+            )
             .then(d => {
                 data = JSON.parse(d[0]);
                 res.send({
@@ -119,6 +94,8 @@ function api(app, wsServer, config) {
                     first: data.first,
                     last: data.last,
                     rate: data.rate,
+                    max: data.max,
+                    min: data.min,
                     cached: d[1]
                 });
             })
@@ -131,7 +108,10 @@ function api(app, wsServer, config) {
     // Get temperature history
     app.get('/api/history', (req, res) => {
         common.log('🌐 GET: /api/history', '', req.ip);
-        getData(`http://${pluginConfig.ip}:${pluginConfig.port}/data/download`)
+        common
+            .getData(
+                `http://${config.sensor.ip}:${config.sensor.port}/data/download`
+            )
             .then(d => {
                 data = {};
                 let lines = d[0].split('\n');
@@ -154,7 +134,7 @@ function api(app, wsServer, config) {
 module.exports = {
     loadThis: true,
     name: 'Simple Api',
-    version: '1.1',
+    version: '1.2',
     disableDefaultApi: false,
 
     onInit: () => {},

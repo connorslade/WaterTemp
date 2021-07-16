@@ -86,22 +86,34 @@ pub fn get_stats(_req: &tiny_http::Request, log_file: &String, rate: i64) -> [St
     let data: Vec<&str> = history.split('\n').collect();
     let first: Vec<&str> = data[0].split(',').collect();
     let last: Vec<&str> = data[data.len() - 2].split(',').collect();
+    let mut min = f64::MAX;
+    let mut max = 0.0;
     let mut mean: f64 = 0.0;
     for i in &data {
         let items: Vec<&str> = i.split(',').collect();
         if items.len() != 2 {
             continue;
         }
-        mean += items[1].parse::<f64>().unwrap();
+        let temp = items[1].parse::<f64>().unwrap();
+
+        mean += temp;
+        if temp > max {
+            max = temp;
+        }
+        if temp < min {
+            min = temp;
+        }
     }
     [
         format!(
-            "{{\"length\":{}, \"mean\": {}, \"first\":{}, \"last\":{}, \"rate\":{}}}",
+            "{{\"length\":{}, \"mean\": {}, \"first\":{}, \"last\":{}, \"rate\":{}, \"min\":{}, \"max\":{}}}",
             data.len(),
             mean / data.len() as f64,
             first[0],
             last[0],
-            60.0 / (rate as f64 / 1000.0 / 60.0)
+            60.0 / (rate as f64 / 1000.0 / 60.0),
+            min,
+            max
         ),
         "Content-type: application/json".to_string(),
     ]

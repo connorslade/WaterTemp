@@ -2,6 +2,9 @@ const config = require('./../config/config.json');
 const http = require('http');
 const fs = require('fs');
 
+// Init Cache
+let cache = {};
+
 /**
  * Send a Get Request
  * @async
@@ -71,8 +74,8 @@ function addToLog(text) {
         this.getLogFileName(config.log.log),
         `[${datetime}] ${text}` + '\n',
         'utf8',
-        (err) => {
-            if (err) console.log('📜 Error writing to Log File :/')
+        err => {
+            if (err) console.log('📜 Error writing to Log File :/');
         }
     );
 }
@@ -91,11 +94,45 @@ function log(type, text, ip) {
     this.addToLog(working);
 }
 
+/**
+ * Averages the numbers in an array
+ * @param {Array} arr Array to average
+ * @returns {Number}
+ */
+function avg(arr) {
+    let sum = arr.reduce((a, b) => a + b, 0);
+    return sum / arr.length;
+}
+
+/**
+ * Get request but with a cache
+ * @param {String} uri The Uri to get
+ * @param {Number} cache Length to cache data (IN MS)
+ * @returns {Promise<String>} Response
+ */
+function getData(url, cacheTime) {
+    cacheTime = cacheTime || 120000;
+    return new Promise((resolve, reject) => {
+        if (url in cache && Date.now() - cache[url].time <= cacheTime)
+            resolve([cache[url].data, true]);
+        else {
+            get(url)
+                .then(data => {
+                    cache[url] = { data: data, time: Date.now() };
+                    resolve([data, false]);
+                })
+                .catch(reject);
+        }
+    });
+}
+
 module.exports = {
-    pad: pad,
-    ipPad: ipPad,
-    getLogFileName: getLogFileName,
-    addToLog: addToLog,
-    log: log,
-    get: get
+    getLogFileName,
+    addToLog,
+    getData,
+    ipPad,
+    pad,
+    log,
+    get,
+    avg
 };
