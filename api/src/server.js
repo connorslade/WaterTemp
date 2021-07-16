@@ -21,6 +21,12 @@ if (config.server.rateLimit.enabled)
     );
 app.use(bodyParser.json());
 
+// Error 404 Page
+app.use((req, res) => {
+    res.status(404);
+    res.redirect(`/404?page=${req.url}`);
+});
+
 /**
  *  Setup Server
  * @param {Object} plugins Plugins to load
