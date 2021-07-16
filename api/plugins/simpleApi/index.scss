@@ -6,17 +6,20 @@
 
 @import url('https://cdn.jsdelivr.net/gh/tonsky/FiraCode@1.207/distr/fira_code.min.css');
 
-body * {
-    text-align: left;
-    font-family: proxima-nova, Arial, sans-serif;
-    margin: 0;
-    margin-top: 0;
+.footer-content {
+    text-align: center;
 }
 
 body {
-    width: 50%;
+    width: 50vw;
     margin-left: 25%;
     margin-top: 3%;
+    & * {
+        text-align: left;
+        font-family: proxima-nova, Arial, sans-serif;
+        margin: 0;
+        margin-top: 0;
+    }
 }
 
 hr {
@@ -52,4 +55,11 @@ code {
 
 a {
     color: #58a6ff;
+}
+
+.footer {
+    position: relative;
+    margin-left: 30px;
+    width: 50vw;
+    border-radius: 10px 10px 0 0;
 }

@@ -3,17 +3,20 @@
   font-family: "proxima-nova";
   src: url("https://cdn.jsdelivr.net/npm/font-proxima-nova@1.0.1/fonts/ProximaNova-Regular.woff") format("woff");
 }
+.footer-content {
+  text-align: center;
+}
+
+body {
+  width: 50vw;
+  margin-left: 25%;
+  margin-top: 3%;
+}
 body * {
   text-align: left;
   font-family: proxima-nova, Arial, sans-serif;
   margin: 0;
   margin-top: 0;
-}
-
-body {
-  width: 50%;
-  margin-left: 25%;
-  margin-top: 3%;
 }
 
 hr {
@@ -49,6 +52,13 @@ code {
 
 a {
   color: #58a6ff;
+}
+
+.footer {
+  position: relative;
+  margin-left: 30px;
+  width: 50vw;
+  border-radius: 10px 10px 0 0;
 }
 
 /*# sourceMappingURL=index.css.map */
