@@ -2,12 +2,12 @@ const common = require('../../src/common');
 const fs = require('fs');
 
 // System Status Plugin for Water temp system thing
-// V0.3 By Connor Slade 7/11/2021
+// V0.4 By Connor Slade 7/11/2021
 
 // Load Api Info Page
 let basePage = [];
 ['index.html', 'error.html', 'index.css'].forEach(file => {
-    basePage[file] = fs.readFileSync(`./plugins/getData/${file}`).toString();
+    basePage[file] = fs.readFileSync(`${__dirname}/${file}`).toString();
 });
 
 function api(app, wsServer, config) {
@@ -88,7 +88,7 @@ function download(app, wsServer, config) {
 module.exports = {
     loadThis: true,
     name: 'Get Data',
-    version: '0.3',
+    version: '0.4',
     disableDefaultApi: false,
 
     onInit: () => {},

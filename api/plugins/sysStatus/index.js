@@ -28,6 +28,7 @@ global.sensor_state = [false, 'N/A', ''];
 // [Last Update, Temperature]
 global.sensor_data = ['N/A', 'N/A'];
 
+// Load Html Page Data
 const basePage = fs.readFileSync(`${__dirname}/basePage.html`, 'utf8');
 
 function api(app, wsServer, config) {

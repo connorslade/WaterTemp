@@ -3,7 +3,7 @@ const http = require('http');
 const fs = require('fs');
 
 // Simple API plugin for Water Temperature Monitor
-// V1.1 By Connor Slade 7/11/2021
+// V1.3 By Connor Slade 7/11/2021
 
 const pluginConfig = {
     ip: 'localhost',
@@ -14,8 +14,8 @@ const pluginConfig = {
 
 // Load Api Info Page
 let basePage = [];
-basePage['index.html'] = fs.readFileSync('./plugins/simpleApi/index.html');
-basePage['index.css'] = fs.readFileSync('./plugins/simpleApi/index.css');
+basePage['index.html'] = fs.readFileSync(`${__dirname}/index.html`);
+basePage['index.css'] = fs.readFileSync(`${__dirname}/index.css`);
 
 function api(app, wsServer, config) {
     // Api Docs
@@ -134,7 +134,7 @@ function api(app, wsServer, config) {
 module.exports = {
     loadThis: true,
     name: 'Simple Api',
-    version: '1.2',
+    version: '1.3',
     disableDefaultApi: false,
 
     onInit: () => {},
