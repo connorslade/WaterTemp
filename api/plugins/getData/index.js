@@ -2,13 +2,24 @@ const common = require('../../src/common');
 const fs = require('fs');
 
 // System Status Plugin for Water temp system thing
-// V0.4 By Connor Slade 7/11/2021
+// V0.5 By Connor Slade 7/11/2021
 
 // Load Api Info Page
 let basePage = [];
 ['index.html', 'error.html', 'index.css'].forEach(file => {
     basePage[file] = fs.readFileSync(`${__dirname}/${file}`).toString();
 });
+
+function dateUnit(sizeKB) {
+    let units = ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    let unitIndex = 0;
+    while (sizeKB > 1024) {
+        if (unitIndex + 1 > units.length) break;
+        sizeKB /= 1024;
+        unitIndex++;
+    }
+    return `${sizeKB.toFixed(2)} ${units[unitIndex]}`;
+}
 
 function api(app, wsServer, config) {
     // Serve some static files
@@ -23,7 +34,9 @@ function api(app, wsServer, config) {
     app.get('/data', (req, res) => {
         common.log('✨ GET: /data', '', req.ip);
         common
-            .getData(`http://${config.sensor.ip}:${config.sensor.port}/data/stats`)
+            .getData(
+                `http://${config.sensor.ip}:${config.sensor.port}/data/stats`
+            )
             .then(data => {
                 data = JSON.parse(data[0]);
                 let dataSize = Math.round(10 + (9 + data.length * 28) / 1024);
@@ -41,7 +54,7 @@ function api(app, wsServer, config) {
                         '{DATA_E}',
                         new Date(data.last * 1000).toDateString()
                     )
-                    .replace('{DATA_SIZE}', dataSize);
+                    .replace('{DATA_SIZE}', dateUnit(dataSize));
                 res.send(page);
             })
             .catch(err =>
@@ -88,7 +101,7 @@ function download(app, wsServer, config) {
 module.exports = {
     loadThis: true,
     name: 'Get Data',
-    version: '0.4',
+    version: '0.5',
     disableDefaultApi: false,
 
     onInit: () => {},
