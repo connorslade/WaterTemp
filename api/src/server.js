@@ -25,6 +25,19 @@ function init(plugins, debug) {
             process.exit(0);
         });
 
+    // Serve static content
+    if (config.server.static.serveStatic)
+        app.use(express.static(config.server.static.staticFolder));
+
+    // Add Rate-Limiting
+    if (config.server.rateLimit.enabled)
+        app.use(
+            rateLimit({
+                windowMs: config.server.rateLimit.window,
+                max: config.server.rateLimit.max
+            })
+        );
+
     // Load plugins
     let loadDefault = true;
     for (const key in plugins) {
@@ -36,15 +49,6 @@ function init(plugins, debug) {
             }
         }
     }
-    if (config.server.static.serveStatic)
-        app.use(express.static(config.server.static.staticFolder));
-    if (config.server.rateLimit.enabled)
-        app.use(
-            rateLimit({
-                windowMs: config.server.rateLimit.window,
-                max: config.server.rateLimit.max
-            })
-        );
     if (!loadDefault) return;
     common.log('🚓 Loading default API');
     require('./routes').webSocket(wsServer, debug);
