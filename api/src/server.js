@@ -17,7 +17,6 @@ if (config.server.rateLimit.enabled)
             max: config.server.rateLimit.max
         })
     );
-app.use(bodyParser.json());
 
 /**
  *  Setup Server
