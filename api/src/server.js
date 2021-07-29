@@ -10,22 +10,6 @@ const fs = require('fs');
 
 const wsServer = new ws.Server({ noServer: true });
 const app = express();
-if (config.server.static.serveStatic)
-    app.use(express.static(config.server.static.staticFolder));
-if (config.server.rateLimit.enabled)
-    app.use(
-        rateLimit({
-            windowMs: config.server.rateLimit.window,
-            max: config.server.rateLimit.max
-        })
-    );
-app.use(bodyParser.json());
-
-// // Error 404 Page
-// app.use((req, res) => {
-//     res.status(404);
-//     res.redirect(`/404?page=${req.url}`);
-// });
 
 /**
  *  Setup Server
@@ -40,6 +24,19 @@ function init(plugins, debug) {
             common.log('🛑 Server is exiting...');
             process.exit(0);
         });
+
+    // Serve static content
+    if (config.server.static.serveStatic)
+        app.use(express.static(config.server.static.staticFolder));
+
+    // Add Rate-Limiting
+    if (config.server.rateLimit.enabled)
+        app.use(
+            rateLimit({
+                windowMs: config.server.rateLimit.window,
+                max: config.server.rateLimit.max
+            })
+        );
 
     // Load plugins
     let loadDefault = true;
@@ -66,7 +63,11 @@ function start(ip, port) {
     ).on('upgrade', (request, socket, head) => {
         wsServer.handleUpgrade(request, socket, head, socket => {
             wsServer.emit('connection', socket, request);
-            common.log(`✔ WebSocket Connected`, '', socket._socket.remoteAddress);
+            common.log(
+                `✔ WebSocket Connected`,
+                '',
+                socket._socket.remoteAddress
+            );
         });
     });
 }
