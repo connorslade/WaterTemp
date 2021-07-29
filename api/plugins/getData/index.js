@@ -2,7 +2,7 @@ const common = require('../../src/common');
 const fs = require('fs');
 
 // System Status Plugin for Water temp system thing
-// V0.5 By Connor Slade 7/11/2021
+// V0.6 By Connor Slade 7/11/2021
 
 // Load Api Info Page
 let basePage = [];
@@ -10,7 +10,7 @@ let basePage = [];
     basePage[file] = fs.readFileSync(`${__dirname}/${file}`).toString();
 });
 
-function dateUnit(sizeKB) {
+function dataUnit(sizeKB) {
     let units = ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     let unitIndex = 0;
     while (sizeKB > 1024) {
@@ -54,7 +54,7 @@ function api(app, wsServer, config) {
                         '{DATA_E}',
                         new Date(data.last * 1000).toDateString()
                     )
-                    .replace('{DATA_SIZE}', dateUnit(dataSize));
+                    .replace('{DATA_SIZE}', dataUnit(dataSize));
                 res.send(page);
             })
             .catch(err =>
@@ -71,7 +71,22 @@ function download(app, wsServer, config) {
             .getData(
                 `http://${config.sensor.ip}:${config.sensor.port}/data/download`
             )
-            .then(data => res.send(data[0]))
+            .then(data => {
+                data = data[0];
+                data = data.split('\n');
+                data.shift();
+                data.pop();
+                data.forEach((e, i) => {
+                    e = e.split(',');
+                    e.push(e[1]);
+                    e[1] = new Date(e[0] * 1000)
+                        .toLocaleString()
+                        .replace(',', '');
+                    data[i] = e.join(',');
+                });
+                data.unshift('epoch,time,temp');
+                res.send(data.join('\n'));
+            })
             .catch(err =>
                 res.send(basePage['error.html'].replace(/{ERROR}/g, err))
             );
@@ -101,7 +116,7 @@ function download(app, wsServer, config) {
 module.exports = {
     loadThis: true,
     name: 'Get Data',
-    version: '0.5',
+    version: '0.6',
     disableDefaultApi: false,
 
     onInit: () => {},
