@@ -1,7 +1,8 @@
 // Plugin to get stats on website visits
-// Version 0.0 By Connor Slade :P
+// Version 0.1 By Connor Slade :P
 
 const fs = require('fs');
+const crypto = require('crypto');
 
 const common = require('../../src/common');
 
@@ -13,11 +14,21 @@ const localConfig = {
 
     // How often to save data to disk
     // As this is not critical, it is set to 10 minutes
-    saveInterval: 1000 * 60 * 5,
+    saveInterval: 1000 * 60 * 10,
+
+    // Enables an api to get stats remotely
+    // Requires a key to be set in the config
+    publicApi: {
+        enabled: false,
+
+        // The key is a sha256 hash of the key you want to use
+        // When making a request, the key will be sent in the header 'auth'
+        key: '2f3e0736b8e4fb1a4e14c809640f3cf6108ec4ba473338263140396a0637c3f3'
+    },
 
     // Enable Debug Mode
     // Will print extra info to console
-    debug: true
+    debug: false
 };
 
 let newData = [];
@@ -65,12 +76,35 @@ function api(app, wsServer, config) {
         });
         next();
     });
+
+    // Optional Public API
+    if (!localConfig.publicApi.enabled) return;
+    app.get('/analytics', (req, res) => {
+        if (!('auth' in req.headers)) {
+            res.status(401).send('Unauthorized');
+            return;
+        }
+        let sha256 = crypto.createHash('sha256');
+        sha256.update(req.headers.auth, 'utf8');
+        if (sha256.digest('hex') !== localConfig.publicApi.key) {
+            res.status(401).send('Incorrect Auth Key');
+            return;
+        }
+        fs.readFile(localConfig.dataFile, 'utf8', (err, dataStr) => {
+            if (err) common.log(`🛑 Error Reading Data File: ${err}`);
+            res.send({
+                time: new Date(),
+                version: 0.1,
+                data: JSON.parse(dataStr)
+            });
+        });
+    });
 }
 
 module.exports = {
     loadThis: true,
     name: 'Basic Analytics',
-    version: '0.0',
+    version: '0.1',
     disableDefaultApi: false,
 
     onInit: init,
