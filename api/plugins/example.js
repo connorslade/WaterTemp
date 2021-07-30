@@ -20,7 +20,7 @@ module.exports = {
         // app is express app
         // wsServer is WebSocket server
         // Config is loaded from config/config.json
-        (app, wsServer, config) => {
+        (app, wsServer, config, debug) => {
             app.get('/test', (req, res) => {
                 // Example Express Get Function
                 res.send('It Works!!!');

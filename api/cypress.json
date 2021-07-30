@@ -3,5 +3,9 @@
     "retries": {
         "runMode": 3,
         "openMode": 0
-    }
+    },
+    "testFiles": [
+        "*spec.js",
+        "plugins/*spec.js"
+    ]
 }
