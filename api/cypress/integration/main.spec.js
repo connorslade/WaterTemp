@@ -121,9 +121,3 @@ describe('Chart', () => {
             });
     });
 });
-
-describe('EXIT', () => {
-    it('Stop server now that tests are done', () => {
-        cy.visit('localhost:8080/EXIT');
-    });
-});
