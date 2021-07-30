@@ -19,14 +19,27 @@ function load(folder, config) {
     let plugins = {};
     let loadedPlugins = 0;
     common.log('🔌 Loading Plugins');
-    const commandFiles = fs
-        .readdirSync(folder)
-        .filter(file => file.endsWith('.js'));
-
+    // Load Plugins from folders
     const commandFolders = fs
         .readdirSync(folder, { withFileTypes: true })
         .filter(dirent => dirent.isDirectory())
         .map(dirent => dirent.name);
+
+    // Load Plugins from files
+    const commandFiles = fs
+        .readdirSync(folder)
+        .filter(file => file.endsWith('.js'));
+
+    for (const pluginFolder of commandFolders) {
+        if (config['plugins']['disabledPlugins'].includes(pluginFolder))
+            continue;
+        if (!fs.existsSync(`${folder}/${pluginFolder}/index.js`)) continue;
+        const command = require(`../${folder}/${pluginFolder}/index`);
+        const plugin = loadPlugin(pluginFolder, command);
+        if (!plugin) continue;
+        loadedPlugins++;
+        plugins[pluginFolder] = plugin;
+    }
 
     for (const file of commandFiles) {
         if (config['plugins']['disabledPlugins'].includes(file)) continue;
@@ -35,16 +48,6 @@ function load(folder, config) {
         if (!plugin) continue;
         loadedPlugins++;
         plugins[file] = plugin;
-    }
-
-    for (const pluginFolder of commandFolders) {
-        if (config['plugins']['disabledPlugins'].includes(pluginFolder)) continue;
-        if (!fs.existsSync(`${folder}/${pluginFolder}/index.js`)) continue;
-        const command = require(`../${folder}/${pluginFolder}/index`);
-        const plugin = loadPlugin(pluginFolder, command);
-        if (!plugin) continue;
-        loadedPlugins++;
-        plugins[pluginFolder] = plugin;
     }
 
     common.log(`🔌 ${loadedPlugins} plugins loaded`);

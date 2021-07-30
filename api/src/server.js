@@ -25,10 +25,6 @@ function init(plugins, debug) {
             process.exit(0);
         });
 
-    // Serve static content
-    if (config.server.static.serveStatic)
-        app.use(express.static(config.server.static.staticFolder));
-
     // Add Rate-Limiting
     if (config.server.rateLimit.enabled)
         app.use(
@@ -49,6 +45,11 @@ function init(plugins, debug) {
             }
         }
     }
+
+    // Serve static content
+    if (config.server.static.serveStatic)
+        app.use(express.static(config.server.static.staticFolder));
+
     if (!loadDefault) return;
     common.log('🚓 Loading default API');
     require('./routes').webSocket(wsServer, debug);
