@@ -25,7 +25,7 @@ function init(plugins, debug) {
         });
 
     // Add Rate-Limiting
-    if (config.server.rateLimit.enabled)
+    if (config.server.rateLimit.enabled && !debug)
         app.use(
             rateLimit({
                 windowMs: config.server.rateLimit.window,
