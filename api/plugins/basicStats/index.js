@@ -60,7 +60,13 @@ function init() {
     }, localConfig.saveInterval);
 }
 
-function api(app, wsServer, config) {
+function api(app, wsServer, config, debug) {
+    // If in debug mode, use known values for testing
+    if (debug) {
+        localConfig.publicApi.enabled = true;
+        localConfig.key = '2f3e0736b8e4fb1a4e14c809640f3cf6108ec4ba473338263140396a0637c3f3';
+    }
+
     // Log some info about each request made to the server
     app.use((req, res, next) => {
         if (localConfig.debug)
