@@ -34,8 +34,10 @@ jobs:
         working-directory: ./api
         run: npx cypress run
 
-      - name: Shutdown Sensor Interface
-        run: curl http://localhost:3030/EXIT
+      - name: Shutdown Servers
+        run: |
+          curl http://localhost:3030/EXIT
+          curl http://localhost:8080/EXIT
 
   runRustTests:
     name: Run Rust Unit Tests
