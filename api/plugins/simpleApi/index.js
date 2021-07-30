@@ -6,8 +6,6 @@ const fs = require('fs');
 // V1.3 By Connor Slade 7/11/2021
 
 const pluginConfig = {
-    ip: 'localhost',
-    port: 3030,
     cacheTime: 120000,
     docs: true
 };
@@ -38,7 +36,10 @@ function api(app, wsServer, config) {
     app.get('/api/temp', (req, res) => {
         common.log('🌐 GET: /api/temp', '', req.ip);
         common
-            .getData(`http://${config.sensor.ip}:${config.sensor.port}/temp`)
+            .getData(
+                `http://${config.sensor.ip}:${config.sensor.port}/temp`,
+                pluginConfig.cacheTime
+            )
             .then(d => {
                 data = JSON.parse(d[0]);
                 res.send({ temp: data.temp, cached: d[1] });
@@ -56,7 +57,8 @@ function api(app, wsServer, config) {
         let temp = null;
         common
             .getData(
-                `http://${config.sensor.ip}:${config.sensor.port}/data/download`
+                `http://${config.sensor.ip}:${config.sensor.port}/data/download`,
+                pluginConfig.cacheTime
             )
             .then(d => {
                 data = {};
@@ -84,7 +86,8 @@ function api(app, wsServer, config) {
         common.log('🌐 GET: /api/stats', '', req.ip);
         common
             .getData(
-                `http://${config.sensor.ip}:${config.sensor.port}/data/stats`
+                `http://${config.sensor.ip}:${config.sensor.port}/data/stats`,
+                pluginConfig.cacheTime
             )
             .then(d => {
                 data = JSON.parse(d[0]);
@@ -110,7 +113,8 @@ function api(app, wsServer, config) {
         common.log('🌐 GET: /api/history', '', req.ip);
         common
             .getData(
-                `http://${config.sensor.ip}:${config.sensor.port}/data/download`
+                `http://${config.sensor.ip}:${config.sensor.port}/data/download`,
+                pluginConfig.cacheTime
             )
             .then(d => {
                 data = {};
