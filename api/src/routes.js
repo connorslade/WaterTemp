@@ -4,6 +4,9 @@ const common = require('./common');
 // Create new array to hold history data
 let history = Array.from({ length: 10 }, () => 0);
 
+// Sensor Address
+let sen = `http://${config.sensor.ip}:${config.sensor.port}`;
+
 /**
  * Gets Init Data for Websocket Clients
  * @param {String} event Event Type
@@ -12,22 +15,28 @@ let history = Array.from({ length: 10 }, () => 0);
 function getData(event) {
     return new Promise((resolve, reject) => {
         common
-            .get(`http://${config.sensor.ip}:${config.sensor.port}/temp`)
-            .then(data => {
-                data = JSON.parse(data);
-                history.push(data.temp);
-                history.shift();
-                global.sensor_data = [
-                    new Date().toLocaleTimeString(),
-                    data.temp
-                ];
-                let toSend = {
-                    event: event,
-                    tmp: data.temp,
-                    avg: common.avg(history)
-                };
-                if (event === 'init') toSend.data = history;
-                resolve(JSON.stringify(toSend));
+            .getData(`${sen}/data/stats`, 300000)
+            .then(stats => {
+                stats = JSON.parse(stats[0]);
+                common
+                    .get(`${sen}/temp`)
+                    .then(data => {
+                        data = JSON.parse(data);
+                        history.push(data.temp);
+                        history.shift();
+                        global.sensor_data = [
+                            new Date().toLocaleTimeString(),
+                            data.temp
+                        ];
+                        let toSend = {
+                            event: event,
+                            tmp: data.temp,
+                            avg: stats.mean
+                        };
+                        if (event === 'init') toSend.data = history;
+                        resolve(JSON.stringify(toSend));
+                    })
+                    .catch(reject);
             })
             .catch(reject);
     });
@@ -39,7 +48,7 @@ function getData(event) {
  */
 function init() {
     common
-        .get(`http://${config.sensor.ip}:${config.sensor.port}/test`)
+        .get(`${sen}/test`)
         .then(data => {
             data = JSON.parse(data);
             common.log('✅ Connection with Sensor Server Initialized');
