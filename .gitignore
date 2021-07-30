@@ -5,6 +5,7 @@ api/cypress/fixtures
 api/cypress/plugins
 api/cypress/videos
 api/cypress/screenshots
+api/cypress/downloads
 api/certs/server.*
 
 static/index.js
