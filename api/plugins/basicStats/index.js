@@ -1,5 +1,5 @@
 // Plugin to get stats on website visits
-// Version 0.1 By Connor Slade :P
+// Version 0.2 By Connor Slade :P
 
 const fs = require('fs');
 const crypto = require('crypto');
@@ -60,7 +60,13 @@ function init() {
     }, localConfig.saveInterval);
 }
 
-function api(app, wsServer, config) {
+function api(app, wsServer, config, debug) {
+    // If in debug mode, use known values for testing
+    if (debug) {
+        localConfig.publicApi.enabled = true;
+        localConfig.key = '2f3e0736b8e4fb1a4e14c809640f3cf6108ec4ba473338263140396a0637c3f3';
+    }
+
     // Log some info about each request made to the server
     app.use((req, res, next) => {
         if (localConfig.debug)
@@ -94,8 +100,8 @@ function api(app, wsServer, config) {
             if (err) common.log(`🛑 Error Reading Data File: ${err}`);
             res.send({
                 time: new Date(),
-                version: 0.1,
-                data: JSON.parse(dataStr)
+                version: 0.2,
+                data: JSON.parse(dataStr).concat(newData)
             });
         });
     });
@@ -104,7 +110,7 @@ function api(app, wsServer, config) {
 module.exports = {
     loadThis: true,
     name: 'Basic Analytics',
-    version: '0.1',
+    version: '0.2',
     disableDefaultApi: false,
 
     onInit: init,
