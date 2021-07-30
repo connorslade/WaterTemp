@@ -42,7 +42,7 @@ function api(app, wsServer, config) {
             )
             .then(data => {
                 data = JSON.parse(data[0]);
-                let dataSize = 10 + (9 + data.length * 28);
+                let dataSize = 10 + (9 + data.length * 50.47);
                 let page = basePage['index.html']
                     .replace('{DATA_POINTS}', data.length)
                     .replace('{DATA_RATE}', data.rate)
