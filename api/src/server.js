@@ -1,7 +1,6 @@
 const config = require('./../config/config.json');
 
 const rateLimit = require('express-rate-limit');
-const bodyParser = require('body-parser');
 const express = require('express');
 const common = require('./common');
 const https = require('https');

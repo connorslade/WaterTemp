@@ -19,16 +19,14 @@ function load(folder, config) {
     let plugins = {};
     let loadedPlugins = 0;
     common.log('🔌 Loading Plugins');
-    // Load Plugins from folders
+    const commandFiles = fs
+        .readdirSync(folder)
+        .filter(file => file.endsWith('.js'));
+
     const commandFolders = fs
         .readdirSync(folder, { withFileTypes: true })
         .filter(dirent => dirent.isDirectory())
         .map(dirent => dirent.name);
-
-    // Load Plugins from files
-    const commandFiles = fs
-        .readdirSync(folder)
-        .filter(file => file.endsWith('.js'));
 
     for (const pluginFolder of commandFolders) {
         if (config['plugins']['disabledPlugins'].includes(pluginFolder))
