@@ -9,7 +9,7 @@ module.exports = {
     version: '1.0', // Plugin Version
     disableDefaultApi: false, // Disables all default Api Functions
 
-    onInit: function () {
+    onInit: () => {
         // Function run once on plugin load
         // Lets console log some *very* important information
         common.log('Hello World :P');
@@ -20,8 +20,8 @@ module.exports = {
         // app is express app
         // wsServer is WebSocket server
         // Config is loaded from config/config.json
-        function (app, wsServer, config) {
-            app.get('/test', function (req, res) {
+        (app, wsServer, config) => {
+            app.get('/test', (req, res) => {
                 // Example Express Get Function
                 res.send('It Works!!!');
             });

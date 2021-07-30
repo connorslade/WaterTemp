@@ -30,7 +30,7 @@ function api(app, wsServer, config) {
             common.log('🏮 Redirecting Http Traffic', '', req.ip);
             res.redirect('https://' + req.headers.host + req.url);
         })
-        .listen(localConfig.port, localConfig.ip, function () {
+        .listen(localConfig.port, localConfig.ip, () => {
             common.log(
                 `🐍 Serving http://${localConfig.ip}:${localConfig.port}/`
             );

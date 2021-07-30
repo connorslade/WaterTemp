@@ -105,7 +105,7 @@ function webSocket(wsServer, debug) {
                 socket._socket.remoteAddress
             )
         );
-        socket.on('close', function () {
+        socket.on('close', () => {
             common.log(
                 '❌ WebSocket Disconnected',
                 '',
@@ -117,7 +117,7 @@ function webSocket(wsServer, debug) {
         getData('init').then(data => socket.send(data));
     });
 
-    setInterval(function () {
+    setInterval(() => {
         getData('update')
             .then(data => sockets.forEach(socket => socket.send(data)))
             .catch(e => common.log('❌ Error', e));
