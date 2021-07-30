@@ -1,37 +1,24 @@
 const common = require('../../src/common');
-const http = require('http');
 const fs = require('fs');
 
 // Simple API plugin for Water Temperature Monitor
-// V1.3 By Connor Slade 7/11/2021
+// V1.4 By Connor Slade 7/11/2021
 
 const pluginConfig = {
     cacheTime: 120000,
     docs: true
 };
 
-// Load Api Info Page
 let basePage = [];
-basePage['index.html'] = fs.readFileSync(`${__dirname}/index.html`);
-basePage['index.css'] = fs.readFileSync(`${__dirname}/index.css`);
+
+function init() {
+    // Load Api Info Page (Static Content)
+    if (!pluginConfig.docs) return;
+    basePage['index.html'] = fs.readFileSync(`${__dirname}/index.html`);
+    basePage['index.css'] = fs.readFileSync(`${__dirname}/index.css`);
+}
 
 function api(app, wsServer, config) {
-    // Api Docs
-    app.get('/api', (req, res) => {
-        common.log('🌐 GET: /api', '', req.ip);
-        res.type('html');
-        if (pluginConfig.docs) res.send(basePage['index.html']);
-        else res.status(404).send('404 Not Found');
-    });
-
-    ['index.html', 'index.css'].forEach(file => {
-        app.get(`/api/${file}`, (req, res) => {
-            res.type(file.split('.')[1]);
-            common.log('🌐 GET: /api/' + file, '', req.ip);
-            res.send(basePage[file]);
-        });
-    });
-
     // Get current temperature
     app.get('/api/temp', (req, res) => {
         common.log('🌐 GET: /api/temp', '', req.ip);
@@ -133,15 +120,31 @@ function api(app, wsServer, config) {
                 res.send({ error: err });
             });
     });
+
+    // Api Docs
+    if (!pluginConfig.docs) return;
+    app.get('/api', (req, res) => {
+        common.log('🌐 GET: /api', '', req.ip);
+        res.type('html');
+        res.send(basePage['index.html']);
+    });
+
+    ['index.html', 'index.css'].forEach(file => {
+        app.get(`/api/${file}`, (req, res) => {
+            res.type(file.split('.')[1]);
+            common.log('🌐 GET: /api/' + file, '', req.ip);
+            res.send(basePage[file]);
+        });
+    });
 }
 
 module.exports = {
     loadThis: true,
     name: 'Simple Api',
-    version: '1.3',
+    version: '1.4',
     disableDefaultApi: false,
 
-    onInit: () => {},
+    onInit: init,
 
     api: [api]
 };
