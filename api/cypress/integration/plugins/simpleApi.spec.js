@@ -1,4 +1,4 @@
-const simpleAPi = require('../../../plugins/simpleAPi/index');
+const simpleAPi = require('../../../plugins/simpleApi/index');
 
 describe('Basic', () => {
     it('Visits Api Docs Page', () => {
