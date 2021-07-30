@@ -24,6 +24,7 @@ describe('Check Version', () => {
     });
 });
 
+// Test the download buttons
 describe('Data Download', () => {
     it('Download CSV', () => {
         cy.visit('http://localhost:8080/data');
@@ -36,6 +37,7 @@ describe('Data Download', () => {
     });
 });
 
+// Make sure the data has been inserted into the site
 describe('Stats data', () => {
     it('Data Points', () => {
         cy.visit('http://localhost:8080/data');

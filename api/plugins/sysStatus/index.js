@@ -20,16 +20,20 @@ function secondsToHms(d) {
     );
 }
 
-// Define some global variables
+let basePage;
 
-// [Connected, Version, Message]
-global.sensor_state = [false, 'N/A', ''];
+function init() {
+    // Define some global variables
 
-// [Last Update, Temperature]
-global.sensor_data = ['N/A', 'N/A'];
+    // [Connected, Version, Message]
+    global.sensor_state = [false, 'N/A', ''];
 
-// Load Html Page Data
-const basePage = fs.readFileSync(`${__dirname}/basePage.html`, 'utf8');
+    // [Last Update, Temperature]
+    global.sensor_data = ['N/A', 'N/A'];
+
+    // Load Html Page Data
+    basePage = fs.readFileSync(`${__dirname}/basePage.html`, 'utf8');
+}
 
 function api(app, wsServer, config) {
     app.get('/status', (req, res) => {
@@ -64,10 +68,10 @@ function api(app, wsServer, config) {
 module.exports = {
     loadThis: true,
     name: 'System Status',
-    version: '1.2',
+    version: '1.3',
     disableDefaultApi: false,
 
-    onInit: () => {},
+    onInit: init,
 
     api: [api]
 };
