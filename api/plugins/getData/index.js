@@ -4,14 +4,11 @@ const fs = require('fs');
 // System Status Plugin for Water temp system thing
 // V0.7 By Connor Slade 7/11/2021
 
-// Load Api Info Page
-let basePage = [];
-['index.html', 'error.html', 'index.css'].forEach(file => {
-    basePage[file] = fs.readFileSync(`${__dirname}/${file}`).toString();
-});
-
 // Init variable for storing reformated csv data
 let cache = [{}, {}];
+
+// Init variable for storing static html pages
+let basePage = [];
 
 function dataUnit(sizeKB) {
     let units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -24,9 +21,18 @@ function dataUnit(sizeKB) {
     return `${sizeKB.toFixed(2)} ${units[unitIndex]}`;
 }
 
-function api(app, wsServer, config) {
+function init() {
+    // Load Api Info Page
+    ['index.html', 'error.html', 'index.css'].forEach(file => {
+        basePage[file] = fs.readFileSync(`${__dirname}/${file}`).toString();
+    });
+}
+
+function api(app, wsServer, config, debug) {
     // Serve some static files
-    ['index.css'].forEach(file => {
+    let toServe = ['index.css'];
+    if (debug) toServe.push('error.html');
+    toServe.forEach(file => {
         app.get(`/data/${file}`, (req, res) => {
             res.type(file.split('.')[1]);
             common.log('✨ GET: /data/' + file, '', req.ip);
@@ -126,7 +132,7 @@ module.exports = {
     version: '0.7',
     disableDefaultApi: false,
 
-    onInit: () => {},
+    onInit: init,
 
     api: [api, download]
 };

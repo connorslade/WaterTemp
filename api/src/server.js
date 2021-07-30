@@ -40,7 +40,7 @@ function init(plugins, debug) {
             if (plugins[key].disable) loadDefault = false;
         if ('api' in plugins[key]) {
             for (const fun in plugins[key].api) {
-                plugins[key].api[fun](app, wsServer, config);
+                plugins[key].api[fun](app, wsServer, config, debug);
             }
         }
     }

@@ -38,19 +38,8 @@ pub fn get_temp(
 ) -> [String; 2] {
     let temp: f64 = sensor::get_temperature(&dev_id, debug, Some(calibration));
 
-    let mut history: String = "".to_owned();
-    for i in 0..10 {
-        if i == 9 {
-            //history.push_str(&sensor::get_temperature(&dev_id, debug).to_string()[..]);
-            history.push('0');
-            continue;
-        }
-        //history.push_str(&format!("{}, ", sensor::get_temperature(&dev_id, debug))[..]);
-        history.push_str("0, ");
-    }
-
     [
-        format!("{{\"temp\": {}, \"history\": [{}]}}", temp, history),
+        format!("{{\"temp\": {}}}", temp),
         "Content-type: application/json".to_string(),
     ]
 }
