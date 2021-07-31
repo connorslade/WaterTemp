@@ -39,7 +39,7 @@ function api(app, wsServer, config) {
 
 module.exports = {
     loadThis: true,
-    name: 'Add HTTP support for https servers',
+    name: 'HTTP support',
     version: '0.2',
     disableDefaultApi: false,
 
