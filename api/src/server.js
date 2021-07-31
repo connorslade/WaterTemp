@@ -10,6 +10,16 @@ const fs = require('fs');
 const wsServer = new ws.Server({ noServer: true });
 const app = express();
 
+// Allow accessing raw body data of requests
+app.use((req, res, next) => {
+    var data = '';
+    req.on('data', chunk => (data += chunk));
+    req.on('end', () => {
+        req.rawBody = data;
+        next();
+    });
+});
+
 /**
  *  Setup Server
  * @param {Object} plugins Plugins to load

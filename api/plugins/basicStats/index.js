@@ -1,5 +1,5 @@
 // Plugin to get stats on website visits
-// Version 0.2 By Connor Slade :P
+// Version 0.3 By Connor Slade :P
 
 const fs = require('fs');
 const crypto = require('crypto');
@@ -26,6 +26,12 @@ const localConfig = {
         key: '2f3e0736b8e4fb1a4e14c809640f3cf6108ec4ba473338263140396a0637c3f3'
     },
 
+    // Specifies what extra data to save about each request
+    saveData: {
+        // Request Body (As String)
+        data: true
+    },
+
     // Enable Debug Mode
     // Will print extra info to console
     debug: false
@@ -43,6 +49,7 @@ function init() {
     // Save data to disk every x minutes
     setInterval(() => {
         if (localConfig.debug) common.log('💾 Saving analytics data...');
+        if (newData.length === 0) return;
         let data = newData;
         newData = [];
 
@@ -64,22 +71,30 @@ function api(app, wsServer, config, debug) {
     // If in debug mode, use known values for testing
     if (debug) {
         localConfig.publicApi.enabled = true;
-        localConfig.key = '2f3e0736b8e4fb1a4e14c809640f3cf6108ec4ba473338263140396a0637c3f3';
+        localConfig.key =
+            '2f3e0736b8e4fb1a4e14c809640f3cf6108ec4ba473338263140396a0637c3f3';
     }
 
     // Log some info about each request made to the server
     app.use((req, res, next) => {
         if (localConfig.debug)
-            common.log(`🔁 REQUEST`, `${req.method} ${req.url}`, req.ip);
+            common.log(
+                `🔁 REQUEST`,
+                `${req.method} ${req.url} ${req.rawBody}`,
+                req.ip
+            );
 
         // Push data to buffer thing
-        newData.push({
+        let data = {
             path: req.path,
             method: req.method,
             ip: req.ip,
             userAgent: req.headers['user-agent'],
+            data: null,
             date: new Date()
-        });
+        };
+        if (localConfig.saveData.data) data.data = req.rawBody;
+        newData.push(data);
         next();
     });
 
@@ -110,7 +125,7 @@ function api(app, wsServer, config, debug) {
 module.exports = {
     loadThis: true,
     name: 'Basic Analytics',
-    version: '0.2',
+    version: '0.3',
     disableDefaultApi: false,
 
     onInit: init,
