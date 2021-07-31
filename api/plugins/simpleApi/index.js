@@ -9,7 +9,7 @@ const pluginConfig = {
     docs: true
 };
 
-let cache = {};
+let cache = { history: {} };
 let basePage = [];
 
 function init() {
@@ -120,11 +120,11 @@ function api(app, wsServer, config) {
                 if (NaN in data) delete data[NaN];
                 cache.history = data;
                 res.send({ temp: data, cached: d[1] });
-            })
-            .catch(err => {
-                res.status(500);
-                res.send({ error: err });
             });
+        // .catch(err => {
+        //     res.status(500);
+        //     res.send({ error: err });
+        // });
     });
 
     // Api Docs
