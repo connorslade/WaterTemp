@@ -9,6 +9,7 @@ const pluginConfig = {
     docs: true
 };
 
+let cache = {};
 let basePage = [];
 
 function init() {
@@ -104,6 +105,10 @@ function api(app, wsServer, config) {
                 pluginConfig.cacheTime
             )
             .then(d => {
+                if (d[1] && cache.history.length !== 0) {
+                    res.send({ temp: cache.history, cached: true });
+                    return;
+                }
                 data = {};
                 let lines = d[0].split('\n');
                 lines.forEach(e => {
@@ -113,6 +118,7 @@ function api(app, wsServer, config) {
                         );
                 });
                 if (NaN in data) delete data[NaN];
+                cache.history = data;
                 res.send({ temp: data, cached: d[1] });
             })
             .catch(err => {
