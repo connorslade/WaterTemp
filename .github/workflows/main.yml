@@ -1,23 +1,9 @@
 name: CI
 on: [push, pull_request]
 jobs:
-  CompileRust:
-   name: Compile Rust
-   runs-on: ubuntu-latest
-   steps:
-      - uses: actions/checkout@v2
-
-      - name: Install Cargo
-        run: curl https://sh.rustup.rs -sSf | sh -s -- -y
-
-      - name: Compile...
-        working-directory: ./sensor_Interface
-        run: cargo build
-
   Tests:
     name: Run UI tests with Cypress
     runs-on: ubuntu-latest
-    needs: CompileRust
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node.js
@@ -35,7 +21,10 @@ jobs:
 
       - name: Start Sensor Interface
         working-directory: ./sensor_Interface
-        run: cargo run -- --debug &
+        run: |
+          curl https://sh.rustup.rs -sSf | sh -s -- -y
+          cargo build
+          cargo run -- --debug &
 
       - name: Start Web Server
         working-directory: ./api
@@ -53,9 +42,11 @@ jobs:
   runRustTests:
     name: Run Rust Unit Tests
     runs-on: ubuntu-latest
-    needs: CompileRust
     steps:
       - uses: actions/checkout@v2
+
+      - name: Install Cargo
+        run: curl https://sh.rustup.rs -sSf | sh -s -- -y
 
       - name: Run Unit Tests
         working-directory: ./sensor_Interface
