@@ -66,9 +66,10 @@ function api(app, wsServer, config, debug) {
                     .replace('{DATA_SIZE}', dataUnit(dataSize));
                 res.send(page);
             })
-            .catch(err =>
-                res.send(basePage['error.html'].replace(/{ERROR}/g, err))
-            );
+            .catch(err => {
+                res.send(basePage['error.html'].replace(/{ERROR}/g, err));
+                common.log('🚨 Error: ', err, req.ip);
+            });
     });
 }
 
@@ -99,9 +100,10 @@ function download(app, wsServer, config) {
                 }
                 res.send(cache[0].join('\n'));
             })
-            .catch(err =>
-                res.send(basePage['error.html'].replace(/{ERROR}/g, err))
-            );
+            .catch(err => {
+                res.send(basePage['error.html'].replace(/{ERROR}/g, err));
+                common.log('🚨 Error: ', err, req.ip);
+            });
     });
 
     app.get('/data/download.json', (req, res) => {
@@ -120,9 +122,10 @@ function download(app, wsServer, config) {
                 }
                 res.send(cache[1]);
             })
-            .catch(err =>
-                res.send(basePage['error.html'].replace(/{ERROR}/g, err))
-            );
+            .catch(err => {
+                res.send(basePage['error.html'].replace(/{ERROR}/g, err));
+                common.log('🚨 Error: ', err, req.ip);
+            });
     });
 }
 

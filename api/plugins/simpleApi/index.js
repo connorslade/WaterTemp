@@ -35,6 +35,7 @@ function api(app, wsServer, config) {
             .catch(err => {
                 res.status(500);
                 res.send({ error: err });
+                common.log('🚨 Error: ', err, req.ip);
             });
     });
 
@@ -66,6 +67,7 @@ function api(app, wsServer, config) {
             .catch(err => {
                 res.status(500);
                 res.send({ error: err });
+                common.log('🚨 Error: ', err, req.ip);
             });
     });
 
@@ -93,6 +95,7 @@ function api(app, wsServer, config) {
             .catch(err => {
                 res.status(500);
                 res.send({ error: err });
+                common.log('🚨 Error: ', err, req.ip);
             });
     });
 
@@ -124,6 +127,7 @@ function api(app, wsServer, config) {
             .catch(err => {
                 res.status(500);
                 res.send({ error: err });
+                common.log('🚨 Error: ', err, req.ip);
             });
     });
 
