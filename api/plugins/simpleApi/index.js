@@ -10,14 +10,6 @@ const pluginConfig = {
 };
 
 let cache = {};
-let basePage = [];
-
-function init() {
-    // Load Api Info Page (Static Content)
-    if (!pluginConfig.docs) return;
-    basePage['index.html'] = fs.readFileSync(`${__dirname}/index.html`);
-    basePage['index.css'] = fs.readFileSync(`${__dirname}/index.css`);
-}
 
 function api(app, wsServer, config) {
     // Get current temperature
@@ -136,14 +128,14 @@ function api(app, wsServer, config) {
     app.get('/api', (req, res) => {
         common.log('🌐 GET: /api', '', req.ip);
         res.type('html');
-        res.send(basePage['index.html']);
+        common.streamFile(`${__dirname}/index.html`, res);
     });
 
     ['index.html', 'index.css'].forEach(file => {
         app.get(`/api/${file}`, (req, res) => {
             res.type(file.split('.')[1]);
             common.log('🌐 GET: /api/' + file, '', req.ip);
-            res.send(basePage[file]);
+            common.streamFile(`${__dirname}/${file}`, res);
         });
     });
 }
@@ -154,7 +146,7 @@ module.exports = {
     version: '1.4',
     disableDefaultApi: false,
 
-    onInit: init,
+    onInit: () => {},
 
     api: [api]
 };
