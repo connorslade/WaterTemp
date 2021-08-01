@@ -121,7 +121,7 @@ describe('Chart', () => {
 describe('Error 404 Page', () => {
     it('Check 404 Page', () => {
         cy.visit('http://localhost:8080/asdf', { failOnStatusCode: false });
-        cy.title().should('eq', 'Error');
+        cy.title().should('eq', 'Page Not Found');
         cy.get('p')
             .contains(/The page .* was not found... sorwy./)
             .should(e => expect(e.text()).include('/asdf'));
