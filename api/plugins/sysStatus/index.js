@@ -32,7 +32,7 @@ function init() {
     global.sensor_data = ['N/A', 'N/A'];
 
     // Load Html Page Data
-    basePage = fs.readFileSync(`${__dirname}/basePage.html`, 'utf8');
+    basePage = fs.readFileSync(`${__dirname}/index.html`, 'utf8');
 }
 
 function api(app, wsServer, config) {

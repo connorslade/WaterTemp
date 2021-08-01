@@ -9,14 +9,7 @@ const pluginConfig = {
     docs: true
 };
 
-let basePage = [];
-
-function init() {
-    // Load Api Info Page (Static Content)
-    if (!pluginConfig.docs) return;
-    basePage['index.html'] = fs.readFileSync(`${__dirname}/index.html`);
-    basePage['index.css'] = fs.readFileSync(`${__dirname}/index.css`);
-}
+let cache = {};
 
 function api(app, wsServer, config) {
     // Get current temperature
@@ -34,12 +27,13 @@ function api(app, wsServer, config) {
             .catch(err => {
                 res.status(500);
                 res.send({ error: err });
+                common.log('🚨 Error: ', err, req.ip);
             });
     });
 
     // Get the temperature at a specific time
     app.get('/api/temp/:time', (req, res) => {
-        common.log('🌐 GET: /api/temp/:time', '', req.ip);
+        common.log(`🌐 GET: /api/temp/${req.params.time}`, '', req.ip);
         let time = new Date(parseInt(req.params.time) * 1000);
         let temp = null;
         common
@@ -65,6 +59,7 @@ function api(app, wsServer, config) {
             .catch(err => {
                 res.status(500);
                 res.send({ error: err });
+                common.log('🚨 Error: ', err, req.ip);
             });
     });
 
@@ -92,6 +87,7 @@ function api(app, wsServer, config) {
             .catch(err => {
                 res.status(500);
                 res.send({ error: err });
+                common.log('🚨 Error: ', err, req.ip);
             });
     });
 
@@ -104,6 +100,10 @@ function api(app, wsServer, config) {
                 pluginConfig.cacheTime
             )
             .then(d => {
+                if (d[1] && 'history' in cache) {
+                    res.send({ temp: cache.history, cached: true });
+                    return;
+                }
                 data = {};
                 let lines = d[0].split('\n');
                 lines.forEach(e => {
@@ -113,11 +113,13 @@ function api(app, wsServer, config) {
                         );
                 });
                 if (NaN in data) delete data[NaN];
+                cache.history = data;
                 res.send({ temp: data, cached: d[1] });
             })
             .catch(err => {
                 res.status(500);
                 res.send({ error: err });
+                common.log('🚨 Error: ', err, req.ip);
             });
     });
 
@@ -126,14 +128,14 @@ function api(app, wsServer, config) {
     app.get('/api', (req, res) => {
         common.log('🌐 GET: /api', '', req.ip);
         res.type('html');
-        res.send(basePage['index.html']);
+        common.streamFile(`${__dirname}/index.html`, res);
     });
 
     ['index.html', 'index.css'].forEach(file => {
         app.get(`/api/${file}`, (req, res) => {
             res.type(file.split('.')[1]);
             common.log('🌐 GET: /api/' + file, '', req.ip);
-            res.send(basePage[file]);
+            common.streamFile(`${__dirname}/${file}`, res);
         });
     });
 }
@@ -144,7 +146,7 @@ module.exports = {
     version: '1.4',
     disableDefaultApi: false,
 
-    onInit: init,
+    onInit: () => {},
 
     api: [api]
 };
