@@ -73,7 +73,9 @@ function debugWebSocket(wsServer) {
         );
         socket.on('close', () => {
             common.log(
-                `❌ WebSocket Disconnected ${socket._socket.remoteAddress}`
+                '❌ WebSocket Disconnected',
+                '',
+                socket._socket.remoteAddress
             );
             sockets = sockets.filter(s => s !== socket);
         });

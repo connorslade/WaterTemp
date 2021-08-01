@@ -41,7 +41,7 @@ function api(app, wsServer, config) {
 
     // Get the temperature at a specific time
     app.get('/api/temp/:time', (req, res) => {
-        common.log('🌐 GET: /api/temp/:time', '', req.ip);
+        common.log(`🌐 GET: /api/temp/${req.params.time}`, '', req.ip);
         let time = new Date(parseInt(req.params.time) * 1000);
         let temp = null;
         common

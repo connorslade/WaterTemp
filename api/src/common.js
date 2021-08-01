@@ -126,8 +126,21 @@ function getData(url, cacheTime) {
     });
 }
 
+/**
+ * Stream a file on disk
+ * @param {String} file Path of file to stream
+ * @param {Function} res Response to pipe the file to
+ * @returns {null}
+ */
+function streamFile(file, res) {
+    let stream = fs.createReadStream(file);
+    stream.on('open', () => stream.pipe(res));
+    stream.on('error', err => res.end(err));
+}
+
 module.exports = {
     getLogFileName,
+    streamFile,
     addToLog,
     getData,
     ipPad,
