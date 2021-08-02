@@ -62,6 +62,16 @@ impl Sensor {
     }
 }
 
+impl Value {
+    pub fn new(id: &String, name: &String, value: f64) -> Value {
+        Value {
+            id: id.clone(),
+            name: name.clone(),
+            value: value,
+        }
+    }
+}
+
 /// Get rew sensor data
 ///
 /// **Not in a useable format yet**
@@ -77,6 +87,16 @@ fn get_sensor_data(dev_id: &str) -> String {
         return get_sensor_data(dev_id);
     }
     sensor_data_lines[1].to_string()
+}
+
+/// Get sensor data for all sensors
+pub fn get_all_temp(sensors: &[Sensor]) -> Vec<Value> {
+    let mut values: Vec<Value> = Vec::new();
+
+    for i in sensors.iter() {
+        values.push(Value::new(&i.id, &i.name, i.get_temperature().unwrap()));
+    }
+    values
 }
 
 /// Get data history from disk

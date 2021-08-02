@@ -59,7 +59,7 @@ fn main() {
         &event_log_cfg,
         format!(
             "{} {}",
-            common::color("[*] Device ID:", 32),
+            common::color("[*] Main Device ID:", 32),
             common::color(&dev_id[..], 34)
         ),
     );
