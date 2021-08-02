@@ -7,10 +7,11 @@ use std::thread;
 
 mod common;
 mod logging;
+mod sensor;
 mod server;
 
 /// Server Version
-pub static VERSION: &str = "0.7";
+pub static VERSION: &str = "0.8";
 
 /// Main entry point
 fn main() {
@@ -20,7 +21,7 @@ fn main() {
 
     // Load config file
     let mut cfg = Config::new(Some("config.ini"));
-    cfg.read().ok().expect("Error reading config file :/");
+    cfg.read().ok().expect("[-] Error reading config file :/");
 
     // Get some config values
     let ip = &cfg.get("ip").unwrap()[..];
@@ -36,6 +37,11 @@ fn main() {
         do_log: cfg.get_bool("event_logging").unwrap(),
         file: cfg.get("event_log_file").unwrap(),
     };
+
+    let mut sensors: Vec<sensor::Sensor> = Vec::new();
+    sensors.push(sensor::Sensor::new("", "water", None, true));
+    sensors.push(sensor::Sensor::new("", "water2", None, true));
+    sensors.push(sensor::Sensor::new("", "water3", None, true));
 
     // Print some info
     logging::log_event(
@@ -84,10 +90,9 @@ fn main() {
     server::start(
         server::init(ip, port),
         debug,
-        &dev_id[..],
+        sensors,
         log_delay,
         &log_file,
-        calibration,
         &event_log_cfg,
     );
 }

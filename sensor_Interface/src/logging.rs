@@ -6,7 +6,7 @@ use std::time::SystemTime;
 use std::time::{Duration, Instant};
 
 use super::common;
-use super::server::sensor;
+use super::sensor;
 
 pub struct LogCfg {
     pub do_log: bool,
@@ -36,7 +36,8 @@ pub fn start_data_logging(
     loop {
         let start = Instant::now();
 
-        let temp: f64 = sensor::get_temperature(&dev_id, debug, Some(calibration));
+        // let temp: f64 = sensor::get_temperature(&dev_id, debug, Some(calibration));
+        let temp = 0.0;
         let epoch = SystemTime::now()
             .duration_since(SystemTime::UNIX_EPOCH)
             .unwrap();

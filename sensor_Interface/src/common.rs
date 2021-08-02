@@ -16,6 +16,22 @@ pub fn remove_ansi(text: &str) -> String {
     re.replace_all(text, "").to_string()
 }
 
+/// Removes any whitespace from before and after a string
+///
+/// EX: "  hello  " -> "hello"
+pub fn remove_whitespace(mut value: String) -> String {
+    // Remove any leading spaces
+    while value.starts_with(' ') {
+        value = value[1..value.len()].to_string();
+    }
+
+    // Remove any trailing spaces
+    while value.ends_with(' ') {
+        value = value[..value.len() - 1].to_string();
+    }
+    value
+}
+
 pub fn ret_if(cond: bool, ret: String) -> String {
     if cond {
         return ret;

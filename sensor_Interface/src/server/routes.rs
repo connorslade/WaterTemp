@@ -2,74 +2,93 @@ use super::super::logging;
 use super::super::*;
 use super::sensor;
 
-// I wish there was a nice way to do this, but I can't figure it out.
+// I wish there was a nicer way to do this, but I can't figure it out.
+// I now now know how to do it but I don't want to write it.
+
+// Note To self: Finish this.
+
+/// Define a response to a sensor request.
+pub struct Response {
+    pub status: u16,
+    pub data: String,
+    pub headers: Vec<String>,
+}
+
+/// Implementation for the Response type.
+impl Response {
+    /// Quick and easy way to create a response.
+    pub fn new(status: u16, data: &str, headers: Vec<&str>) -> Response {
+        let new_headers: Vec<String> = headers.iter().map(|header| header.to_string()).collect();
+        Response {
+            status: status,
+            data: data.to_string(),
+            headers: new_headers,
+        }
+    }
+}
 
 /// GET: "/*"
 /// Run For All Requests
 pub fn all(req: &tiny_http::Request, event_log_cfg: &logging::LogCfg) {
     logging::log_event(
         &event_log_cfg,
-        format!(
-            "{}",
-            common::color(
-                &format!("[+] {:?}: \"{}\"", req.method(), req.url())[..],
-                32
-            )
-        ),
+        common::color(
+            &format!("[+] {:?}: \"{}\"", req.method(), req.url())[..],
+            32,
+        )
+        .to_string(),
     );
 }
 
 /// GET: "/EXIT"
 /// When in Debug Mode this will exit the server
-pub fn get_exit(_req: &tiny_http::Request) -> [String; 2] {
-    [
-        "Ok - Goodby World".to_string(),
-        "Content-type: text/plain".to_string(),
-    ]
+pub fn get_exit(_req: &tiny_http::Request) -> Response {
+    Response::new(200, "Ok - Goodby World", vec!["Content-Type: text/plain"])
 }
 
 /// GET: "/temp"
 /// Gives the current temperature and temperature history
-pub fn get_temp(
-    _req: &tiny_http::Request,
-    dev_id: &str,
-    debug: bool,
-    calibration: f64,
-) -> [String; 2] {
-    let temp: f64 = sensor::get_temperature(&dev_id, debug, Some(calibration));
+pub fn get_temp(_req: &tiny_http::Request, sensors: &[sensor::Sensor]) -> Response {
+    // let all_temp: Vec<sensor::Value> = Vec::new();
+    let temp: f64 = sensors[0].get_temperature().unwrap();
 
-    [
-        format!("{{\"temp\": {}}}", temp),
-        "Content-type: application/json".to_string(),
-    ]
+    Response::new(
+        200,
+        &format!("{{\"temp\": {}}}", temp)[..],
+        vec!["Content-Type: application/json"],
+    )
 }
 
 /// Run on GET: "/data/download"
 /// Download the current temperature history
-pub fn get_download(_req: &tiny_http::Request, log_file: &String) -> [String; 2] {
+pub fn get_download(_req: &tiny_http::Request, log_file: &String) -> Response {
     let history: Option<String> = sensor::get_history(log_file);
     if history.is_none() {
-        return [
-            "Data logging is not enabled :/".to_string(),
-            "Content-type: text/plain".to_string(),
-        ];
+        return Response::new(
+            200,
+            "Data logging is not enabled :/",
+            vec!["Content-Type: text/plain"],
+        );
     }
     let format_history: String = history.unwrap().replace("\n\n", "\n");
-    [
-        format!("time,temp\n{}", format_history),
-        "Content-type: text/plain".to_string(),
-    ]
+    // TODO: Update this to support more than one sensor.
+    Response::new(
+        200,
+        &format!("time,temp\n{}", format_history)[..],
+        vec!["Content-Type: text/csv"],
+    )
 }
 
 /// Run on GET: "/data/stats"
 /// Get statistics for the temperature history
-pub fn get_stats(_req: &tiny_http::Request, log_file: &String, rate: i64) -> [String; 2] {
+pub fn get_stats(_req: &tiny_http::Request, log_file: &String, rate: i64) -> Response {
     let history: Option<String> = sensor::get_history(log_file);
     if history.is_none() {
-        return [
-            "Data logging is not enabled :/".to_string(),
-            "Content-type: text/plain".to_string(),
-        ];
+        return Response::new(
+            200,
+            "Data logging is not enabled :/",
+            vec!["Content-Type: text/plain"],
+        );
     };
     let history = history.unwrap();
     let data: Vec<&str> = history.split('\n').collect();
@@ -93,8 +112,7 @@ pub fn get_stats(_req: &tiny_http::Request, log_file: &String, rate: i64) -> [St
             min = temp;
         }
     }
-    [
-        format!(
+    let json_response: &str = &format!(
             "{{\"length\":{}, \"mean\": {}, \"first\":{}, \"last\":{}, \"rate\":{}, \"min\":{}, \"max\":{}}}",
             data.len(),
             mean / data.len() as f64,
@@ -103,28 +121,29 @@ pub fn get_stats(_req: &tiny_http::Request, log_file: &String, rate: i64) -> [St
             60.0 / (rate as f64 / 1000.0 / 60.0),
             min,
             max
-        ),
-        "Content-type: application/json".to_string(),
-    ]
+        )[..];
+    Response::new(200, json_response, vec!["Content-Type: application/json"])
 }
 
 /// Run on GET "/test"
 /// Make sure everything is working :P
-pub fn get_test(_req: &tiny_http::Request) -> [String; 2] {
-    [
-        format!(
+pub fn get_test(_req: &tiny_http::Request) -> Response {
+    Response::new(
+        200,
+        &format!(
             "{{\"message\": \"All Systems are a Go!\", \"version\": {}}}",
             VERSION
-        ),
-        "Content-type: application/json".to_string(),
-    ]
+        )[..],
+        vec!["Content-Type: application/json"],
+    )
 }
 
 /// GET: "/*" when no other route is found
 /// Run when no specific route is defined
-pub fn not_found(_req: &tiny_http::Request) -> [String; 2] {
-    [
-        "Error: Path Not Found :/".to_string(),
-        "Content-type: text/plain".to_string(),
-    ]
+pub fn not_found(_req: &tiny_http::Request) -> Response {
+    Response::new(
+        404,
+        "Error: Path Not Found :/",
+        vec!["Content-Type: text/plain"],
+    )
 }
