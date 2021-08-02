@@ -2,7 +2,7 @@ const common = require('../../src/common');
 const fs = require('fs');
 
 // System Status Plugin for Water temp system thing
-// V0.7 By Connor Slade 7/11/2021
+// V0.8 By Connor Slade 7/11/2021
 
 // Init variable for storing reformated csv data
 let cache = [{}, {}];
@@ -23,9 +23,12 @@ function dataUnit(sizeKB) {
 
 function init() {
     // Load Api Info Page
-    ['index.html', 'error.html', 'index.css'].forEach(file => {
-        basePage[file] = fs.readFileSync(`${__dirname}/${file}`).toString();
-    });
+    ['index.html', 'error.html'].forEach(
+        file =>
+            (basePage[file] = fs
+                .readFileSync(`${__dirname}/${file}`)
+                .toString())
+    );
 }
 
 function api(app, wsServer, config, debug) {
@@ -36,7 +39,7 @@ function api(app, wsServer, config, debug) {
         app.get(`/data/${file}`, (req, res) => {
             res.type(file.split('.')[1]);
             common.log('✨ GET: /data/' + file, '', req.ip);
-            res.send(basePage[file]);
+            common.streamFile(`${__dirname}/${file}`, res);
         });
     });
 
@@ -66,9 +69,10 @@ function api(app, wsServer, config, debug) {
                     .replace('{DATA_SIZE}', dataUnit(dataSize));
                 res.send(page);
             })
-            .catch(err =>
-                res.send(basePage['error.html'].replace(/{ERROR}/g, err))
-            );
+            .catch(err => {
+                res.send(basePage['error.html'].replace(/{ERROR}/g, err));
+                common.log('🚨 Error: ', err, req.ip);
+            });
     });
 }
 
@@ -99,9 +103,10 @@ function download(app, wsServer, config) {
                 }
                 res.send(cache[0].join('\n'));
             })
-            .catch(err =>
-                res.send(basePage['error.html'].replace(/{ERROR}/g, err))
-            );
+            .catch(err => {
+                res.send(basePage['error.html'].replace(/{ERROR}/g, err));
+                common.log('🚨 Error: ', err, req.ip);
+            });
     });
 
     app.get('/data/download.json', (req, res) => {
@@ -120,16 +125,17 @@ function download(app, wsServer, config) {
                 }
                 res.send(cache[1]);
             })
-            .catch(err =>
-                res.send(basePage['error.html'].replace(/{ERROR}/g, err))
-            );
+            .catch(err => {
+                res.send(basePage['error.html'].replace(/{ERROR}/g, err));
+                common.log('🚨 Error: ', err, req.ip);
+            });
     });
 }
 
 module.exports = {
     loadThis: true,
     name: 'Get Data',
-    version: '0.7',
+    version: '0.8',
     disableDefaultApi: false,
 
     onInit: init,

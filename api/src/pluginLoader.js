@@ -1,6 +1,10 @@
+// PLUGIN LOADER
+// By Connor Slade :P
+
 const common = require('./common');
 const fs = require('fs');
 
+// Load a plugin
 function loadPlugin(file, command) {
     if (!command.loadThis) return false;
     common.log(`🍞 Loading ${file} v${command.version}`);
@@ -14,6 +18,7 @@ function loadPlugin(file, command) {
     return plugin;
 }
 
+// Find plugins
 function load(folder, config) {
     if (!config['plugins']['loadPlugins']) return;
     let plugins = {};
@@ -54,6 +59,7 @@ function load(folder, config) {
     return plugins;
 }
 
+// Run plugin init functions
 function runInits(plugins) {
     common.log('👆 Initializing Plugins');
     for (const key in plugins) {
@@ -66,6 +72,22 @@ function runInits(plugins) {
     }
 }
 
+// Inject API function of plugins
+function inject(plugins, inject) {
+    let loadDefault = true;
+    for (const key in plugins) {
+        if ('disable' in plugins[key])
+            if (plugins[key].disable) loadDefault = false;
+        if ('api' in plugins[key]) {
+            for (const fun in plugins[key].api) {
+                inject(plugins[key].api[fun]);
+            }
+        }
+    }
+    return { loadDefault };
+}
+
 module.exports = {
-    load
+    load,
+    inject
 };

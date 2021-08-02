@@ -3,10 +3,6 @@ describe('Basic', () => {
         cy.wait(500);
         cy.visit('http://localhost:8080');
     });
-
-    it('Visits data get plugin is running', () => {
-        cy.visit('http://localhost:8080/data');
-    });
 });
 
 // Check data is coming from API
@@ -119,5 +115,15 @@ describe('Chart', () => {
                 cy.get('#graph').should('have.css', 'width', '375px');
                 cy.get('#graph').should('have.css', 'height', '284px');
             });
+    });
+});
+
+describe('Error 404 Page', () => {
+    it('Check 404 Page', () => {
+        cy.visit('http://localhost:8080/asdf', { failOnStatusCode: false });
+        cy.title().should('eq', 'Page Not Found');
+        cy.get('p')
+            .contains(/The page .* was not found... sorwy./)
+            .should(e => expect(e.text()).include('/asdf'));
     });
 });

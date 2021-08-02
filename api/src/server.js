@@ -2,7 +2,10 @@ const config = require('./../config/config.json');
 
 const rateLimit = require('express-rate-limit');
 const express = require('express');
+
 const common = require('./common');
+const pluginLoader = require('./pluginLoader');
+
 const https = require('https');
 const ws = require('ws');
 const fs = require('fs');
@@ -21,20 +24,21 @@ app.use((req, res, next) => {
 });
 
 /**
- *  Setup Server
+ * Setup Server
  * @param {Object} plugins Plugins to load
  * @param {Boolean} debug Debug mode
  */
 function init(plugins, debug) {
     // Debug mode
     if (debug)
-        app.get('/EXIT', (req, res) => {
+        app.use('/EXIT', (req, res) => {
             res.send('ok');
             common.log('🛑 Server is exiting...');
             process.exit(0);
         });
 
     // Add Rate-Limiting
+    // (Disabled in debug mode)
     if (config.server.rateLimit.enabled && !debug)
         app.use(
             rateLimit({
@@ -43,29 +47,33 @@ function init(plugins, debug) {
             })
         );
 
-    // Load plugins
-    let loadDefault = true;
-    for (const key in plugins) {
-        if ('disable' in plugins[key])
-            if (plugins[key].disable) loadDefault = false;
-        if ('api' in plugins[key]) {
-            for (const fun in plugins[key].api) {
-                plugins[key].api[fun](app, wsServer, config, debug);
-            }
-        }
-    }
+    // Inject plugins
+    // App args are passed to each plugin
+    let inject = pluginLoader.inject(plugins, api =>
+        api(app, wsServer, config, debug)
+    );
 
     // Serve static content
     if (config.server.static.serveStatic)
         app.use(express.static(config.server.static.staticFolder));
 
-    if (!loadDefault) return;
-    common.log('🚓 Loading default API');
-    require('./routes').webSocket(wsServer, debug);
+    // Load default 
+    if (inject.loadDefault) {
+        common.log('🚓 Loading default API');
+        require('./routes').webSocket(wsServer, debug);
+    }
+
+    // Add a 404 Page
+    // Will stream the /static/404.html file
+    app.use((req, res, next) => {
+        res.status(404);
+        req.header
+        common.streamFile('../static/404/index.html', res);
+    });
 }
 
 /**
- *  Start Server Http
+ *  Start Server (Http)
  */
 function start(ip, port) {
     app.listen(config.server.port, config.server.ip, () =>
@@ -83,7 +91,7 @@ function start(ip, port) {
 }
 
 /**
- *  Start Server Https
+ *  Start Server (Https)
  */
 // prettier-ignore
 function startTls(ip, port) {
