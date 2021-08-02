@@ -74,7 +74,7 @@ function start(ip, port) {
         wsServer.handleUpgrade(request, socket, head, socket => {
             wsServer.emit('connection', socket, request);
             common.log(
-                `✔ WebSocket Connected`,
+                `✅️ WebSocket Connected`,
                 '',
                 socket._socket.remoteAddress
             );
@@ -96,7 +96,7 @@ function startTls(ip, port) {
             wsServer.handleUpgrade(request, socket, head, socket => {
                 wsServer.emit('connection', socket, request);
                 common.log(
-                    `✔ WebSocket Connected`,
+                    `✅️ WebSocket Connected`,
                     '',
                     socket._socket.remoteAddress
                 );
