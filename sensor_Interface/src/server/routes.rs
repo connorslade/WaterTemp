@@ -20,7 +20,7 @@ impl Response {
     pub fn new(status: u16, data: &str, headers: Vec<&str>) -> Response {
         let new_headers: Vec<String> = headers.iter().map(|header| header.to_string()).collect();
         Response {
-            status: status,
+            status,
             data: data.to_string(),
             headers: new_headers,
         }
@@ -35,8 +35,7 @@ pub fn all(req: &tiny_http::Request, event_log_cfg: &logging::LogCfg) {
         common::color(
             &format!("[+] {:?}: \"{}\"", req.method(), req.url())[..],
             32,
-        )
-        .to_string(),
+        ),
     );
 }
 
@@ -74,7 +73,7 @@ pub fn get_temp(_req: &tiny_http::Request, sensors: &[sensor::Sensor]) -> Respon
 
 /// Run on GET: "/data/download"
 /// Download the current temperature history
-pub fn get_download(_req: &tiny_http::Request, log_file: &String) -> Response {
+pub fn get_download(_req: &tiny_http::Request, log_file: &str) -> Response {
     let history: Option<String> = sensor::get_history(log_file);
     if history.is_none() {
         return Response::new(
@@ -94,7 +93,7 @@ pub fn get_download(_req: &tiny_http::Request, log_file: &String) -> Response {
 
 /// Run on GET: "/data/stats"
 /// Get statistics for the temperature history
-pub fn get_stats(_req: &tiny_http::Request, log_file: &String, rate: i64) -> Response {
+pub fn get_stats(_req: &tiny_http::Request, log_file: &str, rate: i64) -> Response {
     let history: Option<String> = sensor::get_history(log_file);
     if history.is_none() {
         return Response::new(

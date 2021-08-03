@@ -1,5 +1,6 @@
 use super::common;
 use rand::Rng;
+use std::fmt;
 use std::fs;
 
 /// Defines a sensor.
@@ -32,8 +33,8 @@ impl Sensor {
         Sensor {
             id: id.to_string(),
             name: name.to_string(),
-            calibration: calibration,
-            debug: debug,
+            calibration,
+            debug,
         }
     }
 
@@ -49,7 +50,7 @@ impl Sensor {
         let sensor_data = get_sensor_data(&self.id[..]);
         let temp: Vec<&str> = sensor_data.split("t=").collect();
         if temp.len() != 2 {
-            format!("{}", common::color("[-] Error Parsing Sensor Data :/", 31));
+            println!("{}", common::color("[-] Error Parsing Sensor Data :/", 31));
             return None;
         }
         let temp_str = temp[1].to_string();
@@ -65,18 +66,34 @@ impl Sensor {
         Sensor {
             id: self.id.clone(),
             name: self.name.clone(),
-            calibration: self.calibration.clone(),
-            debug: self.debug.clone(),
+            calibration: self.calibration,
+            debug: self.debug,
         }
     }
 }
 
+#[allow(unused_must_use)]
+/// Allow getting debug printout of a sensor Struct
+impl fmt::Debug for Sensor {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "Sensor(id={}, name={}, calibration={}, debug={})",
+            self.id,
+            self.name,
+            self.calibration.unwrap_or(0.0),
+            self.debug
+        );
+        Ok(())
+    }
+}
+
 impl Value {
-    pub fn new(id: &String, name: &String, value: f64) -> Value {
+    pub fn new(id: &str, name: &str, value: f64) -> Value {
         Value {
-            id: id.clone(),
-            name: name.clone(),
-            value: value,
+            id: id.to_string(),
+            name: name.to_string(),
+            value,
         }
     }
 }
@@ -109,7 +126,7 @@ pub fn get_all_temp(sensors: &[Sensor]) -> Vec<Value> {
 }
 
 /// Get data history from disk
-pub fn get_history(log_file: &String) -> Option<String> {
+pub fn get_history(log_file: &str) -> Option<String> {
     match fs::read_to_string(log_file) {
         Ok(data) => Some(data),
         Err(_) => None,
@@ -119,16 +136,16 @@ pub fn get_history(log_file: &String) -> Option<String> {
 /// Get all the sensors defined in the config file
 ///
 /// Returns a vector of sensors
-pub fn get_sensors(data: &Vec<[String; 2]>, debug: bool) -> Vec<Sensor> {
+pub fn get_sensors(data: &[[String; 2]], debug: bool) -> Vec<Sensor> {
     let mut sensors: Vec<Sensor> = Vec::new();
     for i in data.iter() {
         if i[0].contains("sensor_") {
             let friendly_name =
-                common::remove_whitespace(i[0].split("_").collect::<Vec<&str>>()[1].to_string());
+                common::remove_whitespace(i[0].split('_').collect::<Vec<&str>>()[1].to_string());
             let sensor_id =
-                common::remove_whitespace(i[1].split(",").collect::<Vec<&str>>()[0].to_string());
+                common::remove_whitespace(i[1].split(',').collect::<Vec<&str>>()[0].to_string());
             let calibration =
-                common::remove_whitespace(i[1].split(",").collect::<Vec<&str>>()[1].to_string());
+                common::remove_whitespace(i[1].split(',').collect::<Vec<&str>>()[1].to_string());
 
             sensors.push(Sensor::new(
                 &sensor_id[..],

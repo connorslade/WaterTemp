@@ -40,8 +40,8 @@ pub fn start_data_logging(log_file: &str, log_interval: i64, sensors: Vec<sensor
         if sensors.len() > 1 {
             let mut all_data: String = "".to_string();
 
-            for i in 1..sensors.len() {
-                all_data.push_str(&format!("{},", sensors[i].get_temperature().unwrap())[..]);
+            for i in sensors.iter().skip(1) {
+                all_data.push_str(&format!("{},", i.get_temperature().unwrap())[..]);
             }
             all_data = all_data[0..all_data.len() - 1].to_string();
 
@@ -50,10 +50,8 @@ pub fn start_data_logging(log_file: &str, log_interval: i64, sensors: Vec<sensor
             }
         }
         // Only One Sensor
-        else {
-            if let Err(e) = writeln!(file, "{:?},{}", epoch.as_secs(), temp) {
-                eprintln!("[-] Error writhing to file: {}", e);
-            }
+        else if let Err(e) = writeln!(file, "{:?},{}", epoch.as_secs(), temp) {
+            eprintln!("[-] Error writhing to file: {}", e);
         }
 
         // Fancy stuff to make sure this runs every 5 seconds

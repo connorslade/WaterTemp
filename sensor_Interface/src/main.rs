@@ -11,7 +11,7 @@ mod sensor;
 mod server;
 
 /// Server Version
-pub static VERSION: &str = "0.8";
+pub static VERSION: &str = "0.8.1";
 
 /// Main entry point
 fn main() {
@@ -41,7 +41,7 @@ fn main() {
 
     // If there are no sensors, panic
     if sensors.is_empty() {
-        println!("[-] No Sensors defined :/");
+        println!("{}", common::color("[-] No Sensors defined :/", 31));
         panic!("No Sensors defined :/");
     }
 
@@ -57,12 +57,28 @@ fn main() {
         ),
     );
 
+    let mut sensor_names = "".to_string();
+    for sensor in &sensors {
+        sensor_names.push_str(&format!("{}, ", sensor.name)[..]);
+    }
+    sensor_names = sensor_names[0..sensor_names.len() - 2].to_string();
     logging::log_event(
         &event_log_cfg,
         format!(
-            "{} {}",
+            "{} {} {}",
+            common::color("[*] Found Devices:", 32),
+            common::color(&sensors.len().to_string(), 34),
+            common::color(&format!("[{}]", sensor_names), 34),
+        ),
+    );
+
+    logging::log_event(
+        &event_log_cfg,
+        format!(
+            "{} {} {}",
             common::color("[*] Main Device ID:", 32),
-            common::color(&sensors[0].id[..], 34)
+            common::color(&sensors[0].id[..], 34),
+            common::color(&format!("[{}]", &sensors[0].name[..]), 34),
         ),
     );
 
@@ -77,8 +93,8 @@ fn main() {
 
     // Start Logging thread
     let mut log_sensors: Vec<sensor::Sensor> = Vec::new();
-    for i in 0..sensors.len() {
-        log_sensors.push(sensors[i].clone());
+    for i in &sensors {
+        log_sensors.push(i.clone());
     }
     if logging {
         thread::spawn(move || {

@@ -17,7 +17,7 @@ pub fn start(
     debug: bool,
     sensors: Vec<sensor::Sensor>,
     data_rate: i64,
-    log_file: &String,
+    log_file: &str,
     event_log_cfg: &logging::LogCfg,
 ) {
     for request in server.incoming_requests() {
