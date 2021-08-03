@@ -1,9 +1,11 @@
 // Plugin for showing data from multiple sensors
 
+const nodemailer = require('nodemailer');
 const fs = require('fs');
 
 const common = require('../../src/common');
 const { Type } = require(`${__dirname}/common`);
+const sendAlert = require(`${__dirname}/alert`);
 
 // Load Config
 const { pluginConfig } = require(`${__dirname}/config`);
@@ -69,20 +71,18 @@ function checkRange(data, config) {
     // Return if there are no alerts
     if (!Object.values(alert).includes(true)) return;
 
-    // Send the alerts!
-    if (config.alerts.alertMessage.webhook) {
-        let splitUrl = config.alerts.alertMessage.webhook.url.split('/');
-        common
-            .post(
-                { content: 'Temperature Alert' },
-                splitUrl[2],
-                443,
-                `/${splitUrl.slice(3).join('/')}`
-            )
-            .catch(err => {
-                console.log(`🛑 Error Sending Webhook: ${err}`);
-            });
-    }
+    Object.keys(alert).forEach(key => {
+        // Send the alerts!
+        if (config.alerts.alertMessage.webhook) {
+            console.log(`🌡 ${key} sent an alert`);
+            sendAlert.discord({ content: `🌡 ${key} sent an alert` }, config);
+        }
+
+        // Comming Soon to a alert system near you!
+        // mabye.
+        if (config.alerts.alertMessage.email) {
+        }
+    });
 }
 
 // Define routes for sending data
@@ -150,5 +150,6 @@ module.exports = {
 // Unit Changing
 // Show Averages
 // ✔ Webhook ALerts
+// Add Embeds to discord webhook
 // Email Alerts
 // idk

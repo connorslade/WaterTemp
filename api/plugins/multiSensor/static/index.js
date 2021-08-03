@@ -1,6 +1,11 @@
 var socket;
+var connected = false;
 function main() {
     createWebSocket();
+    setInterval(function () {
+        if (!connected)
+            createWebSocket();
+    });
 }
 function createWebSocket() {
     var wsProto = 'ws';
@@ -9,6 +14,7 @@ function createWebSocket() {
     socket = new WebSocket(wsProto + "://" + window.location.href.split('/')[2]);
     // Tell server we want the data for all the sensors
     socket.onopen = function () {
+        connected = true;
         console.log('WebSocket opened');
         socket.send('multiSensor');
     };
@@ -25,14 +31,14 @@ function createWebSocket() {
         }
     };
     socket.onclose = function (event) {
+        connected = false;
         if (event.wasClean)
             return;
         if (event.code === 1000)
             return;
-        setTimeout(createWebSocket, 5000);
     };
     socket.onerror = function () {
-        setTimeout(createWebSocket, 5000);
+        connected = false;
     };
 }
 function getTempElementData(id, name, temp, unit) {

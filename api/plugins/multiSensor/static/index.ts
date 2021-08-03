@@ -1,7 +1,11 @@
 let socket;
+let connected = false;
 
 function main() {
     createWebSocket();
+    setInterval(() => {
+        if (!connected) createWebSocket();
+    });
 }
 
 function createWebSocket() {
@@ -13,6 +17,7 @@ function createWebSocket() {
 
     // Tell server we want the data for all the sensors
     socket.onopen = () => {
+        connected = true;
         console.log('WebSocket opened');
         socket.send('multiSensor');
     };
@@ -32,13 +37,13 @@ function createWebSocket() {
     };
 
     socket.onclose = (event: any) => {
+        connected = false;
         if (event.wasClean) return;
         if (event.code === 1000) return;
-        setTimeout(createWebSocket, 5000);
     };
 
     socket.onerror = () => {
-        setTimeout(createWebSocket, 5000);
+        connected = false;
     };
 }
 
@@ -46,7 +51,7 @@ function getTempElementData(id, name, temp, unit) {
     return `<div class="sensor" id="${id}">
         <i class="fa fa-thermometer-full"></i> <p class="name">${name}</p>
         <p class="temp">${temp}°${unit}</p>
-    </div>`
+    </div>`;
 }
 
 function niceName(name: string) {
@@ -68,10 +73,20 @@ function showData(data) {
         let temp = Math.round(e.temp * 100) / 100;
         if (shownDevices.includes(e.id)) {
             let sensor = document.getElementById(e.id);
-            sensor.outerHTML = getTempElementData(e.id, niceName(e.name), temp, 'F');
-            return
+            sensor.outerHTML = getTempElementData(
+                e.id,
+                niceName(e.name),
+                temp,
+                'F'
+            );
+            return;
         }
-        mainElement.innerHTML += getTempElementData(e.id, niceName(e.name), temp, 'F');
+        mainElement.innerHTML += getTempElementData(
+            e.id,
+            niceName(e.name),
+            temp,
+            'F'
+        );
     });
 }
 

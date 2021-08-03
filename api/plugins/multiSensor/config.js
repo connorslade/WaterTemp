@@ -35,6 +35,7 @@ const pluginConfig = {
 
         alertMessage: {
             // Send alerts through email
+            // Comming Soon...
             email: {
                 enabled: false,
 
@@ -47,12 +48,12 @@ const pluginConfig = {
                     password: ''
                 }
             },
-
+            
             // Send alerts through webhook
             // Intended for Discord, may work elsewhere
             webhook: {
                 enabled: true,
-                url: 'https://discord.com/api/webhooks/.../...'
+                url: 'https://discord.com/api/webhooks/844410249288482826/ze8PzNzgUq7Yg3_Vbm32YpEH11toqgAxOJV0P81s5rd8ABdkGy81VJA9vQTDT1NutIW0'
             }
         }
     }
