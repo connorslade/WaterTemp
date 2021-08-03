@@ -116,6 +116,31 @@ pub fn get_history(log_file: &String) -> Option<String> {
     }
 }
 
+/// Get all the sensors defined in the config file
+///
+/// Returns a vector of sensors
+pub fn get_sensors(data: &Vec<[String; 2]>, debug: bool) -> Vec<Sensor> {
+    let mut sensors: Vec<Sensor> = Vec::new();
+    for i in data.iter() {
+        if i[0].contains("sensor_") {
+            let friendly_name =
+                common::remove_whitespace(i[0].split("_").collect::<Vec<&str>>()[1].to_string());
+            let sensor_id =
+                common::remove_whitespace(i[1].split(",").collect::<Vec<&str>>()[0].to_string());
+            let calibration =
+                common::remove_whitespace(i[1].split(",").collect::<Vec<&str>>()[1].to_string());
+
+            sensors.push(Sensor::new(
+                &sensor_id[..],
+                &friendly_name[..],
+                Some(calibration.parse::<f64>().unwrap()),
+                debug,
+            ));
+        }
+    }
+    sensors
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -26,11 +26,9 @@ fn main() {
     // Get some config values
     let ip = &cfg.get("ip").unwrap()[..];
     let port = cfg.get("port").unwrap().parse::<u32>().unwrap();
-    let dev_id = cfg.get("dev_id").unwrap();
     let logging = cfg.get_bool("logging").unwrap();
     let log_delay = cfg.get_int("log_delay").unwrap();
     let log_file = cfg.get("log_file").unwrap();
-    let calibration = cfg.get_float("calibration").unwrap();
     debug = debug || cfg.get_bool("debug").unwrap();
 
     let event_log_cfg = logging::LogCfg {
@@ -38,10 +36,14 @@ fn main() {
         file: cfg.get("event_log_file").unwrap(),
     };
 
-    let mut sensors: Vec<sensor::Sensor> = Vec::new();
-    sensors.push(sensor::Sensor::new("", "water", None, true));
-    sensors.push(sensor::Sensor::new("", "water2", None, true));
-    sensors.push(sensor::Sensor::new("", "water3", None, true));
+    // Get all sensors from config
+    let sensors: Vec<sensor::Sensor> = sensor::get_sensors(&cfg.data, debug);
+
+    // If there are no sensors, panic
+    if sensors.is_empty() {
+        println!("[-] No Sensors defined :/");
+        panic!("No Sensors defined :/");
+    }
 
     // Print some info
     logging::log_event(
@@ -60,7 +62,7 @@ fn main() {
         format!(
             "{} {}",
             common::color("[*] Main Device ID:", 32),
-            common::color(&dev_id[..], 34)
+            common::color(&sensors[0].id[..], 34)
         ),
     );
 
@@ -80,11 +82,7 @@ fn main() {
     }
     if logging {
         thread::spawn(move || {
-            logging::start_data_logging(
-                &cfg.get("log_file").unwrap()[..],
-                log_delay,
-                log_sensors
-            )
+            logging::start_data_logging(&cfg.get("log_file").unwrap()[..], log_delay, log_sensors)
         });
     }
 
