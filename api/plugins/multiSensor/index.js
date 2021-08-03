@@ -1,6 +1,6 @@
 // Plugin for showing data from multiple sensors
 
-const nodemailer = require('nodemailer');
+// const nodemailer = require('nodemailer');
 const fs = require('fs');
 
 const common = require('../../src/common');
