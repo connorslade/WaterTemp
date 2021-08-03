@@ -45,7 +45,7 @@ pub fn start_data_logging(log_file: &str, log_interval: i64, sensors: Vec<sensor
             }
             all_data = all_data[0..all_data.len() - 1].to_string();
 
-            if let Err(e) = writeln!(file, "{:?},{},,{}", epoch.as_secs(), temp, &all_data) {
+            if let Err(e) = writeln!(file, "{:?},{},{}", epoch.as_secs(), temp, &all_data) {
                 eprintln!("[-] Error writhing to file: {}", e);
             }
         }
