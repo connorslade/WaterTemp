@@ -60,6 +60,15 @@ impl Sensor {
         let temp_f = temp_c * 9.0 / 5.0 + 32.0;
         Some(temp_f + cal)
     }
+
+    pub fn clone(&self) -> Sensor {
+        Sensor {
+            id: self.id.clone(),
+            name: self.name.clone(),
+            calibration: self.calibration.clone(),
+            debug: self.debug.clone(),
+        }
+    }
 }
 
 impl Value {

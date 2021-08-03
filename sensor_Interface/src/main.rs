@@ -74,14 +74,16 @@ fn main() {
     );
 
     // Start Logging thread
+    let mut log_sensors: Vec<sensor::Sensor> = Vec::new();
+    for i in 0..sensors.len() {
+        log_sensors.push(sensors[i].clone());
+    }
     if logging {
         thread::spawn(move || {
             logging::start_data_logging(
                 &cfg.get("log_file").unwrap()[..],
                 log_delay,
-                debug,
-                cfg.get("dev_id").unwrap(),
-                calibration,
+                log_sensors
             )
         });
     }

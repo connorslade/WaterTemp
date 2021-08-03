@@ -15,13 +15,7 @@ pub struct LogCfg {
 
 /// Start Data Logging.
 /// Best to run this in a separate thread.
-pub fn start_data_logging(
-    log_file: &str,
-    log_interval: i64,
-    debug: bool,
-    dev_id: String,
-    calibration: f64,
-) {
+pub fn start_data_logging(log_file: &str, log_interval: i64, sensors: Vec<sensor::Sensor>) {
     // Open file
     // Will also create file if it does not exist
     let mut file = OpenOptions::new()
@@ -36,19 +30,36 @@ pub fn start_data_logging(
     loop {
         let start = Instant::now();
 
-        // let temp: f64 = sensor::get_temperature(&dev_id, debug, Some(calibration));
-        let temp = 0.0;
+        let temp: f64 = sensors[0].get_temperature().unwrap();
+
         let epoch = SystemTime::now()
             .duration_since(SystemTime::UNIX_EPOCH)
             .unwrap();
 
-        if let Err(e) = writeln!(file, "{:?},{}", epoch.as_secs(), temp) {
-            eprintln!("Error writhing to file: {}", e);
+        // More than one sensor
+        if sensors.len() > 1 {
+            let mut all_data: String = "".to_string();
+
+            for i in 1..sensors.len() {
+                all_data.push_str(&format!("{},", sensors[i].get_temperature().unwrap())[..]);
+            }
+            all_data = all_data[0..all_data.len() - 1].to_string();
+
+            if let Err(e) = writeln!(file, "{:?},{},,{}", epoch.as_secs(), temp, &all_data) {
+                eprintln!("[-] Error writhing to file: {}", e);
+            }
+        }
+        // Only One Sensor
+        else {
+            if let Err(e) = writeln!(file, "{:?},{}", epoch.as_secs(), temp) {
+                eprintln!("[-] Error writhing to file: {}", e);
+            }
         }
 
         // Fancy stuff to make sure this runs every 5 seconds
         // Not just 5 seconds after everything finished processing
         let runtime = start.elapsed();
+
         if let Some(remaining) = Duration::from_millis(delay).checked_sub(runtime) {
             thread::sleep(remaining);
         }
