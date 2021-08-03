@@ -22,11 +22,11 @@ function createWebSocket() {
         console.log(data);
         switch (data.event) {
             case 'multi_update':
-                showData(data.data, false);
+                showData(data.data);
                 break;
 
             case 'multi_init':
-                showData(data.data, true);
+                showData(data.data);
                 break;
         }
     };
@@ -57,19 +57,21 @@ function niceName(name: string) {
     return working.join(' ');
 }
 
-function showData(data, init: boolean) {
-    let mainEle = document.getElementById('values');
-    if (init) {
-        data.all.forEach(e => {
-            let temp = Math.round(e.temp * 100) / 100;
-            mainEle.innerHTML += getTempElementData(e.id, niceName(e.name), temp, 'F');
-        });
-        return
+function showData(data) {
+    let mainElement = document.getElementById('values');
+    let shownDevices = [];
+    for (let i = 0; i < mainElement.children.length; i++) {
+        shownDevices.push(mainElement.children[i].id);
     }
+
     data.all.forEach(e => {
-        let sensor = document.getElementById(e.id);
         let temp = Math.round(e.temp * 100) / 100;
-        sensor.outerHTML = getTempElementData(e.id, niceName(e.name), temp, 'F');
+        if (shownDevices.includes(e.id)) {
+            let sensor = document.getElementById(e.id);
+            sensor.outerHTML = getTempElementData(e.id, niceName(e.name), temp, 'F');
+            return
+        }
+        mainElement.innerHTML += getTempElementData(e.id, niceName(e.name), temp, 'F');
     });
 }
 

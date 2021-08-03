@@ -3,14 +3,15 @@
 const fs = require('fs');
 
 const common = require('../../src/common');
+const { Type } = require(`${__dirname}/common`);
 
-// Config
-const pagePath = 'multi';
+// Load Config
+const { pluginConfig } = require(`${__dirname}/config`);
 
 // Init some variables
 let sockets = [];
 let staticFiles;
-let data;
+let lastData = {};
 
 function undefOrNull(value) {
     return value === undefined || value === null;
@@ -20,6 +21,70 @@ function init() {
     staticFiles = fs.readdirSync(`${__dirname}/static`);
 }
 
+// Get the data from backend server
+function getData(config) {
+    let sen = `http://${config.sensor.ip}:${config.sensor.port}`;
+    return new Promise((resolve, reject) => {
+        common
+            .get(`${sen}/temp`)
+            .then(data => {
+                data = JSON.parse(data);
+                lastData = data;
+                resolve(data);
+            })
+            .catch(reject);
+    });
+}
+
+// Check if sensor data is in range
+// If not, send an alert
+// TODO: Multi Sensor Support
+function checkRange(data, config) {
+    let temp = data.temp;
+    let alert = {};
+
+    // Check if the temperature is ok
+    config.alerts.alerts.forEach(e => {
+        switch (e.type) {
+            case Type.whiteList:
+                if (e.values.includes(temp)) alert[e.name] = true;
+                break;
+
+            case Type.blackList:
+                if (!e.values.includes(temp)) alert[e.name] = true;
+                break;
+
+            case Type.between:
+                if (temp >= e.values[0] || temp <= e.values[1])
+                    alert[e.name] = true;
+                break;
+
+            case Type.outOf:
+                if (temp < e.values[0] || temp > e.values[1])
+                    alert[e.name] = true;
+                break;
+        }
+    });
+
+    // Return if there are no alerts
+    if (!Object.values(alert).includes(true)) return;
+
+    // Send the alerts!
+    if (config.alerts.alertMessage.webhook) {
+        let splitUrl = config.alerts.alertMessage.webhook.url.split('/');
+        common
+            .post(
+                { content: 'Temperature Alert' },
+                splitUrl[2],
+                443,
+                `/${splitUrl.slice(3).join('/')}`
+            )
+            .catch(err => {
+                console.log(`🛑 Error Sending Webhook: ${err}`);
+            });
+    }
+}
+
 // Define routes for sending data
 function api(app, wsServer, config, debug) {
     wsServer.on('connection', socket => {
@@ -27,15 +92,10 @@ function api(app, wsServer, config, debug) {
             if (message === 'multiSensor' && !sockets.includes(socket)) {
                 sockets.push(socket);
 
-                if (undefOrNull(global.raw_sensor_data)) {
-                    socket.send(JSON.stringify({ event: 'multi_init' }));
-                    return;
-                }
-
                 socket.send(
                     JSON.stringify({
                         event: 'multi_init',
-                        data: global.raw_sensor_data
+                        data: lastData
                     })
                 );
             }
@@ -47,17 +107,16 @@ function api(app, wsServer, config, debug) {
     });
 
     setInterval(() => {
-        sockets.forEach(s => {
-            if (undefOrNull(global.raw_sensor_data)) {
-                s.send(JSON.stringify({ event: 'multi_update' }));
-                return;
-            }
-            s.send(
-                JSON.stringify({
-                    event: 'multi_update',
-                    data: global.raw_sensor_data
-                })
-            );
+        getData(config).then(data => {
+            sockets.forEach(s => {
+                s.send(
+                    JSON.stringify({
+                        event: 'multi_update',
+                        data: data
+                    })
+                );
+                checkRange(data, pluginConfig);
+            });
         });
     }, 5000);
 }
@@ -65,7 +124,7 @@ function api(app, wsServer, config, debug) {
 // Define routes for static files
 function static(app, wsServer, config, debug) {
     staticFiles.forEach(file => {
-        app.get(`/${pagePath}/${file}`, (req, res) => {
+        app.get(`/${pluginConfig.mainPage}/${file}`, (req, res) => {
             common.streamFile(`${__dirname}/static/${file}`, res);
         });
     });
@@ -84,3 +143,12 @@ module.exports = {
     onInit: init,
     api: [api, static]
 };
+
+// TODO
+// Add Cypress Tests
+// Show when WS disconnects
+// Unit Changing
+// Show Averages
+// ✔ Webhook ALerts
+// Email Alerts
+// idk

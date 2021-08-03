@@ -22,7 +22,6 @@ function getData(event) {
                     .get(`${sen}/temp`)
                     .then(data => {
                         data = JSON.parse(data);
-                        global.raw_sensor_data = data;
                         history.push(data.temp);
                         history.shift();
                         global.sensor_data = [
@@ -48,7 +47,6 @@ function getData(event) {
  * @returns {void}
  */
 function init() {
-    global.raw_sensor_data = null;
     common
         .get(`${sen}/test`)
         .then(data => {

@@ -1,4 +1,5 @@
 const config = require('./../config/config.json');
+const https = require('https');
 const http = require('http');
 const fs = require('fs');
 
@@ -19,6 +20,40 @@ function get(uri) {
             response.on('end', () => resolve(data));
         });
         req.on('error', reject);
+    });
+}
+
+/**
+ * Send a POST request
+ * @async
+ * @param data {String} Json Data
+ * @param hostname {string} Server Hostname
+ * @param port {Number} Server Port
+ * @param path {String} Resource Path
+ * @returns {Promise<String>} Response
+ */
+function post(data, hostname, port, path) {
+    return new Promise((resolve, reject) => {
+        data = JSON.stringify(data);
+        const options = {
+            hostname: hostname,
+            port: port,
+            path: path,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Content-Length': data.length
+            }
+        };
+
+        const req = https.request(options, res => {
+            let todo = '';
+            res.on('data', d => (todo += d));
+            res.on('end', () => resolve(todo));
+        });
+        req.on('error', reject);
+        req.write(data);
+        req.end();
     });
 }
 
@@ -144,6 +179,7 @@ module.exports = {
     addToLog,
     getData,
     ipPad,
+    post,
     pad,
     log,
     get,

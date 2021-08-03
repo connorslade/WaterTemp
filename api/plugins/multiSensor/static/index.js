@@ -17,10 +17,10 @@ function createWebSocket() {
         console.log(data);
         switch (data.event) {
             case 'multi_update':
-                showData(data.data, false);
+                showData(data.data);
                 break;
             case 'multi_init':
-                showData(data.data, true);
+                showData(data.data);
                 break;
         }
     };
@@ -45,19 +45,20 @@ function niceName(name) {
     });
     return working.join(' ');
 }
-function showData(data, init) {
-    var mainEle = document.getElementById('values');
-    if (init) {
-        data.all.forEach(function (e) {
-            var temp = Math.round(e.temp * 100) / 100;
-            mainEle.innerHTML += getTempElementData(e.id, niceName(e.name), temp, 'F');
-        });
-        return;
+function showData(data) {
+    var mainElement = document.getElementById('values');
+    var shownDevices = [];
+    for (var i = 0; i < mainElement.children.length; i++) {
+        shownDevices.push(mainElement.children[i].id);
     }
     data.all.forEach(function (e) {
-        var sensor = document.getElementById(e.id);
         var temp = Math.round(e.temp * 100) / 100;
-        sensor.outerHTML = getTempElementData(e.id, niceName(e.name), temp, 'F');
+        if (shownDevices.includes(e.id)) {
+            var sensor = document.getElementById(e.id);
+            sensor.outerHTML = getTempElementData(e.id, niceName(e.name), temp, 'F');
+            return;
+        }
+        mainElement.innerHTML += getTempElementData(e.id, niceName(e.name), temp, 'F');
     });
 }
 window.onload = main;
