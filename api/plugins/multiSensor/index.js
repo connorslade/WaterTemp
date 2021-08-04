@@ -3,43 +3,21 @@
 const fs = require('fs');
 
 const common = require('../../src/common');
-const { Type } = require(`${__dirname}/common`);
+const { Type, niceName, getData } = require(`${__dirname}/common`);
 const sendAlert = require(`${__dirname}/alert`);
 
 // Load Config
 const { pluginConfig } = require(`${__dirname}/config`);
 
 // Init some variables
+let sensorInAlert = [];
+let lastData = {};
 let sockets = [];
 let staticFiles;
-let lastData = {};
 
+// Plugin init
 function init() {
     staticFiles = fs.readdirSync(`${__dirname}/static`);
-}
-
-// Capatilize the first letter of each word
-function niceName(name) {
-    let working = name.toLowerCase().split(' ');
-    working.forEach((e, i) => {
-        working[i] = e[0].toUpperCase() + e.substr(1);
-    });
-    return working.join(' ');
-}
-
-// Get the data from backend server
-function getData(config) {
-    let sen = `http://${config.sensor.ip}:${config.sensor.port}`;
-    return new Promise((resolve, reject) => {
-        common
-            .get(`${sen}/temp`)
-            .then(data => {
-                data = JSON.parse(data);
-                lastData = data;
-                resolve(data);
-            })
-            .catch(reject);
-    });
 }
 
 // Check if sensor data is in range
@@ -53,73 +31,76 @@ function checkRange(data, config) {
 
         // Check if the temperature is ok
         config.alerts.alerts.forEach(e => {
+            if (e.sensorId !== sensor.id) return;
+            alert[e.name] = [];
             switch (e.type) {
                 case Type.whiteList:
-                    if (!(e.name in alert)) alert[e.name] = [];
                     if (e.values.includes(temp)) alert[e.name].push(sensor);
                     break;
 
                 case Type.blackList:
-                    if (!(e.name in alert)) alert[e.name] = [];
                     if (!e.values.includes(temp)) alert[e.name].push(sensor);
                     break;
 
                 case Type.between:
-                    if (!(e.name in alert)) alert[e.name] = [];
                     if (temp >= e.values[0] || temp <= e.values[1])
                         alert[e.name].push(sensor);
                     break;
 
                 case Type.outOf:
-                    if (!(e.name in alert)) alert[e.name] = [];
                     if (temp < e.values[0] || temp > e.values[1])
                         alert[e.name].push(sensor);
                     break;
+                default:
+                    if (sensor.id in sensorInAlert)
+                        delete sensorInAlert[sensor.id];
+                    break;
             }
+            if (alert[e.name].length === 0) delete alert[e.name];
         });
     });
 
     // Return if there are no alerts
-    if (alert.length === 0) return;
+    if (Object.keys(alert).length === 0) return;
 
     // Gernerate the text to send
     let text = '';
     Object.keys(alert).forEach(a => {
         alert[a].forEach(e => {
+            if (sensorInAlert.includes(e.id)) return;
+            else sensorInAlert.push(e.id);
             text += `${a} - ${niceName(e.name)} - ${
                 Math.round(e.temp * 1000) / 1000
             }°F\n`;
         });
     });
 
-    Object.keys(alert).forEach(key => {
-        // Send the alerts!
-        if (config.alerts.alertMessage.webhook) {
-            console.log(
-                `:thermometer: Sensor Alert${
-                    alert.length > 1 ? 's' : ''
-                }\n${text}`
-            );
-            sendAlert.discord(
-                {
-                    content: `:thermometer: Sensor Alert${
-                        alert.length > 1 ? 's' : ''
-                    }\n${text}`
-                },
-                config
-            );
-        }
+    // Send the alerts!
+    if (text === '') return;
+    common.log(`🚨 Sensor Alert: ${text}`);
 
-        // Comming Soon to a alert system near you!
-        // mabye.
-        if (config.alerts.alertMessage.email.enabled) {
-            sendAlert.email(
-                `Tempature Alert for ${Object.keys(alert).join(', ')}`,
-                text,
-                config
-            );
-        }
-    });
+    if (config.alerts.alertMessage.webhook.enabled) {
+        sendAlert.discord(
+            {
+                embeds: [
+                    {
+                        title: ':thermometer: Sensor Alert',
+                        description: text,
+                        color: 154877
+                    }
+                ]
+            },
+            config
+        );
+    }
+
+    if (config.alerts.alertMessage.email.enabled) {
+        sendAlert.email(
+            `Tempature Alert for ${Object.keys(alert).join(', ')}`,
+            text,
+            config
+        );
+    }
 }
 
 // Define routes for sending data

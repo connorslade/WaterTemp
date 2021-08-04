@@ -35,7 +35,6 @@ const pluginConfig = {
 
         alertMessage: {
             // Send alerts through email
-            // Comming Soon...
             email: {
                 enabled: false,
 
@@ -54,11 +53,9 @@ const pluginConfig = {
 
             // Send alerts through webhook
             // For Discord Only (For now...)
-            // https://discord.com/api/webhooks/[ID]]/[Token]
             webhook: {
-                enabled: true,
-                id: '',
-                token: ''
+                enabled: false,
+                url: ''
             }
         }
     }

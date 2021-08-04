@@ -1,14 +1,10 @@
 const common = require('../../src/common');
+const axios = require('axios');
 
 function discord(alert, config) {
     let discordConfig = config.alerts.alertMessage.webhook;
-    common
-        .post(
-            alert,
-            'discord.com',
-            443,
-            `/api/webhooks/${discordConfig.id}/${discordConfig.token}`
-        )
+    axios
+        .post(discordConfig.url, alert)
         .then(() => common.log('📨 Discord Webhook Sent'))
         .catch(err => {
             common.log(`🛑 Error Sending Webhook: ${err}`);
