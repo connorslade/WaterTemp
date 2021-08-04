@@ -7,6 +7,9 @@ let history = Array.from({ length: 10 }, () => 0);
 // Sensor Address
 let sen = `http://${config.sensor.ip}:${config.sensor.port}`;
 
+// Latest Data from Sensor Server
+let lastData = '';
+
 /**
  * Gets Init Data for Websocket Clients
  * @param {String} event Event Type
@@ -34,6 +37,9 @@ function getData(event) {
                             avg: stats.mean
                         };
                         if (event === 'init') toSend.data = history;
+                        let lData = toSend;
+                        lData.data = history;
+                        lastData = JSON.stringify(lData);
                         resolve(JSON.stringify(toSend));
                     })
                     .catch(reject);
@@ -102,6 +108,7 @@ function debugWebSocket(wsServer) {
 
 function webSocket(wsServer, debug) {
     init();
+    getData('init');
     if (debug) {
         debugWebSocket(wsServer);
         return;
@@ -109,11 +116,7 @@ function webSocket(wsServer, debug) {
     let sockets = [];
     wsServer.on('connection', socket => {
         socket.on('message', message =>
-            common.log(
-                '🔌 WebSocket ',
-                message,
-                socket._socket.remoteAddress
-            )
+            common.log('🔌 WebSocket ', message, socket._socket.remoteAddress)
         );
         socket.on('close', () => {
             common.log(
@@ -124,7 +127,7 @@ function webSocket(wsServer, debug) {
             sockets = sockets.filter(s => s !== socket);
         });
         sockets.push(socket);
-        getData('init').then(data => socket.send(data));
+        socket.send(lastData);
     });
 
     setInterval(() => {

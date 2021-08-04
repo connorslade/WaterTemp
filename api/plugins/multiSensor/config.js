@@ -40,20 +40,25 @@ const pluginConfig = {
                 enabled: false,
 
                 // The email address to send the alert to
-                sendTo: [],
+                sendTo: [''],
 
                 // The email info of the sender address
                 sender: {
-                    email: '',
-                    password: ''
+                    service: 'gmail',
+                    auth: {
+                        user: '',
+                        pass: ''
+                    }
                 }
             },
-            
+
             // Send alerts through webhook
-            // Intended for Discord, may work elsewhere
+            // For Discord Only (For now...)
+            // https://discord.com/api/webhooks/[ID]]/[Token]
             webhook: {
                 enabled: true,
-                url: ''
+                id: '',
+                token: ''
             }
         }
     }
@@ -61,4 +66,4 @@ const pluginConfig = {
 
 // No need to edit anything below this line
 
-module.exports = { pluginConfig, Type };
+module.exports = { pluginConfig };

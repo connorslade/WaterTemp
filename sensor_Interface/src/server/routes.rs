@@ -83,7 +83,6 @@ pub fn get_download(_req: &tiny_http::Request, log_file: &str) -> Response {
         );
     }
     let format_history: String = history.unwrap().replace("\n\n", "\n");
-    // TODO: Update this to support more than one sensor.
     Response::new(
         200,
         &format!("time,temp\n{}", format_history)[..],
@@ -143,7 +142,7 @@ pub fn get_test(_req: &tiny_http::Request) -> Response {
     Response::new(
         200,
         &format!(
-            "{{\"message\": \"All Systems are a Go!\", \"version\": {}}}",
+            "{{\"message\": \"All Systems are a Go!\", \"version\": \"{}\"}}",
             VERSION
         )[..],
         vec!["Content-Type: application/json"],

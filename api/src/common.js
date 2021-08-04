@@ -35,7 +35,7 @@ function get(uri) {
 function post(data, hostname, port, path) {
     return new Promise((resolve, reject) => {
         data = JSON.stringify(data);
-        const options = {
+        let options = {
             hostname: hostname,
             port: port,
             path: path,
@@ -46,7 +46,7 @@ function post(data, hostname, port, path) {
             }
         };
 
-        const req = https.request(options, res => {
+        let req = https.request(options, res => {
             let todo = '';
             res.on('data', d => (todo += d));
             res.on('end', () => resolve(todo));

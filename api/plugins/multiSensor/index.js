@@ -1,6 +1,5 @@
 // Plugin for showing data from multiple sensors
 
-// const nodemailer = require('nodemailer');
 const fs = require('fs');
 
 const common = require('../../src/common');
@@ -15,12 +14,17 @@ let sockets = [];
 let staticFiles;
 let lastData = {};
 
-function undefOrNull(value) {
-    return value === undefined || value === null;
-}
-
 function init() {
     staticFiles = fs.readdirSync(`${__dirname}/static`);
+}
+
+// Capatilize the first letter of each word
+function niceName(name) {
+    let working = name.toLowerCase().split(' ');
+    working.forEach((e, i) => {
+        working[i] = e[0].toUpperCase() + e.substr(1);
+    });
+    return working.join(' ');
 }
 
 // Get the data from backend server
@@ -42,45 +46,78 @@ function getData(config) {
 // If not, send an alert
 // TODO: Multi Sensor Support
 function checkRange(data, config) {
-    let temp = data.temp;
     let alert = {};
 
-    // Check if the temperature is ok
-    config.alerts.alerts.forEach(e => {
-        switch (e.type) {
-            case Type.whiteList:
-                if (e.values.includes(temp)) alert[e.name] = true;
-                break;
+    data.all.forEach(sensor => {
+        let temp = sensor.temp;
 
-            case Type.blackList:
-                if (!e.values.includes(temp)) alert[e.name] = true;
-                break;
+        // Check if the temperature is ok
+        config.alerts.alerts.forEach(e => {
+            switch (e.type) {
+                case Type.whiteList:
+                    if (!(e.name in alert)) alert[e.name] = [];
+                    if (e.values.includes(temp)) alert[e.name].push(sensor);
+                    break;
 
-            case Type.between:
-                if (temp >= e.values[0] || temp <= e.values[1])
-                    alert[e.name] = true;
-                break;
+                case Type.blackList:
+                    if (!(e.name in alert)) alert[e.name] = [];
+                    if (!e.values.includes(temp)) alert[e.name].push(sensor);
+                    break;
 
-            case Type.outOf:
-                if (temp < e.values[0] || temp > e.values[1])
-                    alert[e.name] = true;
-                break;
-        }
+                case Type.between:
+                    if (!(e.name in alert)) alert[e.name] = [];
+                    if (temp >= e.values[0] || temp <= e.values[1])
+                        alert[e.name].push(sensor);
+                    break;
+
+                case Type.outOf:
+                    if (!(e.name in alert)) alert[e.name] = [];
+                    if (temp < e.values[0] || temp > e.values[1])
+                        alert[e.name].push(sensor);
+                    break;
+            }
+        });
     });
 
     // Return if there are no alerts
-    if (!Object.values(alert).includes(true)) return;
+    if (alert.length === 0) return;
+
+    // Gernerate the text to send
+    let text = '';
+    Object.keys(alert).forEach(a => {
+        alert[a].forEach(e => {
+            text += `${a} - ${niceName(e.name)} - ${
+                Math.round(e.temp * 1000) / 1000
+            }°F\n`;
+        });
+    });
 
     Object.keys(alert).forEach(key => {
         // Send the alerts!
         if (config.alerts.alertMessage.webhook) {
-            console.log(`🌡 ${key} sent an alert`);
-            sendAlert.discord({ content: `🌡 ${key} sent an alert` }, config);
+            console.log(
+                `:thermometer: Sensor Alert${
+                    alert.length > 1 ? 's' : ''
+                }\n${text}`
+            );
+            sendAlert.discord(
+                {
+                    content: `:thermometer: Sensor Alert${
+                        alert.length > 1 ? 's' : ''
+                    }\n${text}`
+                },
+                config
+            );
         }
 
         // Comming Soon to a alert system near you!
         // mabye.
-        if (config.alerts.alertMessage.email) {
+        if (config.alerts.alertMessage.email.enabled) {
+            sendAlert.email(
+                `Tempature Alert for ${Object.keys(alert).join(', ')}`,
+                text,
+                config
+            );
         }
     });
 }
@@ -108,15 +145,12 @@ function api(app, wsServer, config, debug) {
 
     setInterval(() => {
         getData(config).then(data => {
-            sockets.forEach(s => {
-                s.send(
-                    JSON.stringify({
-                        event: 'multi_update',
-                        data: data
-                    })
-                );
-                checkRange(data, pluginConfig);
+            let tosend = JSON.stringify({
+                event: 'multi_update',
+                data: data
             });
+            sockets.forEach(s => s.send(tosend));
+            checkRange(data, pluginConfig);
         });
     }, 5000);
 }
@@ -151,5 +185,6 @@ module.exports = {
 // Show Averages
 // ✔ Webhook ALerts
 // Add Embeds to discord webhook
-// Email Alerts
+// ✔ Email Alerts
+// Only send alert once per time it enters range
 // idk
