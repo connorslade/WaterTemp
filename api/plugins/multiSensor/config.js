@@ -8,7 +8,7 @@ const pluginConfig = {
 
     // Temperature alerts
     alerts: {
-        enabled: false,
+        enabled: true,
 
         // Define as many alerts as you want
         // They will be checked every 5 seconds

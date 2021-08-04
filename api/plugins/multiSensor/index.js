@@ -24,6 +24,7 @@ function init() {
 // If not, send an alert
 // TODO: Multi Sensor Support
 function checkRange(data, config) {
+    if (!config.alerts.enabled) return;
     let alert = {};
 
     data.all.forEach(sensor => {
@@ -31,8 +32,9 @@ function checkRange(data, config) {
 
         // Check if the temperature is ok
         config.alerts.alerts.forEach(e => {
-            if (e.sensorId !== sensor.id) return;
-            alert[e.name] = [];
+            if (e.sensorId !== sensor.id && e.sensorId !== '*') return;
+            console.log(`Checking ${JSON.stringify(sensor)}`);
+            if (!Object.keys(alert).includes(e.name)) alert[e.name] = [];
             switch (e.type) {
                 case Type.whiteList:
                     if (e.values.includes(temp)) alert[e.name].push(sensor);
@@ -51,17 +53,24 @@ function checkRange(data, config) {
                     if (temp < e.values[0] || temp > e.values[1])
                         alert[e.name].push(sensor);
                     break;
-                default:
-                    if (sensor.id in sensorInAlert)
-                        delete sensorInAlert[sensor.id];
-                    break;
+            }
+            if (
+                Object.keys(alert).length === 0 ||
+                (!Object.keys(alert).includes(e.name) &&
+                    !alert[e.name].includes(sensor))
+            ) {
+                console.log('should remove');
+                delete sensorInAlert[sensor.id];
+                console.log(sensorInAlert);
             }
             if (alert[e.name].length === 0) delete alert[e.name];
         });
     });
-
+    console.log(alert);
+    console.log(sensorInAlert);
     // Return if there are no alerts
     if (Object.keys(alert).length === 0) return;
+    console.log('try Send');
 
     // Gernerate the text to send
     let text = '';
