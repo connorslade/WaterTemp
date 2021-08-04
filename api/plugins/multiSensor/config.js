@@ -1,6 +1,7 @@
 const { Type } = require(`${__dirname}/common`);
 
 // This config is kinda a mess, but it works.
+// NOTE: All tempature values are in fahrenheit. (sorry)
 const pluginConfig = {
     // The page the plugin will be served from
     // Ex multi would serve on [page]/multi
@@ -29,7 +30,7 @@ const pluginConfig = {
                 // Define the values for the alert
                 // For between and outOf, the values are [min, max]
                 // For whiteList and blackList, the values are a list of values
-                values: [0, 0]
+                values: [75, 79]
             }
         ],
 

@@ -22,7 +22,6 @@ function init() {
 
 // Check if sensor data is in range
 // If not, send an alert
-// TODO: Multi Sensor Support
 function checkRange(data, config) {
     if (!config.alerts.enabled) return;
     let alert = {};
@@ -32,9 +31,11 @@ function checkRange(data, config) {
 
         // Check if the temperature is ok
         config.alerts.alerts.forEach(e => {
+            // Make sure the sensor ment to be checked
             if (e.sensorId !== sensor.id && e.sensorId !== '*') return;
-            console.log(`Checking ${JSON.stringify(sensor)}`);
             if (!Object.keys(alert).includes(e.name)) alert[e.name] = [];
+
+            // Check if the sensor is in range
             switch (e.type) {
                 case Type.whiteList:
                     if (e.values.includes(temp)) alert[e.name].push(sensor);
@@ -54,23 +55,16 @@ function checkRange(data, config) {
                         alert[e.name].push(sensor);
                     break;
             }
-            if (
-                Object.keys(alert).length === 0 ||
-                (!Object.keys(alert).includes(e.name) &&
-                    !alert[e.name].includes(sensor))
-            ) {
-                console.log('should remove');
-                delete sensorInAlert[sensor.id];
-                console.log(sensorInAlert);
-            }
+
+            // Remove sensor from lock if is in range
+            if (!alert[e.name].includes(sensor))
+                sensorInAlert = sensorInAlert.filter(s => s !== sensor.id);
+
             if (alert[e.name].length === 0) delete alert[e.name];
         });
     });
-    console.log(alert);
-    console.log(sensorInAlert);
     // Return if there are no alerts
     if (Object.keys(alert).length === 0) return;
-    console.log('try Send');
 
     // Gernerate the text to send
     let text = '';
@@ -174,7 +168,6 @@ module.exports = {
 // Unit Changing
 // Show Averages
 // ✔ Webhook ALerts
-// Add Embeds to discord webhook
+// ✔ Add Embeds to discord webhook
 // ✔ Email Alerts
-// Only send alert once per time it enters range
-// idk
+// ✔ Only send alert once per time it enters range
