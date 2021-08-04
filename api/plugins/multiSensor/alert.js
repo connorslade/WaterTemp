@@ -1,7 +1,7 @@
 const common = require('../../src/common');
-const axios = require('axios');
 
 function discord(alert, config) {
+    const axios = require('axios');
     let discordConfig = config.alerts.alertMessage.webhook;
     axios
         .post(discordConfig.url, alert)
