@@ -11,7 +11,7 @@
     <br />
     <a href="https://github.com/Basicprogrammer10/NoseBot/issues">Report Bug</a>
     ·
-    <a href="https://github.com/Basicprogrammer10/WaterTemp/blob/master/todo.md">Planned Features</a>
+    <a href="https://github.com/Basicprogrammer10/WaterTemp/projects/1">Planned Features</a>
     ·
     <a href="https://github.com/Basicprogrammer10/NoseBot/issues">Request Feature</a>
   <br><br>
@@ -21,5 +21,6 @@
 </p>
 <br><br>
 
-<img src="https://i.imgur.com/GFe5Rgn.png" width="49%"></img> <img src="https://i.imgur.com/POConlM.png" width="49%"></img>
+<img src="https://i.imgur.com/mkCg8u3.png" width="49%"></img> <img src="https://i.imgur.com/9KPbuoW.png" width="49%"></img>
 
+## For more info on the project, visit the [Wiki](https://github.com/Basicprogrammer10/WaterTemp/wiki)
