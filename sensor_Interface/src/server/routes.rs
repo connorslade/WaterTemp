@@ -32,7 +32,7 @@ pub fn all(req: &tiny_http::Request, event_log_cfg: &logging::LogCfg) {
         &event_log_cfg,
         common::color(
             &format!("[+] {:?}: \"{}\"", req.method(), req.url())[..],
-            32,
+            common::Color::Green,
         ),
     );
 }

@@ -5,6 +5,8 @@ use simple_config_parser::config::Config;
 use std::env;
 use std::thread;
 
+use common::Color;
+
 mod common;
 mod logging;
 mod sensor;
@@ -41,7 +43,7 @@ fn main() {
 
     // If there are no sensors, panic
     if sensors.is_empty() {
-        println!("{}", common::color("[-] No Sensors defined :/", 31));
+        println!("{}", common::color("[-] No Sensors defined :/", Color::Red));
         panic!("No Sensors defined :/");
     }
 
@@ -50,10 +52,10 @@ fn main() {
         &event_log_cfg,
         format!(
             "{} {} {} {}",
-            common::color_bold("[*] Starting Sensor Interface", 32),
-            common::color(&format!("[v{}]", VERSION)[..], 34),
-            common::ret_if(logging, common::color_bold("LOGGING", 36)),
-            common::ret_if(debug, common::color_bold("DEBUG", 31))
+            common::color_bold("[*] Starting Sensor Interface", Color::Green),
+            common::color(&format!("[v{}]", VERSION)[..], Color::Blue),
+            common::ret_if(logging, common::color_bold("LOGGING", Color::Cyan)),
+            common::ret_if(debug, common::color_bold("DEBUG", Color::Red))
         ),
     );
 
@@ -66,9 +68,9 @@ fn main() {
         &event_log_cfg,
         format!(
             "{} {} {}",
-            common::color("[*] Found Devices:", 32),
-            common::color(&sensors.len().to_string(), 34),
-            common::color(&format!("[{}]", sensor_names), 34),
+            common::color("[*] Found Devices:", Color::Green),
+            common::color(&sensors.len().to_string(), Color::Blue),
+            common::color(&format!("[{}]", sensor_names), Color::Blue),
         ),
     );
 
@@ -76,9 +78,9 @@ fn main() {
         &event_log_cfg,
         format!(
             "{} {} {}",
-            common::color("[*] Main Device ID:", 32),
-            common::color(&sensors[0].id[..], 34),
-            common::color(&format!("[{}]", &sensors[0].name[..]), 34),
+            common::color("[*] Main Device ID:", Color::Green),
+            common::color(&sensors[0].id[..], Color::Blue),
+            common::color(&format!("[{}]", &sensors[0].name[..]), Color::Blue),
         ),
     );
 
@@ -86,8 +88,8 @@ fn main() {
         &event_log_cfg,
         format!(
             "{}{}",
-            common::color("[*] Serving on: ", 32),
-            common::color(&format!("{}:{}", ip, port)[..], 36)
+            common::color("[*] Serving on: ", Color::Green),
+            common::color(&format!("{}:{}", ip, port)[..], Color::Cyan)
         ),
     );
 
