@@ -31,7 +31,12 @@ pub fn all(req: &tiny_http::Request, event_log_cfg: &logging::LogCfg) {
     logging::log_event(
         &event_log_cfg,
         common::color(
-            &format!("[+] {:?}: \"{}\"", req.method(), req.url())[..],
+            &format!(
+                "[+] {:?}: \"{}\" ({})",
+                req.method(),
+                req.url(),
+                req.remote_addr()
+            ),
             common::Color::Green,
         ),
     );
@@ -40,6 +45,7 @@ pub fn all(req: &tiny_http::Request, event_log_cfg: &logging::LogCfg) {
 /// GET: "/EXIT"
 /// When in Debug Mode this will exit the server
 pub fn get_exit(_req: &tiny_http::Request) -> Response {
+    // Goodbye World... So sad.
     Response::new(200, "Ok - Goodby World", vec!["Content-Type: text/plain"])
 }
 
@@ -90,6 +96,8 @@ pub fn get_download(_req: &tiny_http::Request, log_file: &str) -> Response {
 
 /// Run on GET: "/data/stats"
 /// Get statistics for the temperature history
+///
+/// Only for main sensor (For Now :P)
 pub fn get_stats(_req: &tiny_http::Request, log_file: &str, rate: i64) -> Response {
     let history: Option<String> = sensor::get_history(log_file);
     if history.is_none() {
@@ -122,15 +130,15 @@ pub fn get_stats(_req: &tiny_http::Request, log_file: &str, rate: i64) -> Respon
         }
     }
     let json_response: &str = &format!(
-            "{{\"length\":{}, \"mean\": {}, \"first\":{}, \"last\":{}, \"rate\":{}, \"min\":{}, \"max\":{}}}",
-            data.len(),
-            mean / data.len() as f64,
-            first[0],
-            last[0],
-            60.0 / (rate as f64 / 1000.0 / 60.0),
-            min,
-            max
-        )[..];
+        r#"{{"length":{}, "mean": {}, "first":{}, "last":{}, "rate":{}, "min":{}, "max":{}}}"#,
+        data.len(),
+        mean / data.len() as f64,
+        first[0],
+        last[0],
+        60.0 / (rate as f64 / 1000.0 / 60.0),
+        min,
+        max
+    );
     Response::new(200, json_response, vec!["Content-Type: application/json"])
 }
 

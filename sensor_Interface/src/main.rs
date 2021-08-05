@@ -1,10 +1,12 @@
 extern crate rand;
 extern crate tiny_http;
 
+// External imports
 use simple_config_parser::config::Config;
 use std::env;
 use std::thread;
 
+// Internal imports
 use common::Color;
 
 mod common;
@@ -13,7 +15,7 @@ mod sensor;
 mod server;
 
 /// Server Version
-pub static VERSION: &str = "0.8.2";
+pub static VERSION: &str = "0.8.3";
 
 /// Main entry point
 fn main() {
@@ -99,9 +101,11 @@ fn main() {
         log_sensors.push(i.clone());
     }
     if logging {
-        thread::spawn(move || {
-            logging::start_data_logging(&cfg.get("log_file").unwrap()[..], log_delay, log_sensors)
-        });
+        let thread = thread::Builder::new().name("Logger".to_string());
+        #[rustfmt::skip]
+        thread.spawn(move || {
+            logging::start_data_logging(&cfg.get("log_file").unwrap(), log_delay, log_sensors)
+        }).unwrap();
     }
 
     // Start web server

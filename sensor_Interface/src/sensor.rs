@@ -3,6 +3,15 @@ use rand::Rng;
 use std::fmt;
 use std::fs;
 
+/// Some errors that can occur
+pub enum ErrorType {
+    /// The sensor is not found.
+    SensorNotFound,
+
+    /// There was an error parsings the sensor data.
+    DataParseError,
+}
+
 /// Defines a sensor.
 ///
 /// A sensor contains a Device ID, a Friendly Name and a calibration factor.
@@ -44,22 +53,25 @@ impl Sensor {
     /// let sensor = Sensor::new("00000bdf4372", "Water", None, false);
     /// sensor.get_temperature();
     /// ```
-    pub fn get_temperature(&self) -> Option<f64> {
+    pub fn get_temperature(&self) -> Result<f64, ErrorType> {
         let cal = self.calibration.unwrap_or(0.0);
 
         if self.debug {
             let mut rng = rand::thread_rng();
-            return Some(rng.gen_range::<f64>(0.0, 10.0) + cal);
+            return Ok(rng.gen_range::<f64>(0.0, 10.0) + cal);
         }
 
-        let sensor_data = get_sensor_data(&self.id[..]);
+        let sensor_data = match get_sensor_data(&self.id[..]) {
+            Ok(data) => data,
+            Err(e) => return Err(e),
+        };
         let temp: Vec<&str> = sensor_data.split("t=").collect();
         if temp.len() != 2 {
             println!(
                 "{}",
                 common::color("[-] Error Parsing Sensor Data :/", common::Color::Red)
             );
-            return None;
+            return Err(ErrorType::DataParseError);
         }
         let temp_str = temp[1].to_string();
         let temp_c = temp_str
@@ -67,7 +79,7 @@ impl Sensor {
             .expect("Failed to parse temperature")
             / 1000.0;
         let temp_f = temp_c * 9.0 / 5.0 + 32.0;
-        Some(temp_f + cal)
+        Ok(temp_f + cal)
     }
 
     /// Clone a sensor.
@@ -111,9 +123,21 @@ impl Value {
 /// Get rew sensor data
 ///
 /// **Not in a useable format yet**
-fn get_sensor_data(dev_id: &str) -> String {
+fn get_sensor_data(dev_id: &str) -> Result<String, ErrorType> {
     let mut dev_path = format!("/sys/bus/w1/devices/{}/w1_slave", dev_id);
-    let sensor_data = fs::read_to_string(&mut dev_path).expect("Failed to read sensor data");
+    let sensor_data: String = match fs::read_to_string(&mut dev_path) {
+        Ok(v) => v,
+        Err(_) => {
+            // Prints a \r before each error because if this error is triggered
+            // it will probably be triggered again... and again...
+            print!(
+                "\r{} {}",
+                common::color("[-] Error reading sensor data for", common::Color::Red),
+                common::color(dev_id, common::Color::Cyan)
+            );
+            return Err(ErrorType::SensorNotFound);
+        }
+    };
     let sensor_data_lines: Vec<&str> = sensor_data.split('\n').collect();
     if &common::remove_whitespace(
         sensor_data_lines[0][sensor_data_lines[0].len() - 3..sensor_data_lines[0].len()]
@@ -122,7 +146,7 @@ fn get_sensor_data(dev_id: &str) -> String {
     {
         return get_sensor_data(dev_id);
     }
-    sensor_data_lines[1].to_string()
+    Ok(sensor_data_lines[1].to_string())
 }
 
 /// Get sensor data for all sensors
@@ -135,7 +159,11 @@ pub fn get_all_temp(sensors: &[Sensor]) -> Vec<Value> {
     let mut values: Vec<Value> = Vec::new();
 
     for i in sensors.iter() {
-        values.push(Value::new(&i.id, &i.name, i.get_temperature().unwrap()));
+        values.push(Value::new(
+            &i.id,
+            &i.name,
+            i.get_temperature().ok().unwrap(),
+        ));
     }
     values
 }
@@ -189,7 +217,7 @@ mod tests {
     /// Test Getting Data from a Sensor
     fn test_get_temperature_1() {
         let sensor = Sensor::new("", "Water", None, true);
-        let number: f64 = sensor.get_temperature().unwrap();
+        let number: f64 = sensor.get_temperature().ok().unwrap();
         assert!(number >= 0.0 && number < 10.0);
     }
 
@@ -197,7 +225,7 @@ mod tests {
     /// Test Getting Data from a Sensor with Calibration
     fn test_get_temperature_cal() {
         let sensor = Sensor::new("", "Water", Some(10.0), true);
-        let number: f64 = sensor.get_temperature().unwrap();
+        let number: f64 = sensor.get_temperature().ok().unwrap();
         assert!(number >= 10.0 && number < 20.0);
     }
 

@@ -15,7 +15,6 @@ pub enum Color {
 }
 
 /// Get Color as an Integer.
-/// Using Ansi Color Codes.
 #[rustfmt::skip]
 fn get_color_code(color: Color) -> i32 {
     match color {
@@ -103,6 +102,18 @@ mod tests {
     fn test_remove_ansi_1() {
         assert_eq!(remove_ansi("\x1B[0;32mHello\x1B[0;0m"), "Hello");
         assert_eq!(remove_ansi(&color("Nose", Color::Cyan)), "Nose");
+    }
+
+    #[test]
+    fn test_remove_ansi_2() {
+        assert_eq!(
+            remove_ansi(&format!(
+                "{}{}",
+                color("Hello ", Color::Green),
+                color(" World", Color::Cyan)
+            )),
+            "Hello  World"
+        );
     }
 
     #[test]
