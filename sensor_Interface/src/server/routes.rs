@@ -5,8 +5,6 @@ use super::sensor;
 // I wish there was a nicer way to do this, but I can't figure it out.
 // I now now know how to do it but I don't want to write it.
 
-// Note To self: Finish this.
-
 /// Define a response to a sensor request.
 pub struct Response {
     pub status: u16,

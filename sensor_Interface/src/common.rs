@@ -74,4 +74,20 @@ mod tests {
     fn test_get_type_1() {
         assert_eq!(get_type(&1), "i32");
     }
+
+    #[test]
+    fn test_remove_whitespace_1() {
+        assert_eq!(remove_whitespace("  hello  ".to_string()), "hello");
+    }
+
+    #[test]
+    fn test_remove_ansi_1() {
+        assert_eq!(remove_ansi("\x1B[0;32mHello\x1B[0;0m"), "Hello");
+        assert_eq!(remove_ansi(&color("Nose", 36)), "Nose");
+    }
+
+    #[test]
+    fn test_ret_if_1() {
+        assert_eq!(ret_if(true, "Hello".to_string()), "Hello".to_string());
+    }
 }

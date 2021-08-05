@@ -39,6 +39,11 @@ impl Sensor {
     }
 
     /// Get the current temperature of a sensor.
+    /// ## Example
+    /// ```rust
+    /// let sensor = Sensor::new("00000bdf4372", "Water", None, false);
+    /// sensor.get_temperature();
+    /// ```
     pub fn get_temperature(&self) -> Option<f64> {
         let cal = self.calibration.unwrap_or(0.0);
 
@@ -62,6 +67,7 @@ impl Sensor {
         Some(temp_f + cal)
     }
 
+    /// Clone a sensor.
     pub fn clone(&self) -> Sensor {
         Sensor {
             id: self.id.clone(),
@@ -88,6 +94,7 @@ impl fmt::Debug for Sensor {
     }
 }
 
+/// Implementations for Value.
 impl Value {
     pub fn new(id: &str, name: &str, value: f64) -> Value {
         Value {
@@ -116,6 +123,11 @@ fn get_sensor_data(dev_id: &str) -> String {
 }
 
 /// Get sensor data for all sensors
+/// ## Example
+/// ```rust
+/// let sensors: Vec<sensor::Sensor> = sensor::get_sensors(&cfg.data, debug);
+/// sensors.get_all_temp();
+/// ```
 pub fn get_all_temp(sensors: &[Sensor]) -> Vec<Value> {
     let mut values: Vec<Value> = Vec::new();
 
@@ -126,6 +138,10 @@ pub fn get_all_temp(sensors: &[Sensor]) -> Vec<Value> {
 }
 
 /// Get data history from disk
+/// ## Example
+/// ```rust
+/// sensor::get_history("sensor.wtl");
+/// ```
 pub fn get_history(log_file: &str) -> Option<String> {
     match fs::read_to_string(log_file) {
         Ok(data) => Some(data),
@@ -136,6 +152,10 @@ pub fn get_history(log_file: &str) -> Option<String> {
 /// Get all the sensors defined in the config file
 ///
 /// Returns a vector of sensors
+/// ## Example
+/// ```rust
+/// let sensors: Vec<sensor::Sensor> = sensor::get_sensors(&cfg.data, debug);
+/// ```
 pub fn get_sensors(data: &[[String; 2]], debug: bool) -> Vec<Sensor> {
     let mut sensors: Vec<Sensor> = Vec::new();
     for i in data.iter() {
@@ -163,6 +183,7 @@ mod tests {
     use super::*;
 
     #[test]
+    /// Test Getting Data from a Sensor
     fn test_get_temperature_1() {
         let sensor = Sensor::new("", "Water", None, true);
         let number: f64 = sensor.get_temperature().unwrap();
@@ -170,9 +191,49 @@ mod tests {
     }
 
     #[test]
+    /// Test Getting Data from a Sensor with Calibration
     fn test_get_temperature_cal() {
         let sensor = Sensor::new("", "Water", Some(10.0), true);
         let number: f64 = sensor.get_temperature().unwrap();
         assert!(number >= 10.0 && number < 20.0);
+    }
+
+    #[test]
+    /// Test loading sensors from config file
+    fn test_get_sensors() {
+        let data = vec![
+            ["sensor_nose".to_string(), "1234,0.0".to_string()],
+            ["sensor_water".to_string(), "4321,12.7".to_string()],
+        ];
+        let sensors = get_sensors(&data, true);
+        assert_eq!(sensors.len(), 2);
+
+        assert_eq!(sensors[0].id, "1234");
+        assert_eq!(sensors[0].name, "nose");
+        assert_eq!(sensors[0].calibration.unwrap(), 0.0);
+
+        assert_eq!(sensors[1].id, "4321");
+        assert_eq!(sensors[1].name, "water");
+        assert_eq!(sensors[1].calibration.unwrap(), 12.7);
+    }
+
+    #[test]
+    /// Test Getting all the temperature data
+    fn test_get_all_temp() {
+        let data = vec![
+            ["sensor_nose".to_string(), "1234,0.0".to_string()],
+            ["sensor_water".to_string(), "4321,12.7".to_string()],
+        ];
+        let sensors = get_sensors(&data, true);
+        let values = get_all_temp(&sensors);
+
+        assert_eq!(values.len(), 2);
+        assert_eq!(values[0].id, "1234");
+        assert_eq!(values[0].name, "nose");
+        assert!(values[0].value >= 0.0 && values[0].value <= 10.0);
+
+        assert_eq!(values[1].id, "4321");
+        assert_eq!(values[1].name, "water");
+        assert!(values[1].value >= 12.7 && values[1].value <= 22.7);
     }
 }
