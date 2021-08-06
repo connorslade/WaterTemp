@@ -40,6 +40,29 @@ pub fn color_bold(text: &str, color: Color) -> String {
     format!("\x1B[1;{}m{}\x1B[0m", get_color_code(color), text)
 }
 
+/// Color Print
+///
+/// Macro for *easy* printing of colored text to the console.
+/// ## Example
+/// ```rust
+/// // A simple print
+/// color_print!(Color::Green, "This is a green message!");
+///
+/// // A more complex print
+/// color_print!(Color::Green, "This is a {} message!", "green");
+/// ```
+#[macro_use]
+macro_rules! color_print {
+    ($color:expr, $text:expr) => (
+        println!("{}", common::color($text, $color))
+    );
+    ($color:expr, $($exp:expr),+) => (
+        let mut text: String = "{}".to_string();
+        $(text = text.replacen("{}", $exp, 1);)*
+        println!("{}", common::color(&text, $color))
+    );
+}
+
 /// Removes ANSI color codes from text
 pub fn remove_ansi(text: &str) -> String {
     let re = Regex::new(r"\x1B\[[0-1];[0-9]+m").unwrap();

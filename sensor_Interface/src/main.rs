@@ -9,6 +9,7 @@ use std::thread;
 // Internal imports
 use common::Color;
 
+#[macro_use]
 mod common;
 mod logging;
 mod sensor;
@@ -25,7 +26,15 @@ fn main() {
 
     // Load config file
     let mut cfg = Config::new(Some("config.ini"));
-    cfg.read().ok().expect("[-] Error reading config file :/");
+
+    // Read config file
+    match cfg.read() {
+        Ok(_) => { /* everything is fine */ }
+        Err(_) => {
+            color_print!(Color::Red, "[-] Error reading config file");
+            panic!("Error Reading Config File");
+        }
+    };
 
     // Get some config values
     let ip = &cfg.get("ip").unwrap()[..];
@@ -45,7 +54,7 @@ fn main() {
 
     // If there are no sensors, panic
     if sensors.is_empty() {
-        println!("{}", common::color("[-] No Sensors defined :/", Color::Red));
+        color_print!(Color::Red, "[-] No Sensors defined :/");
         panic!("No Sensors defined :/");
     }
 

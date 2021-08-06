@@ -67,10 +67,7 @@ impl Sensor {
         };
         let temp: Vec<&str> = sensor_data.split("t=").collect();
         if temp.len() != 2 {
-            println!(
-                "{}",
-                common::color("[-] Error Parsing Sensor Data :/", common::Color::Red)
-            );
+            color_print!(common::Color::Red, "Error: {}", &sensor_data);
             return Err(ErrorType::DataParseError);
         }
         let temp_str = temp[1].to_string();
