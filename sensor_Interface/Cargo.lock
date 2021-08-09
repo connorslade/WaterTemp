@@ -195,9 +195,9 @@ dependencies = [
 
 [[package]]
 name = "simple_config_parser"
-version = "0.1.5"
+version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4cd278a4ff91c9a1bd2acd82125220e688e351963d0e2db71941be6d24a3be1a"
+checksum = "ca4aa1331561973f45e596d0b118aab14dab921cd46c58a3c41f1bf08235a3d8"
 
 [[package]]
 name = "time"
