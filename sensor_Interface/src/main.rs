@@ -16,7 +16,7 @@ mod sensor;
 mod server;
 
 /// Server Version
-pub static VERSION: &str = "0.8.3";
+pub static VERSION: &str = "0.8.4";
 
 /// Main entry point
 fn main() {
