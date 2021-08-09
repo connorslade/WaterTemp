@@ -1,4 +1,4 @@
-const common = require('../../api/src/common');
+const common = require('../../src/common');
 
 function discord(alert, config) {
     const axios = require('axios');

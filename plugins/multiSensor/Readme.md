@@ -14,7 +14,9 @@ Image ⤵
 
 ## 💠 Installation
 
-To use this plugin you will need to install some extra packages
+To install this plugin just move the `multiSensor` folder to `api/plugins/` and restart the server. If you see `🍞 Loading multiSensor v0.1` in the console, you're good to go.
+
+To use some features of this plugin you will need to install some extra packages
 
 The system will still work without these packages installed but wont be able to send alerts.
 

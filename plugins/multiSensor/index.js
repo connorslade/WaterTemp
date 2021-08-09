@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 
-const common = require('../../api/src/common');
+const common = require('../../src/common');
 const { Type, niceName, getData } = require(`${__dirname}/common`);
 const sendAlert = require(`${__dirname}/alert`);
 
