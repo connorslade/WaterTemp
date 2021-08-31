@@ -99,7 +99,10 @@ pub fn get_download(_req: &tiny_http::Request, log_file: &str) -> Response {
 ///
 /// Only for main sensor (For Now :P)
 pub fn get_stats(_req: &tiny_http::Request, log_file: &str, rate: i64) -> Response {
+    // Get all history from log file
     let history: Option<String> = sensor::get_history(log_file);
+
+    // If there is no history, return an error
     if history.is_none() {
         return Response::new(
             200,
@@ -107,26 +110,43 @@ pub fn get_stats(_req: &tiny_http::Request, log_file: &str, rate: i64) -> Respon
             vec!["Content-Type: text/plain"],
         );
     };
+
+    // Convert the history to a vector of lines
     let history = history.unwrap();
     let data: Vec<&str> = history.split('\n').collect();
     let first: Vec<&str> = data[0].split(',').collect();
     let last: Vec<&str> = data[data.len() - 2].split(',').collect();
+
+    // Setup vars for min, max and avg
     let mut min = f64::MAX;
-    let mut max = 0.0;
+    let mut max = f64::MIN;
     let mut mean: f64 = 0.0;
+
+    // Loop through all lines in the history
     for i in &data {
+        // Split by ',' to get each value
         let items: Vec<&str> = i.split(',').collect();
-        if items.len() != 2 {
+
+        // Continue if there are less than 2 values
+        if items.len() < 2 {
             continue;
         }
-        let temp = items[1].parse::<f64>().unwrap();
 
-        mean += temp;
-        if temp > max {
-            max = temp;
-        }
-        if temp < min {
-            min = temp;
+        // Loop through all values and add to max, min and total
+        for i in items.iter().skip(1) {
+            // Get temp as a f64
+            let temp = match i.parse::<f64>() {
+                Ok(i) => i,
+                Err(_) => continue,
+            };
+
+            mean += temp;
+            if temp > max {
+                max = temp;
+            }
+            if temp < min {
+                min = temp;
+            }
         }
     }
     let json_response: &str = &format!(
